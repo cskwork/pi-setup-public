@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pi-setup — one-command pi coding agent setup</title>
+<meta name="description" content="pi coding agent configuration: 10 curated skills, permission policy, extensions. Restore on any machine with one command.">
+<style>
+:root{
+  --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
+  --fg:#e8ecf4;--dim:#98a2b8;--acc:#7c9cff;--acc2:#4de3c1;--warn:#ffb86c;
+  --r:16px;mono:'SF Mono',ui-monospace,Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI','Pretendard',sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(600px 400px at 15% -5%,rgba(124,156,255,.16),transparent 65%),
+  radial-gradient(500px 350px at 85% 10%,rgba(77,227,193,.10),transparent 60%),
+  linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+header{padding:84px 0 40px;text-align:center}
+.badge{display:inline-flex;gap:8px;align-items:center;font:12px/1 mono;color:var(--dim);border:1px solid var(--card-brd);border-radius:999px;padding:7px 14px;background:var(--card);backdrop-filter:blur(8px)}
+.badge .dot{width:7px;height:7px;border-radius:50%;background:var(--acc2);box-shadow:0 0 8px var(--acc2)}
+h1{font-size:clamp(34px,6vw,56px);font-weight:800;letter-spacing:-.02em;margin:22px 0 14px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--dim);font-size:18px;max-width:560px;margin:0 auto}
+.lang{position:fixed;top:18px;right:18px;display:flex;border:1px solid var(--card-brd);border-radius:10px;overflow:hidden;background:var(--card);backdrop-filter:blur(8px);z-index:10}
+.lang button{background:none;border:0;color:var(--dim);font:12px/1 mono;padding:9px 13px;cursor:pointer}
+.lang button.on{color:var(--bg);background:var(--acc)}
+.ko{display:none}
+body.lang-ko .ko{display:block} body.lang-ko .en{display:none}
+.install{margin:34px auto 0;max-width:640px;text-align:left;background:rgba(10,13,20,.7);border:1px solid var(--card-brd);border-radius:var(--r);padding:18px 20px;backdrop-filter:blur(10px)}
+.install .cmt{color:var(--dim);font:12px mono}
+.install code{font:14px mono;color:var(--acc2);display:block;padding:3px 0}
+.install code::before{content:"$ ";color:var(--dim)}
+.btns{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:12px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--card-brd);color:var(--fg);background:var(--card);backdrop-filter:blur(8px);transition:.18s}
+.btn:hover{transform:translateY(-1px);border-color:var(--acc)}
+.btn.pri{background:linear-gradient(90deg,var(--acc),#6580f0);border-color:transparent;color:#fff}
+section{padding:52px 0 8px}
+h2{font-size:26px;letter-spacing:-.01em;margin-bottom:6px}
+h2 .n{color:var(--acc);font-family:mono;font-size:15px;margin-right:10px}
+.lead{color:var(--dim);margin-bottom:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--card-brd);border-radius:var(--r);padding:18px 20px;backdrop-filter:blur(8px);transition:.18s}
+.card:hover{border-color:rgba(124,156,255,.5)}
+.card h3{font-size:15.5px;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h3 code{font:13px mono;color:var(--acc);background:none;padding:0}
+.card p{color:var(--dim);font-size:13.5px}
+.card .src{font:11px mono;color:#5d6a83;text-decoration:none;margin-top:8px;display:inline-block}
+.card .src:hover{color:var(--acc)}
+.tag{font:10px mono;color:var(--acc2);border:1px solid rgba(77,227,193,.3);border-radius:6px;padding:2px 7px}
+.policy{background:var(--card);border:1px solid var(--card-brd);border-radius:var(--r);padding:24px;backdrop-filter:blur(8px)}
+.policy ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:14px}
+.policy li{padding:12px 14px;border-radius:12px;background:rgba(10,13,20,.5);border:1px solid var(--card-brd);font-size:14px}
+.policy li b{display:block;font-size:13px;margin-bottom:2px}
+.policy li span{color:var(--dim);font-size:13px}
+.ok{color:var(--acc2)} .ask{color:var(--warn)} .no{color:#ff7a90}
+footer{margin:64px 0 40px;text-align:center;color:var(--dim);font-size:13px}
+footer a{color:var(--acc);text-decoration:none}
+footer a:hover{text-decoration:underline}
+@media(max-width:600px){header{padding:64px 0 24px}}
+</style>
+</head>
+<body class="lang-en">
+<div class="lang"><button id="btn-en" class="on">EN</button><button id="btn-ko">한</button></div>
+
+<header><div class="wrap">
+  <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
+  <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
+  <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
+  <p class="sub en">10 curated skills, a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
+  <p class="sub ko">엄선한 스킬 10종, 기본은 편하게·위험만 막는 권한 정책, 실제로 쓰는 익스텐션 전부 — 하나의 레포에 담아 어떤 머신에서든 복원합니다.</p>
+  <div class="install">
+    <span class="cmt"># fresh machine</span>
+    <code>git clone https://github.com/cskwork/pi-setup.git ~/pi-setup</code>
+    <code>~/pi-setup/install.sh && pi auth</code>
+  </div>
+  <div class="btns">
+    <a class="btn pri" href="https://github.com/cskwork/pi-setup">★ GitHub</a>
+    <a class="btn" href="https://github.com/cskwork/pi-setup/blob/main/README.md">README</a>
+  </div>
+</div></header>
+
+<section id="skills"><div class="wrap">
+  <h2><span class="n">01</span><span class="en">Curated skills</span><span class="ko">엄선 스킬</span></h2>
+  <p class="lead en">Only skills that earn their context. Everything else was cut.</p>
+  <p class="lead ko">컨텍스트를 값하는 스킬만 남겼습니다. 나머지는 잘라냈습니다.</p>
+  <div class="grid">
+    <div class="card"><h3><code>agent-browser</code></h3><p class="en">Browser automation CLI — navigate, fill, screenshot, scrape.</p><p class="ko">브라우저 자동화 CLI — 탐색·입력·스크린샷·스크래핑.</p><a class="src" href="https://github.com/vercel-labs/agent-browser">vercel-labs/agent-browser</a></div>
+    <div class="card"><h3><code>impeccable</code></h3><p class="en">Frontend design critique, audit, polish — the taste skill.</p><p class="ko">프론트엔드 디자인 비평·감사·폴리시 — 감각을 담당.</p><a class="src" href="https://github.com/oddxinformatics/impeccable">oddxinformatics/impeccable</a></div>
+    <div class="card"><h3><code>gpt-image-2</code></h3><p class="en">Image generation through your ChatGPT plan via Codex CLI.</p><p class="ko">ChatGPT 플랜 + Codex CLI로 이미지 생성.</p></div>
+    <div class="card"><h3><code>improve-codebase-architecture</code> <span class="tag">matt pocock</span></h3><p class="en">Refactor for agent + human navigability, always under green tests.</p><p class="ko">에이전트와 사람 모두에게 익숙해지는 리팩터링, 항상 그린 테스트 아래에서.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>handoff</code> <span class="tag">matt pocock</span></h3><p class="en">Clean session handoff summaries for whoever picks up next.</p><p class="ko">다음 세션이 매끄럽게 이어받는 인계 요약.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>call-agent</code></h3><p class="en">Route a task to the best peer AI CLI — Codex, agy, Kiro, Claude.</p><p class="ko">작업에 가장 맞는 동료 AI CLI로 라우팅 — Codex, agy, Kiro, Claude.</p><a class="src" href="https://github.com/cskwork/call-agent">cskwork/call-agent</a></div>
+    <div class="card"><h3><code>clean-code</code></h3><p class="en">Behavior-preserving legacy refactors with characterization tests.</p><p class="ko">동작 보존 레거시 리팩터링 + 특성화 테스트.</p><a class="src" href="https://github.com/cskwork/clean-code">cskwork/clean-code</a></div>
+    <div class="card"><h3><code>verify-skill</code></h3><p class="en">5 verification gates. Never calls a green build "verified".</p><p class="ko">5단계 검증 게이트. 빌드 성공을 '검증됨'이라 부르지 않음.</p><a class="src" href="https://github.com/cskwork/verify-skill">cskwork/verify-skill</a></div>
+    <div class="card"><h3><code>ego-browser</code></h3><p class="en">Agent-friendly browser that shares your logged-in state, zero config.</p><p class="ko">로그인 상태를 공유하는 에이전트 친화 브라우저, 설정 제로.</p><a class="src" href="https://github.com/citrolabs/ego-lite">citrolabs/ego-lite</a></div>
+    <div class="card"><h3><code>promptbox</code></h3><p class="en">One-shot adds to the promptbox prompt/skill collection site.</p><p class="ko">promptbox 프롬프트·스킬 컬렉션 사이트에 한 번에 추가.</p><a class="src" href="https://github.com/cskwork/promptbox">cskwork/promptbox</a></div>
+  </div>
+</div></section>
+
+<section id="policy"><div class="wrap">
+  <h2><span class="n">02</span><span class="en">Permission policy — friendly by default</span><span class="ko">권한 정책 — 기본은 편하게</span></h2>
+  <div class="policy">
+    <p class="en" style="color:var(--dim)">Feels like stock pi: reads, file tools, skills, search, and normal shell all flow. Rails only where it matters. Your live config stays yours — it's gitignored.</p>
+    <p class="ko" style="color:var(--dim)">기본 pi처럼 부드럽게 — 읽기·파일 도구·스킬·검색·일반 셸은 막힘 없이. 위험한 곳에만 레일을 둡니다. 실제 설정은 각자 로컬에(gitignore).</p>
+    <ul>
+      <li><b class="ok">✓ Allow</b><span class="en">reads · find/grep/ls · skills · ctx tools · web · normal bash · curl</span><span class="ko">읽기 · find/grep/ls · 스킬 · ctx 도구 · 웹 · 일반 bash · curl</span></li>
+      <li><b class="ask">? Ask</b><span class="en">any rm · sudo · ctx_purge</span><span class="ko">모든 rm · sudo · ctx_purge</span></li>
+      <li><b class="no">✕ Deny</b><span class="en">rm -rf · reading .env* and ~/.ssh/* (every tool, cross-cutting)</span><span class="ko">rm -rf · .env*와 ~/.ssh/* 읽기(모든 도구에 적용)</span></li>
+    </ul>
+  </div>
+</div></section>
+
+<section id="ext"><div class="wrap">
+  <h2><span class="n">03</span><span class="en">Extensions stack</span><span class="ko">익스텐션 스택</span></h2>
+  <p class="lead en">Installed automatically from <code style="font-family:mono;font-size:13px">settings.json</code>.</p>
+  <div class="grid">
+    <div class="card"><h3>pi-permission-system</h3><p>Pattern permissions with TUI modal, review log, fail-closed validation.</p></div>
+    <div class="card"><h3>pi-goal</h3><p>Give pi a goal; it keeps working from each settled boundary until done.</p></div>
+    <div class="card"><h3>pi-usage</h3><p>Token/cost tracking per session.</p></div>
+    <div class="card"><h3>pi-subagents</h3><p>Parallel, scripted, and coordinated subagent workflows.</p></div>
+    <div class="card"><h3>pi-background-tasks</h3><p>Named background shell tasks with durable notifications.</p></div>
+    <div class="card"><h3>context-mode</h3><p>Big tool outputs stay out of your context window (FTS5-indexed).</p></div>
+    <div class="card"><h3>pi-memory (@samfp)</h3><p>Learns corrections & preferences; injects them into future sessions.</p></div>
+    <div class="card"><h3>pi-mcp-adapter</h3><p>MCP servers on-demand, without burning context on tool defs.</p></div>
+    <div class="card"><h3>pi-web-access</h3><p>Web search and fetch.</p></div>
+    <div class="card"><h3>locals</h3><p>permission-gate · dirty-repo-guard · herdr-agent-state · superset-hooks · ai-memory-pi</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <p><a href="https://github.com/cskwork/pi-setup">cskwork/pi-setup</a> · install.sh → sync.sh → done</p>
+</div></footer>
+
+<script>
+const b=document.body,en=document.getElementById('btn-en'),ko=document.getElementById('btn-ko');
+function set(l){b.className='lang-'+l;en.classList.toggle('on',l==='en');ko.classList.toggle('on',l==='ko');try{localStorage.setItem('pi-setup-lang',l)}catch(e){}}
+en.onclick=()=>set('en');ko.onclick=()=>set('ko');
+try{const s=localStorage.getItem('pi-setup-lang');if(s)set(s)}catch(e){}
+</script>
+</body>
+</html>
