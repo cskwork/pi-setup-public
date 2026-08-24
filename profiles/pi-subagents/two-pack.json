@@ -1,58 +1,11 @@
 {
-  "lastChangelogVersion": "0.84.3",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-5",
-  "defaultThinkingLevel": "high",
-  "packages": [
-    "npm:@juicesharp/rpiv-todo",
-    "npm:pi-simplify",
-    "npm:pi-subagents",
-    "npm:pi-web-access",
-    "npm:@juicesharp/rpiv-ask-user-question",
-    "npm:context-mode",
-    "npm:pi-markdown-preview",
-    "npm:pi-powerline-footer",
-    "npm:@samfp/pi-memory",
-    "npm:glm-vision",
-    "npm:pi-mcp-adapter",
-    "npm:pi-background-tasks",
-    "npm:@gotgenes/pi-permission-system",
-    "npm:@narumitw/pi-goal",
-    "npm:@narumitw/pi-usage",
-    "npm:pi-lens"
-  ],
-  "enableInstallTelemetry": false,
-  "theme": "dark/dark",
-  "hideThinkingBlock": true,
-  "collapseChangelog": true,
-  "tuiMode": "fullscreen",
   "subagents": {
     "agentOverrides": {
-      "specifier": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
-      },
       "coder": {
         "model": "zai/glm-5.3",
         "thinking": "max",
         "skills": [
           "test-driven-development"
-        ]
-      },
-      "cleaner": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
-      },
-      "sw-architect": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
-      },
-      "hardender": {
-        "model": "zai/glm-5.3",
-        "thinking": "max",
-        "skills": [
-          "systematic-debugging",
-          "verification-before-completion"
         ]
       },
       "qa": {
@@ -112,6 +65,5 @@
         ]
       }
     }
-  },
-  "defaultProjectTrust": "always"
+  }
 }

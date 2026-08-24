@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **Pack profiles `two-pack` and `four-pack`** (`profiles/pi-subagents/`) —
+  load a decided pack's gate set with `/subagents-load-profile two-pack |
+  four-pack`. Both pin the `glm-max` models and keep utility agents' skill
+  lists.
+- **Four-pack follows upstream SwarmForge's role order** — the pipeline is now
+  `specifier → coder → refactorer → sw-architect → qa`: the refactorer runs
+  as the behavior-preserving cleanup gate (artifact `25-refactorer.md`),
+  matching upstream's four-pack branch. The independent QA gate stays in
+  every pack.
+
 ## v0.2.0 — 2026-08-24
 
 First tagged release. Adds real-time code feedback, retunes the subagent model
