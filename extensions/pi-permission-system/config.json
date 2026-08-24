@@ -10,7 +10,7 @@
     },
     "bash": {
       "*": "allow",
-      "rm -rf *": "ask",
+      "rm -rf *": "deny",
       "sudo *": "ask"
     },
     "external_directory": "ask"
