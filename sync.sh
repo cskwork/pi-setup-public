@@ -11,7 +11,11 @@ else
   echo "Committed and pushed ✅"
 fi
 
-# Re-deploy permission config (self-heals if the runtime copy vanishes)
-mkdir -p extensions/pi-permission-system
-cmp -s configs/permissions.json extensions/pi-permission-system/config.json || \
+# Pull live permission config (user edits it via the TUI modal) into the repo copy
+if [ -f extensions/pi-permission-system/config.json ]; then
+  cp extensions/pi-permission-system/config.json configs/permissions.json
+else
+  # Live copy vanished — self-heal from the repo canonical
+  mkdir -p extensions/pi-permission-system
   cp configs/permissions.json extensions/pi-permission-system/config.json
+fi
