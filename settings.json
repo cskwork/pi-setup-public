@@ -18,7 +18,8 @@
     "npm:pi-background-tasks",
     "npm:@gotgenes/pi-permission-system",
     "npm:@narumitw/pi-goal",
-    "npm:@narumitw/pi-usage"
+    "npm:@narumitw/pi-usage",
+    "npm:pi-lens"
   ],
   "enableInstallTelemetry": false,
   "theme": "dark/dark",

@@ -92,6 +92,18 @@ code. Fill each `task` as a role contract: goal · target + seams · authority �
 evidence (spec path, baseline, verify command) · success criteria · output ·
 stop rules.
 
+**Bulk rule — every gate.** Screenshots, probe logs, traces, profiler output,
+and large command dumps are evidence to read, not artifacts to keep. Write
+them under `<RUN>/scratch/`, read them, quote the deciding lines in the gate's
+report, then delete the file. The gate's `.md` is the record. Add this to any
+task whose gate may produce bulk:
+
+```
+Bulk output (logs, traces, captures, screenshots) goes to <RUN>/scratch/,
+gets read, gets quoted in your report, then gets deleted. Cite the evidence,
+do not carry it.
+```
+
 **Wave 1 — Specify** (pack 4/6).
 
 ```typescript
@@ -138,7 +150,8 @@ Gate: `blocked` or `partial` → fix or re-scope before the review gates. The
 parent personally reviews the diff.
 
 **Wave 3 — Review gates** (pack 4: architect only; pack 6: both, parallel).
-Read-only, distinct angles.
+Read-only, distinct angles. The hardener runs probes, so its task carries the
+bulk rule.
 
 ```typescript
 subagent({
@@ -151,7 +164,7 @@ subagent({
         task: "Review invariants, boundaries, dependency direction, data-shape flow of the diff: <changed files>. Read-only." },
       { key: "harden", agent: "hardender", context: "fresh",   // pack 6 only
         output: RUN + "/31-harden.md", outputMode: "file-only",
-        task: "Derive adversarial checks from the changed risk in: <changed files>. Run them. No source edits. Baseline: <verify command>." }
+        task: "Derive adversarial checks from the changed risk in: <changed files>. Run them. No source edits. Baseline: <verify command>. Probe logs and traces go to " + RUN + "/scratch/, get read, get quoted in your report, then get deleted." }
     ]);
   `
 })
@@ -187,12 +200,15 @@ scope changes go to the user, not the fix coder.
 
 **Wave 5 — QA** (all packs). Independent verification against the spec.
 
-UI deliverables: QA captures real screenshots (browser-qa / agent-browser)
-and reads them. Never claim visual verification from DOM text. Every zai model
-is text-only, so a zai-model child gets vision from the ambient
-`npm:glm-vision` extension — **do not** add an `extensions` override to the qa
-agent or the glm profile, since any explicit list disables ambient loading and
-silently strips it. Anthropic and openai-codex models are natively multimodal.
+UI deliverables: **save the screenshot to a file, then `read` that file.** A
+snapshot held in memory is never seen — `glm-vision` hooks the `read` tool, so
+an unsaved capture yields no description and QA would be reporting from DOM
+text. Then the bulk rule applies: cite what the image showed, delete the file.
+
+Vision applies to `zai` children only — the extension gates on the child's
+provider. It is ambient, so **do not** add an `extensions` list to the qa
+agent or any profile; an explicit list disables ambient loading and silently
+strips it. Anthropic and openai-codex models are natively multimodal.
 
 ```typescript
 subagent({
@@ -202,7 +218,7 @@ subagent({
     return runs.run("qa", {
       agent: "qa", context: "fresh",
       output: RUN + "/50-qa.md", outputMode: "file-only",
-      task: "Independently verify through the real public surface. Oracle: " + RUN + "/10-spec.md. Baseline: " + RUN + "/00-baseline.md. Verify command: <cmd>. Read-only on source."
+      task: "Independently verify through the real public surface. Oracle: " + RUN + "/10-spec.md. Baseline: " + RUN + "/00-baseline.md. Verify command: <cmd>. Read-only on source. UI: save each screenshot under " + RUN + "/scratch/, read the file, record what it showed, then delete it — keep the observation, not the image."
     });
   `
 })
@@ -239,11 +255,18 @@ code it describes**. They are one change: a reviewer gets the explanation
 beside the diff, and a revert takes both.
 
 ```bash
+find .sixpack/<run-id>/scratch -type f -delete 2>/dev/null || true   # sweep leftover bulk; absent is normal
 mkdir -p docs/changes
 cp .sixpack/<run-id>/99-report.md docs/changes/<run-id>.md
 
 git add <files the coder changed> docs/changes/<run-id>.md
-git status                       # confirm the staged set — no strays
+git status                            # confirm the staged set — no strays
+```
+
+**Stop here. Show the user the staged file list and the commit message, and
+wait.** The user gives the final check. Do not commit on assumed approval.
+
+```bash
 git commit -m "<type>: <what changed, in plain words>"
 git push
 ```
@@ -257,8 +280,8 @@ reading another tenant's invoices`. Bad: `docs: add 99-report.md for run
 20260824-2140`. Body: three or four plain sentences, then
 `Report: docs/changes/<run-id>.md`.
 
-Show the user the staged list and message before committing. Pushing a shared
-or protected branch needs explicit approval. Non-git: skip.
+Pushing a shared or protected branch needs its own approval, separate from the
+commit check. Non-git: skip.
 
 ## Model profiles
 
@@ -267,7 +290,7 @@ Loading replaces `settings.subagents` wholesale.
 
 | Gate | codex-only | claude-only | mix | glm-max |
 |---|---|---|---|---|
-| specifier | sol · high | sonnet-5 · med | opus-5 · high | glm-5.3 · max |
+| specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · low | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
@@ -296,4 +319,8 @@ QA gets vision from the ambient `glm-vision` extension — see Wave 5.
 - Greenfield non-git: git optional, but the coder leaves a runnable scaffold
   the verify command can execute.
 - User-owned decisions: pack choice, spec open decisions, unapproved scope
-  changes, merge/publish boundaries.
+  changes, merge/publish boundaries. The commit needs the user's final check
+  on the staged list and message — never assume approval.
+- Keep observations, not bulk. Any gate producing screenshots, logs, traces,
+  or large dumps writes them to `<RUN>/scratch/`, reads them, quotes the
+  deciding lines in its report, then deletes them. Step 5 sweeps the rest.

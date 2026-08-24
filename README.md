@@ -2,7 +2,7 @@
 
 My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skills, extensions, agents, and a friendly permission policy. Restore on any machine in one command.
 
-**Landing page:** https://cskwork.github.io/pi-setup/
+**Landing page:** https://cskwork.github.io/pi-setup/ · **한국어:** [README.ko.md](README.ko.md)
 
 ## Quick start
 
@@ -19,7 +19,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (10)
+### Skills (12)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -46,6 +46,7 @@ Installed via `pi install` (see `settings.json`):
 | `npm:@narumitw/pi-goal` | Session goals — pi keeps working to completion |
 | `npm:@narumitw/pi-usage` | Usage/cost tracking |
 | `npm:pi-subagents` | Subagent orchestration |
+| `npm:pi-lens` | Real-time code feedback — LSP, linters, formatters, type-checks |
 | `npm:pi-background-tasks` | Named background shell tasks |
 | `npm:context-mode` | Keep big tool outputs out of your context |
 | `npm:pi-memory` (`@samfp/`) | Persistent learned preferences |
@@ -65,12 +66,18 @@ Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command 
 `profiles/pi-subagents/*.json` — swap per-gate models for the six-pack pipeline with
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
 
-| Profile | Routing |
-|---|---|
-| `codex-only` | every gate on `openai-codex` (sol = build/review, codex-spark = cleaner, gpt-5.4 = QA) |
-| `claude-only` | every gate on `anthropic` (opus-5 = build/review, sonnet-5 = spec/QA, haiku = cleaner) |
-| `mix` | codex-sol coder ∥ opus-5 reviewers, sonnet-5 spec, haiku cleaner, glm-5.3 QA |
-| `glm-max` | every gate `zai/glm-5.3` at thinking max |
+| Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
+|---|---|---|---|---|
+| specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
+| coder | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| cleaner | luna · xhigh · fast | haiku-4-5 · low | luna · xhigh · fast | glm-5.3 · max |
+| sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
+
+The hardender always gets a top model: it is the only gate that invents its own
+checks instead of reading a given artifact, its failure mode is a silent `PASS`
+no later gate catches, and it holds BLOCK authority.
 
 ### Permission policy (default)
 
@@ -88,7 +95,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              10 curated skills
+skills/              12 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 install.sh           fresh-machine bootstrap
