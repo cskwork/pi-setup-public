@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "0.84.3",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-5",
   "defaultThinkingLevel": "high",
@@ -25,33 +25,112 @@
   "theme": "dark/dark",
   "hideThinkingBlock": true,
   "collapseChangelog": true,
-  "tuiMode": "regular",
+  "tuiMode": "fullscreen",
   "subagents": {
     "agentOverrides": {
       "specifier": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "high",
+        "fallbackModels": [
+          "anthropic/claude-sonnet-4-6"
+        ]
       },
       "coder": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
+        "model": "anthropic/claude-opus-5",
+        "thinking": "high",
+        "fallbackModels": [
+          "anthropic/claude-opus-4-8",
+          "anthropic/claude-sonnet-5"
+        ],
+        "skills": [
+          "test-driven-development"
+        ]
       },
       "cleaner": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
+        "model": "anthropic/claude-haiku-4-5",
+        "thinking": "medium",
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "sw-architect": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
+        "model": "anthropic/claude-opus-5",
+        "thinking": "high",
+        "fallbackModels": [
+          "anthropic/claude-opus-4-8"
+        ]
       },
       "hardender": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
+        "model": "anthropic/claude-opus-5",
+        "thinking": "high",
+        "fallbackModels": [
+          "anthropic/claude-opus-4-8"
+        ],
+        "skills": [
+          "systematic-debugging",
+          "verification-before-completion"
+        ]
       },
       "qa": {
-        "model": "zai/glm-5.3",
-        "thinking": "max"
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium",
+        "fallbackModels": [
+          "anthropic/claude-haiku-4-5"
+        ],
+        "skills": [
+          "browser-qa",
+          "verification-before-completion"
+        ]
+      },
+      "qa-tester": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "qa-auditor": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "agent-browser": {
+        "skills": [
+          "browser-qa",
+          "agent-browser",
+          "playwright-cli"
+        ]
+      },
+      "customer-agent": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "persona-product-tester": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "verify": {
+        "skills": [
+          "verify",
+          "verification-before-completion"
+        ]
+      },
+      "tester": {
+        "skills": [
+          "test-driven-development",
+          "e2e-testing"
+        ]
+      },
+      "debugger": {
+        "skills": [
+          "systematic-debugging"
+        ]
       }
     }
-  }
+  },
+  "defaultProjectTrust": "always"
 }
