@@ -1,63 +1,86 @@
 # pi-setup
 
-My [pi coding agent](https://github.com/earendil-works/pi-coding-agent) setup, kept simple.
-One repo = the whole setup. Clone, run `install.sh`, done.
+My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skills, extensions, agents, and a friendly permission policy. Restore on any machine in one command.
 
-## What's in here
+**Landing page:** https://cskwork.github.io/pi-setup/
 
-| Path | What it is |
-|---|---|
-| `settings.json` | Default model **zai / glm-5.3** (thinking: max), theme, installed packages |
-| `AGENTS.md` | My operating instructions (domain-first, options gate, 8-step flow) |
-| `extensions/` | Local TypeScript extensions |
-| `agents/` | 13 custom subagents (planner, researcher, reviewer, tester, …) |
-| `skills/` | 47 skills (tdd, review, security-review, frontend-design, worktree, …) |
-| `install.sh` | Restores everything on a new machine |
-| `sync.sh` | Commits + pushes any drift |
-
-### Installed pi packages (auto-installed by `install.sh`)
-
-| Package | What it gives |
-|---|---|
-| `pi-subagents` | subagent spawning & workflows |
-| `pi-web-access` | web search & fetch |
-| `@juicesharp/rpiv-ask-user-question` | structured user questions |
-| `@juicesharp/rpiv-todo` | todo tool |
-| `context-mode` | context-saving sandbox (ctx_execute / ctx_search) |
-| `pi-mcp-adapter` | MCP server support (`/mcp` command, imports `.mcp.json`) |
-| `pi-background-tasks` | background task management |
-| `@gotgenes/pi-permission-system` | permission gates — config in `extensions/pi-permission-system/config.json` |
-| `pi-simplify` | code simplification skill |
-| `pi-markdown-preview` | render Markdown → PDF/HTML/PNG |
-| `pi-powerline-footer` | status footer |
-| `@samfp/pi-memory` (ai-memory) | wiki memory, session handoffs |
-| `glm-vision` | image reading via GLM-4.6V |
-
-### Local extensions (`extensions/`)
-
-`ai-memory-pi.ts` · `dirty-repo-guard.ts` · `herdr-agent-state.ts` · `permission-gate.ts` · `superset-hooks.ts`
-
-## New machine
+## Quick start
 
 ```bash
 git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
-cd ~/pi-setup && ./install.sh
-pi auth        # zai / anthropic / openai-codex — secrets never leave the machine
+~/pi-setup/install.sh
+pi auth   # log in to your providers
 # restart pi
 ```
 
-## How syncing works
+`install.sh` symlinks `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, installs every package below, and deploys the default permission config. Existing files are backed up, never overwritten.
 
-`install.sh` **symlinks** `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`
-to this repo, so the repo is the single source of truth.
+Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
-- Changed something in pi (settings, a skill, an agent)? → `./sync.sh`
-- New machine? → clone + `./install.sh`
-- `pi install <pkg>` edits `settings.json` → flows into the repo → `./sync.sh`
+## What's inside
 
-## Not synced (on purpose)
+### Skills (10)
 
-- `auth.json` — provider tokens. Run `pi auth` per machine.
-- `sessions/`, `run-history.jsonl`, `npm/` — machine-local state.
-- ai-memory wiki — per-project, lives inside each project.
-- `~/.agents/skills/` — the 198-skill shared hub for all agents; separate concern.
+| Skill | What it does | Source |
+|---|---|---|
+| `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
+| `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
+| `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
+| `improve-codebase-architecture` | Refactor for navigability under green tests | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `handoff` | Session handoff summaries | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
+| `clean-code` | Behavior-preserving legacy refactors | [cskwork/clean-code](https://github.com/cskwork/clean-code) |
+| `verify-skill` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
+| `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
+| `promptbox` | One-shot catalog adds to the promptbox collection | [cskwork/promptbox](https://github.com/cskwork/promptbox) |
+
+### Extensions
+
+Installed via `pi install` (see `settings.json`):
+
+| Package | Purpose |
+|---|---|
+| `npm:@gotgenes/pi-permission-system` | Pattern-based permissions (see below) |
+| `npm:@narumitw/pi-goal` | Session goals — pi keeps working to completion |
+| `npm:@narumitw/pi-usage` | Usage/cost tracking |
+| `npm:pi-subagents` | Subagent orchestration |
+| `npm:pi-background-tasks` | Named background shell tasks |
+| `npm:context-mode` | Keep big tool outputs out of your context |
+| `npm:pi-memory` (`@samfp/`) | Persistent learned preferences |
+| `npm:pi-mcp-adapter` | MCP servers without context bloat |
+| `npm:pi-web-access` | Web search/fetch |
+| `npm:pi-simplify` | Code simplification |
+| `npm:pi-markdown-preview` | Rendered markdown previews |
+| `npm:pi-powerline-footer` | Status footer |
+| `npm:glm-vision` | GLM-4.6V vision |
+| `npm:@juicesharp/rpiv-todo` | Todo management |
+| `npm:@juicesharp/rpiv-ask-user-question` | Structured questions |
+
+Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
+
+### Permission policy (default)
+
+`configs/permissions.json` deploys as `extensions/pi-permission-system/config.json`. It feels like stock pi — reads, file tools, skills, ctx tools, and normal shell commands all flow without prompts — with rails only where it matters:
+
+- `.env*` and `~/.ssh/*` unreadable by every tool (`path` deny, cross-cutting)
+- `rm -rf` denied; any other `rm`/`sudo` asks
+- everything else allowed
+
+Your live config is **yours**: it's gitignored here, and edits via pi's permission modal stay local. The repo copy stays a clean, friendly default for fresh installs.
+
+## Layout
+
+```
+AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
+settings.json        provider + packages
+configs/             permission default (public)
+skills/              10 curated skills
+agents/              subagent role prompts
+extensions/          local TS extensions
+install.sh           fresh-machine bootstrap
+sync.sh              save drift back to GitHub
+```
+
+## Backup
+
+`sync.sh` commits and pushes local drift. Memory and session data live outside this repo by design.
