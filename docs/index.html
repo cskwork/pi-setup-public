@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pi-setup — one-command pi coding agent setup</title>
-<meta name="description" content="pi coding agent configuration: 12 curated skills, 16 packages, 4 subagent model profiles, and a friendly permission policy. Restore on any machine with one command.">
+<meta name="description" content="pi coding agent configuration: 16 curated skills, 16 packages, 4 subagent model profiles with per-agent skill defaults, and a friendly permission policy. Restore on any machine with one command.">
 <style>
 :root{
   --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
@@ -70,7 +70,7 @@ footer a:hover{text-decoration:underline}
   <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
   <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
   <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
-  <p class="sub en">12 curated skills, 4 subagent model profiles, a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
+  <p class="sub en">16 curated skills, 4 subagent model profiles with per-agent skill defaults, a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
   <p class="sub ko">엄선한 스킬 12종, 서브에이전트 모델 프로필 4종, 기본은 편하게·위험만 막는 권한 정책, 실제로 쓰는 익스텐션 전부 — 하나의 레포에 담아 어떤 머신에서든 복원합니다.</p>
   <div class="install">
     <span class="cmt"># fresh machine</span>
@@ -91,16 +91,22 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3><code>agent-browser</code></h3><p class="en">Browser automation CLI — navigate, fill, screenshot, scrape.</p><p class="ko">브라우저 자동화 CLI — 탐색·입력·스크린샷·스크래핑.</p><a class="src" href="https://github.com/vercel-labs/agent-browser">vercel-labs/agent-browser</a></div>
     <div class="card"><h3><code>impeccable</code></h3><p class="en">Frontend design critique, audit, polish — the taste skill.</p><p class="ko">프론트엔드 디자인 비평·감사·폴리시 — 감각을 담당.</p><a class="src" href="https://github.com/oddxinformatics/impeccable">oddxinformatics/impeccable</a></div>
     <div class="card"><h3><code>gpt-image-2</code></h3><p class="en">Image generation through your ChatGPT plan via Codex CLI.</p><p class="ko">ChatGPT 플랜 + Codex CLI로 이미지 생성.</p></div>
-    <div class="card"><h3><code>improve-codebase-architecture</code> <span class="tag">matt pocock</span></h3><p class="en">Refactor for agent + human navigability, always under green tests.</p><p class="ko">에이전트와 사람 모두에게 익숙해지는 리팩터링, 항상 그린 테스트 아래에서.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
-    <div class="card"><h3><code>handoff</code> <span class="tag">matt pocock</span></h3><p class="en">Clean session handoff summaries for whoever picks up next.</p><p class="ko">다음 세션이 매끄럽게 이어받는 인계 요약.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
-    <div class="card"><h3><code>call-agent</code></h3><p class="en">Route a task to the best peer AI CLI — Codex, agy, Kiro, Claude.</p><p class="ko">작업에 가장 맞는 동료 AI CLI로 라우팅 — Codex, agy, Kiro, Claude.</p><a class="src" href="https://github.com/cskwork/call-agent">cskwork/call-agent</a></div>
-    <div class="card"><h3><code>clean-code</code></h3><p class="en">Behavior-preserving legacy refactors with characterization tests.</p><p class="ko">동작 보존 레거시 리팩터링 + 특성화 테스트.</p><a class="src" href="https://github.com/cskwork/clean-code">cskwork/clean-code</a></div>
-    <div class="card"><h3><code>verify-skill</code></h3><p class="en">5 verification gates. Never calls a green build "verified".</p><p class="ko">5단계 검증 게이트. 빌드 성공을 '검증됨'이라 부르지 않음.</p><a class="src" href="https://github.com/cskwork/verify-skill">cskwork/verify-skill</a></div>
+    <div class="card"><h3><code>verify</code></h3><p class="en">5 verification gates. Never calls a green build "verified".</p><p class="ko">5단계 검증 게이트. 빌드 성공을 '검증됨'이라 부르지 않음.</p><a class="src" href="https://github.com/cskwork/verify-skill">cskwork/verify-skill</a></div>
     <div class="card"><h3><code>ego-browser</code></h3><p class="en">Agent-friendly browser that shares your logged-in state, zero config.</p><p class="ko">로그인 상태를 공유하는 에이전트 친화 브라우저, 설정 제로.</p><a class="src" href="https://github.com/citrolabs/ego-lite">citrolabs/ego-lite</a></div>
-    <div class="card"><h3><code>promptbox</code></h3><p class="en">One-shot adds to the promptbox prompt/skill collection site.</p><p class="ko">promptbox 프롬프트·스킬 컬렉션 사이트에 한 번에 추가.</p><a class="src" href="https://github.com/cskwork/promptbox">cskwork/promptbox</a></div>
+    <div class="card"><h3><code>call-agent</code></h3><p class="en">Route a task to the best peer AI CLI — Codex, agy, Kiro, Claude.</p><p class="ko">작업에 가장 맞는 동료 AI CLI로 라우팅 — Codex, agy, Kiro, Claude.</p><a class="src" href="https://github.com/cskwork/call-agent">cskwork/call-agent</a></div>
     <div class="card"><h3><code>pi-sixpack</code></h3><p class="en">Six-role gated pipeline — spec → code → clean → architect ∥ harden → QA, in packs of 2/4/6.</p><p class="ko">6역할 게이트 파이프라인 — 명세→구현→정리→설계∥강화→QA, 2/4/6 팩.</p><a class="src" href="https://github.com/cskwork/aidt-swarmforge-harness">SwarmForge port</a></div>
     <div class="card"><h3><code>browser-qa</code></h3><p class="en">Browser QA on anything — YAML DAG scenarios, engine choice, real API evidence.</p><p class="ko">어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택, 실제 API 증적.</p><a class="src" href="https://github.com/cskwork/browser-qa">cskwork/browser-qa</a></div>
+    <div class="card"><h3><code>playwright-cli</code></h3><p class="en">Drive a browser directly; inspect or author Playwright tests.</p><p class="ko">브라우저를 직접 조작하고 Playwright 테스트를 검사·작성.</p></div>
+    <div class="card"><h3><code>e2e-testing</code></h3><p class="en">Playwright E2E patterns — Page Object Model, CI/CD, artifact management.</p><p class="ko">Playwright E2E 패턴 — POM, CI/CD, 아티팩트 관리.</p></div>
+    <div class="card"><h3><code>tdd</code></h3><p class="en">Red-green-refactor loop for features and bugfixes.</p><p class="ko">기능·버그 수정을 위한 red-green-refactor 루프.</p></div>
+    <div class="card"><h3><code>test-driven-development</code> <span class="tag">superpowers</span></h3><p class="en">Write the failing test first — every feature, every bugfix.</p><p class="ko">실패하는 테스트부터 — 모든 기능, 모든 버그 수정.</p><a class="src" href="https://github.com/obra/superpowers">obra/superpowers</a></div>
+    <div class="card"><h3><code>systematic-debugging</code> <span class="tag">superpowers</span></h3><p class="en">Root-cause discipline before any fix is proposed.</p><p class="ko">해결책을 제안하기 전 루트 코즈 규율.</p><a class="src" href="https://github.com/obra/superpowers">obra/superpowers</a></div>
+    <div class="card"><h3><code>verification-before-completion</code> <span class="tag">superpowers</span></h3><p class="en">Evidence before assertions — never claim unverified work done.</p><p class="ko">주장 전에 증거 — 검증 안 된 일을 끝났다고 말하지 않음.</p><a class="src" href="https://github.com/obra/superpowers">obra/superpowers</a></div>
+    <div class="card"><h3><code>decompose-into-slices</code></h3><p class="en">Break a plan into independently-grabbable vertical slices.</p><p class="ko">계획을 독립적으로 잡을 수 있는 수직 슬라이스로 분해.</p></div>
+    <div class="card"><h3><code>find-skills</code></h3><p class="en">Discover and install new agent skills on demand.</p><p class="ko">새 에이전트 스킬을 필요할 때 발견·설치.</p></div>
   </div>
+  <p class="lead en" style="margin-top:18px">Selected agents load their domain skills by default — QA agents get <code>browser-qa</code>, coders get TDD, verifiers get the verify gate. No per-call wiring.</p>
+  <p class="lead ko" style="margin-top:4px">주요 에이전트는 도메인 스킬을 기본으로 로드 — QA엔 browser-qa, 코더엔 TDD, 검증엔 verify 게이트. 호출마다 연결할 필요 없음.</p>
 </div></section>
 
 <section id="policy"><div class="wrap">
@@ -146,7 +152,7 @@ footer a:hover{text-decoration:underline}
       </tr></thead>
       <tbody>
         <tr><td style="padding:8px 10px"><code>specifier</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">sonnet-5 · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
-        <tr><td style="padding:8px 10px"><code>coder</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>coder</code></td><td style="padding:8px 10px">luna · max</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
         <tr><td style="padding:8px 10px"><code>cleaner</code></td><td style="padding:8px 10px">luna · xhigh</td><td style="padding:8px 10px">haiku-4-5 · med</td><td style="padding:8px 10px">luna · xhigh</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
         <tr><td style="padding:8px 10px"><code>sw-architect</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
         <tr><td style="padding:8px 10px"><code>hardender</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>

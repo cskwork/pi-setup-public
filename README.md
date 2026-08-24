@@ -19,22 +19,26 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (12)
+### Skills (16)
 
 | Skill | What it does | Source |
 |---|---|---|
 | `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
-| `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
-| `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
-| `improve-codebase-architecture` | Refactor for navigability under green tests | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `handoff` | Session handoff summaries | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
-| `clean-code` | Behavior-preserving legacy refactors | [cskwork/clean-code](https://github.com/cskwork/clean-code) |
-| `verify-skill` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
-| `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `promptbox` | One-shot catalog adds to the promptbox collection | [cskwork/promptbox](https://github.com/cskwork/promptbox) |
-| `pi-sixpack` | SwarmForge-style 6-role gated pipeline (specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
 | `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice, API evidence, `superqa` runtime | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
+| `e2e-testing` | Playwright E2E patterns — POM, CI/CD, artifact management, flaky-test strategy | local |
+| `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
+| `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
+| `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
+| `systematic-debugging` | Root-cause discipline before proposing any fix | [obra/superpowers](https://github.com/obra/superpowers) |
+| `test-driven-development` | Write the failing test first, always | [obra/superpowers](https://github.com/obra/superpowers) |
+| `tdd` | Red-green-refactor loop (compact variant) | local |
+| `decompose-into-slices` | Break a plan into independently-grabbable vertical slices | local |
+| `find-skills` | Discover and install new agent skills on demand | local |
+| `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
+| `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
+| `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
+| `pi-sixpack` | SwarmForge-style 6-role gated pipeline (specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
 
 ### Extensions
 
@@ -69,7 +73,7 @@ Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command 
 | Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
-| coder | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| coder | luna · max | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
@@ -78,6 +82,15 @@ Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command 
 The hardender always gets a top model: it is the only gate that invents its own
 checks instead of reading a given artifact, its failure mode is a silent `PASS`
 no later gate catches, and it holds BLOCK authority.
+
+### Skills by default
+
+Every profile sets `agentOverrides.<agent>.skills`, so domain skills load with the
+agent instead of per-call wiring:
+
+- **QA/browser tier** — `qa`, `qa-tester`, `qa-auditor`, `agent-browser` get `browser-qa` (+ `agent-browser`, `playwright-cli` where relevant)
+- **Persona tier** — `customer-agent`, `persona-product-tester` get `browser-qa` + `agent-browser`
+- **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / TDD / systematic-debugging skills
 
 ### Permission policy (default)
 
@@ -95,7 +108,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              12 curated skills
+skills/              16 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 install.sh           fresh-machine bootstrap
