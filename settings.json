@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.84.2",
-  "defaultProvider": "zai",
-  "defaultModel": "glm-5.3",
-  "defaultThinkingLevel": "max",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-5",
+  "defaultThinkingLevel": "high",
   "packages": [
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-simplify",
@@ -24,5 +24,33 @@
   "theme": "dark/dark",
   "hideThinkingBlock": true,
   "collapseChangelog": true,
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "subagents": {
+    "agentOverrides": {
+      "specifier": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "coder": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "cleaner": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "sw-architect": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "hardender": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "qa": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      }
+    }
+  }
 }
