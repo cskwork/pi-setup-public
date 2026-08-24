@@ -10,6 +10,7 @@
     },
     "bash": {
       "*": "allow",
+      "rm *": "ask",
       "rm -rf *": "deny",
       "sudo *": "ask"
     },
