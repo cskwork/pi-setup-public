@@ -30,7 +30,7 @@ Recommend one pack with a one-sentence reason, then ask:
 | Pack | Pipeline | Use when |
 |---|---|---|
 | 2 | coder → qa | localized, clear, low-risk, one subsystem |
-| 4 | specifier → coder → sw-architect → qa | moderate cross-layer work |
+| 4 | specifier → coder → refactorer → sw-architect → qa | moderate cross-layer work |
 | 6 | specifier → coder → cleaner → sw-architect ∥ hardender → fix loop → qa | major, security-sensitive, migration, public-API, high-regression-risk |
 
 Default to pack 2 only on explicit delegation, and say so. Silence is not
@@ -63,7 +63,7 @@ Numbered in pipeline order, so `ls` reads as the timeline:
 | `00-baseline.md` | parent | all |
 | `10-spec.md` | specifier | 4/6 |
 | `20-coder.md` | coder | all |
-| `25-cleaner.md` | cleaner | 6 |
+| `25-cleaner.md` / `25-refactorer.md` | cleaner / refactorer | 6 / 4 |
 | `30-arch.md` | sw-architect | 4/6 |
 | `31-harden.md` | hardender | 6 |
 | `40-fix-n.md` / `41-recheck-n.md` | fix coder / re-check | 6 |
@@ -123,8 +123,8 @@ subagent({
 Gate: read the spec. Product/scope "open decisions" go to the user before
 coding. Missing or vague acceptance oracle → resume the specifier.
 
-**Wave 2 — Build** (all packs). Coder is the sole writer; cleaner follows
-sequentially in pack 6.
+**Wave 2 — Build** (all packs). Coder is the sole writer; the cleanup role
+follows sequentially (pack 4: refactorer; pack 6: cleaner).
 
 ```typescript
 subagent({
@@ -136,9 +136,9 @@ subagent({
       output: RUN + "/20-coder.md", outputMode: "file-only",
       task: "<Implement the accepted spec at " + RUN + "/10-spec.md. Target/seams, baseline, verify command, authority, stop rules.>"
     });
-    const clean = await runs.run("cleaner", {          // pack 6 only
-      agent: "cleaner", context: "fresh",
-      output: RUN + "/25-cleaner.md", outputMode: "file-only",
+    const clean = await runs.run("clean", {          // packs 4/6 only
+      agent: "<pack 6: cleaner | pack 4: refactorer>", context: "fresh",
+      output: RUN + "/25-<cleaner|refactorer>.md", outputMode: "file-only",
       task: "Behavior-preserving cleanup of the coder's diff. Coder handoff: " + build.output + ". Baseline stays green: <verify command>."
     });
     return { build: build.output, clean: clean.output };
@@ -307,6 +307,15 @@ between the spec and the code, not between the code and its review.
 
 `fast: true` is the openai-codex priority tier; a no-op elsewhere. `glm-max`
 QA gets vision from the ambient `glm-vision` extension — see Wave 5.
+
+**Pack profiles** — `two-pack` and `four-pack` — pin the `glm-max` models to
+only the gates that pack runs (two-pack: coder, qa; four-pack: specifier,
+coder, refactorer, sw-architect, qa). Role orders mirror the upstream
+SwarmForge branches; the pi pipeline's independent QA gate stays in every
+pack. Load one when the pack is already decided; unused gates fall back to
+defaults if ever referenced. Utility agents keep their skill lists in every
+profile, so a wholesale load strips nothing. Step 1 still asks for the pack
+unless the user names it.
 
 ## Constraints
 

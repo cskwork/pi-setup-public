@@ -1,6 +1,6 @@
 ---
 name: refactorer
-description: Safe code transformations — extract, inline, rename, simplify
+description: Safe code transformations — extract, inline, rename, simplify. Behavior-preserving cleanup gate of the pi-sixpack four-pack, after coder and before sw-architect.
 model: sonnet
 ---
 

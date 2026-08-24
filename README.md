@@ -64,7 +64,7 @@ Installed via `pi install` (see `settings.json`):
 
 Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
 
-### Subagent model profiles (4)
+### Subagent model profiles (6)
 
 `profiles/pi-subagents/*.json` — swap per-gate models for the six-pack pipeline with
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
@@ -81,6 +81,13 @@ Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command 
 The hardender always gets a top model: it is the only gate that invents its own
 checks instead of reading a given artifact, its failure mode is a silent `PASS`
 no later gate catches, and it holds BLOCK authority.
+
+**Pack profiles** — `two-pack` and `four-pack` pin the `glm-max` models to only the
+gates that pack runs (two-pack: coder → qa; four-pack: specifier → coder →
+refactorer → sw-architect → qa). Role orders mirror the upstream SwarmForge
+branches, with the pi pipeline's independent QA gate kept in every pack. Load one
+when the pack is already decided; they keep the utility agents' skill lists so a
+wholesale load strips nothing. Pack 6 uses any model profile directly.
 
 ### Skills by default
 
