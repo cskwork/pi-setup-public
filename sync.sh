@@ -11,11 +11,9 @@ else
   echo "Committed and pushed ✅"
 fi
 
-# Pull live permission config (user edits it via the TUI modal) into the repo copy
-if [ -f extensions/pi-permission-system/config.json ]; then
-  cp extensions/pi-permission-system/config.json configs/permissions.json
-else
-  # Live copy vanished — self-heal from the repo canonical
+# Personal permission config is gitignored (repo ships a friendly public default).
+# If the live copy is missing, deploy the default so a fresh checkout just works.
+if [ ! -f extensions/pi-permission-system/config.json ]; then
   mkdir -p extensions/pi-permission-system
   cp configs/permissions.json extensions/pi-permission-system/config.json
 fi
