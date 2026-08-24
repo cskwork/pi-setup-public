@@ -15,6 +15,9 @@
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
+        ],
+        "skills": [
+          "test-driven-development"
         ]
       },
       "cleaner": {
@@ -39,6 +42,10 @@
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
+        ],
+        "skills": [
+          "systematic-debugging",
+          "verification-before-completion"
         ]
       },
       "qa": {
@@ -47,6 +54,58 @@
         "fast": true,
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra"
+        ],
+        "skills": [
+          "browser-qa",
+          "verification-before-completion"
+        ]
+      },
+      "qa-tester": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "qa-auditor": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "agent-browser": {
+        "skills": [
+          "browser-qa",
+          "agent-browser",
+          "playwright-cli"
+        ]
+      },
+      "customer-agent": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "persona-product-tester": {
+        "skills": [
+          "browser-qa",
+          "agent-browser"
+        ]
+      },
+      "verify": {
+        "skills": [
+          "verify",
+          "verification-before-completion"
+        ]
+      },
+      "tester": {
+        "skills": [
+          "test-driven-development",
+          "e2e-testing"
+        ]
+      },
+      "debugger": {
+        "skills": [
+          "systematic-debugging"
         ]
       }
     }
