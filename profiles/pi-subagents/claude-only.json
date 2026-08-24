@@ -3,7 +3,7 @@
     "agentOverrides": {
       "specifier": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-sonnet-4-6"
         ]
