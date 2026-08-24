@@ -1,0 +1,48 @@
+{
+  "subagents": {
+    "agentOverrides": {
+      "specifier": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.5"
+        ]
+      },
+      "coder": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.5"
+        ]
+      },
+      "cleaner": {
+        "model": "openai-codex/gpt-5.3-codex-spark",
+        "thinking": "low",
+        "fallbackModels": [
+          "openai-codex/gpt-5.4-mini"
+        ]
+      },
+      "sw-architect": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.5"
+        ]
+      },
+      "hardender": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.5"
+        ]
+      },
+      "qa": {
+        "model": "openai-codex/gpt-5.4",
+        "thinking": "medium",
+        "fallbackModels": [
+          "openai-codex/gpt-5.5"
+        ]
+      }
+    }
+  }
+}

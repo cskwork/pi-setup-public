@@ -59,6 +59,18 @@ Installed via `pi install` (see `settings.json`):
 
 Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
 
+### Subagent model profiles (4)
+
+`profiles/pi-subagents/*.json` — swap per-gate models for the six-pack pipeline with
+`/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
+
+| Profile | Routing |
+|---|---|
+| `codex-only` | every gate on `openai-codex` (sol = build/review, codex-spark = cleaner, gpt-5.4 = QA) |
+| `claude-only` | every gate on `anthropic` (opus-5 = build/review, sonnet-5 = spec/QA, haiku = cleaner) |
+| `mix` | codex-sol coder ∥ opus-5 reviewers, sonnet-5 spec, haiku cleaner, glm-5.3 QA |
+| `glm-max` | every gate `zai/glm-5.3` at thinking max |
+
 ### Permission policy (default)
 
 `configs/permissions.json` deploys as `extensions/pi-permission-system/config.json`. It feels like stock pi — reads, file tools, skills, ctx tools, and normal shell commands all flow without prompts — with rails only where it matters:

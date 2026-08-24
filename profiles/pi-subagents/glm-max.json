@@ -1,0 +1,30 @@
+{
+  "subagents": {
+    "agentOverrides": {
+      "specifier": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "coder": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "cleaner": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "sw-architect": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "hardender": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "qa": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      }
+    }
+  }
+}

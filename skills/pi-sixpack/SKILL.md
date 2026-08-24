@@ -164,6 +164,25 @@ passes, regressions, pre-existing failures, skipped checks, and environment
 limits · the QA verdict line (`integration: verified` / `not verified`) · the
 one open question that changes the next decision, if any.
 
+## Model profiles (per-gate model routing)
+
+Four loadable profiles live in `profiles/pi-subagents/` and are switched
+with `/subagents-load-profile <name>` (or `subagent({ action: "load-profile" })`
+if exposed). Loading replaces `settings.subagents` wholesale:
+
+| Profile | Routing |
+|---|---|
+| `codex-only` | all gates on `openai-codex` — sol (high) for spec/coder/arch/harden, codex-spark (low) for cleaner, gpt-5.4 (medium) for QA |
+| `claude-only` | all gates on `anthropic` — opus-5 (high) for coder/arch/harden, sonnet-5 (medium) spec/QA, haiku-4-5 (low) cleaner |
+| `mix` | coder = codex sol (high, `fast: true` tier), architects/hardender = cross-provider opus-5 (high), specifier = sonnet-5, cleaner = haiku-4-5, QA = glm-5.3 |
+| `glm-max` | all gates on `zai/glm-5.3`, thinking max |
+
+Reviewers deliberately never share the coder's provider in `mix` —
+cross-provider review catches what a same-family model misses. When the
+active profile routes a gate to `openai-codex/*`, pass `fast: true` on that
+wave's launch item for the priority tier; the flag is a no-op on other
+providers.
+
 ## Constraints
 
 - One writer per checkout at all times; never launch two write-capable roles
