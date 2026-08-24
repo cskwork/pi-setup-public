@@ -18,7 +18,7 @@
       },
       "cleaner": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "low",
+        "thinking": "medium",
         "fallbackModels": [
           "anthropic/claude-sonnet-5"
         ]
