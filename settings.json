@@ -16,7 +16,9 @@
     "npm:glm-vision",
     "npm:pi-mcp-adapter",
     "npm:pi-background-tasks",
-    "npm:@gotgenes/pi-permission-system"
+    "npm:@gotgenes/pi-permission-system",
+    "npm:@narumitw/pi-goal",
+    "npm:@narumitw/pi-usage"
   ],
   "enableInstallTelemetry": false,
   "theme": "dark/dark",

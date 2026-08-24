@@ -1,4 +1,5 @@
 {
+  "_comment": "Friendly starter policy for pi-permission-system. Feels like stock pi (no nagging) with rails only where it matters: secrets stay unreadable, destructive shell asks, everything else flows. Edit ~/.pi/agent/extensions/pi-permission-system/config.json (or the TUI /permissions modal) to personalize.",
   "permission": {
     "*": "allow",
     "path": {
@@ -9,8 +10,6 @@
       "~/.ssh/*": "deny"
     },
     "read": "allow",
-    "write": "allow",
-    "edit": "allow",
     "find": "allow",
     "grep": "allow",
     "ls": "allow",
@@ -31,34 +30,8 @@
       "*": "allow",
       "rm *": "ask",
       "rm -rf *": "deny",
-      "sudo *": "ask",
-      "ls": "allow",
-      "ls *": "allow",
-      "cat *": "allow",
-      "head *": "allow",
-      "tail *": "allow",
-      "grep *": "allow",
-      "rg *": "allow",
-      "find *": "allow",
-      "file *": "allow",
-      "stat *": "allow",
-      "wc *": "allow",
-      "du *": "allow",
-      "df *": "allow",
-      "ps": "allow",
-      "ps *": "allow",
-      "pwd": "allow",
-      "which *": "allow",
-      "echo *": "allow",
-      "git status": "allow",
-      "git status *": "allow",
-      "git diff": "allow",
-      "git diff *": "allow",
-      "git log": "allow",
-      "git log *": "allow",
-      "git show *": "allow",
-      "curl *": "allow"
+      "sudo *": "ask"
     },
-    "external_directory": "ask"
+    "external_directory": "allow"
   }
 }
