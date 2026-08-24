@@ -18,6 +18,8 @@ if command -v sqlite3 >/dev/null 2>&1 && [ -f "$MEMORY_DIR/memory.db" ]; then
 else
   cp -f "$MEMORY_DIR/memory.db" "$BACKUP_DIR/memory.db" 2>/dev/null || true
 fi
+# .backup snapshots are self-contained; stale sidecars must not ship
+rm -f "$BACKUP_DIR/memory.db-shm" "$BACKUP_DIR/memory.db-wal"
 
 # Include free-standing artifacts if present (ai-memory, vault wiki).
 # Copied content ships as plain files — strip their .git so nothing nests.
