@@ -26,7 +26,6 @@ One repo = the whole setup. Clone, run `install.sh`, done.
 | `context-mode` | context-saving sandbox (ctx_execute / ctx_search) |
 | `pi-mcp-adapter` | MCP server support (`/mcp` command, imports `.mcp.json`) |
 | `pi-background-tasks` | background task management |
-| `pi-hermes-memory` | Hermes memory system (MEMORY.md + knowledge base) |
 | `@gotgenes/pi-permission-system` | permission gates — config in `extensions/pi-permission-system/config.json` |
 | `pi-simplify` | code simplification skill |
 | `pi-markdown-preview` | render Markdown → PDF/HTML/PNG |
