@@ -70,7 +70,7 @@ Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command 
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| cleaner | luna · xhigh · fast | haiku-4-5 · low | luna · xhigh · fast | glm-5.3 · max |
+| cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
