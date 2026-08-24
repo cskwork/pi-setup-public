@@ -16,7 +16,6 @@
     "npm:glm-vision",
     "npm:pi-mcp-adapter",
     "npm:pi-background-tasks",
-    "npm:pi-hermes-memory",
     "npm:@gotgenes/pi-permission-system"
   ],
   "enableInstallTelemetry": false,
