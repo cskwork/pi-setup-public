@@ -33,6 +33,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | `verify-skill` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
 | `promptbox` | One-shot catalog adds to the promptbox collection | [cskwork/promptbox](https://github.com/cskwork/promptbox) |
+| `pi-sixpack` | SwarmForge-style 6-role gated pipeline (specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
 
 ### Extensions
 
