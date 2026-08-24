@@ -1,3 +1,15 @@
 .DS_Store
 *.log
 extensions/pi-permission-system/
+
+# Domain-specific skills must never be synced (private work IP)
+skills/aidt-*
+skills/ai-engine-reset
+skills/sql-check
+skills/service-build
+skills/jira-*
+skills/bo-account-recovery
+skills/grafana-loki-proxy
+skills/release-notify
+skills/qa-engineer
+skills/cms-jk-deploy
