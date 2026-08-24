@@ -1,0 +1,23 @@
+{
+  "lastChangelogVersion": "0.84.2",
+  "defaultProvider": "zai",
+  "defaultModel": "glm-5.3",
+  "defaultThinkingLevel": "max",
+  "packages": [
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-simplify",
+    "npm:pi-subagents",
+    "npm:pi-web-access",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:context-mode",
+    "npm:pi-markdown-preview",
+    "npm:pi-powerline-footer",
+    "npm:@samfp/pi-memory",
+    "npm:glm-vision"
+  ],
+  "enableInstallTelemetry": false,
+  "theme": "dark/dark",
+  "hideThinkingBlock": true,
+  "collapseChangelog": true,
+  "tuiMode": "regular"
+}
