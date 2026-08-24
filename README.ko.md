@@ -61,7 +61,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 
 추가로 `extensions/`에 로컬 익스텐션이 있다: `permission-gate.ts` (위험 명령 확인), `dirty-repo-guard.ts` (세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
 
-### 서브에이전트 모델 프로필 (4)
+### 서브에이전트 모델 프로필 (6)
 
 `profiles/pi-subagents/*.json` — 식스팩 파이프라인의 게이트별 모델을 통째로 교체한다.
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`
@@ -76,6 +76,14 @@ pi auth   # 사용하는 프로바이더에 로그인
 | qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
 
 hardender에는 항상 최상위 모델을 붙인다. 주어진 문서를 읽는 다른 게이트와 달리 검사 항목 자체를 스스로 만들어내야 하고, 실패했을 때 조용히 `PASS`를 내보내 이후 어떤 게이트도 이를 잡지 못하며, BLOCK 권한을 가지기 때문이다.
+
+**팩 프로필** — `two-pack`과 `four-pack`은 `glm-max` 모델을 해당 팩이 실제로
+돌리는 게이트에만 고정한다 (two-pack: coder → qa; four-pack: specifier →
+coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 SwarmForge
+브랜치를 따르며, pi 파이프라인의 독립 QA 게이트는 모든 팩에 유지된다.
+팩이 이미 정해져 있다면 로드하면 된다. 유틸리티 에이전트의 스킬 목록은
+그대로 남아 통째 로드해도 아무것도 벗겨지지 않는다. 팩 6은 모델 프로필을
+그대로 쓴다.
 
 ### 권한 정책 (기본값)
 

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pi-setup — one-command pi coding agent setup</title>
-<meta name="description" content="pi coding agent configuration: 15 curated skills, 16 packages, 4 subagent model profiles with per-agent skill defaults, and a friendly permission policy. Restore on any machine with one command.">
+<meta name="description" content="pi coding agent configuration: 15 curated skills, 16 packages, 6 subagent model profiles — four per-gate model tiers plus two-pack/four-pack gate sets — with per-agent skill defaults, and a friendly permission policy. Restore on any machine with one command.">
 <style>
 :root{
   --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
@@ -70,7 +70,7 @@ footer a:hover{text-decoration:underline}
   <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
   <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
   <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
-  <p class="sub en">15 curated skills, 4 subagent model profiles with per-agent skill defaults, a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
+  <p class="sub en">15 curated skills, 6 subagent model profiles — four model tiers plus lean two-pack and four-pack gate sets — a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
   <p class="sub ko">엄선한 스킬 12종, 서브에이전트 모델 프로필 4종, 기본은 편하게·위험만 막는 권한 정책, 실제로 쓰는 익스텐션 전부 — 하나의 레포에 담아 어떤 머신에서든 복원합니다.</p>
   <div class="install">
     <span class="cmt"># fresh machine</span>
@@ -160,6 +160,8 @@ footer a:hover{text-decoration:underline}
     </table>
     <p class="en" style="color:var(--dim);margin-top:16px;font-size:13.5px">The hardender always gets a top model — it is the only gate that invents its own checks instead of reading a given artifact, and its failure mode is a silent <code>PASS</code> no later gate catches.</p>
     <p class="ko" style="color:var(--dim);margin-top:16px;font-size:13.5px">hardender에는 항상 최상위 모델을 붙입니다 — 주어진 문서를 읽는 다른 게이트와 달리 검사 항목을 스스로 만들어야 하고, 실패 시 조용히 <code>PASS</code>를 내보내 이후 어느 게이트도 이를 잡지 못하기 때문입니다.</p>
+    <p class="en" style="color:var(--dim);margin-top:12px;font-size:13.5px"><strong>Pack profiles</strong> — <code>two-pack</code> and <code>four-pack</code> pin glm-max models to only the gates that pack runs (coder → qa; specifier → coder → refactorer → sw-architect → qa). Role orders mirror the upstream SwarmForge branches; the independent QA gate stays in every pack.</p>
+    <p class="ko" style="color:var(--dim);margin-top:12px;font-size:13.5px"><strong>팩 프로필</strong> — <code>two-pack</code>과 <code>four-pack</code>은 glm-max 모델을 해당 팩이 돌리는 게이트에만 고정합니다 (coder → qa; specifier → coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 SwarmForge 브랜치를 따르며, 독립 QA 게이트는 모든 팩에 유지됩니다.</p>
   </div>
 </div></section>
 
