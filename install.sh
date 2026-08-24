@@ -30,6 +30,10 @@ link extensions    extensions
 link agents        agents
 link skills        skills
 
+# Deploy permission config into the runtime extension dir
+mkdir -p "$REPO/extensions/pi-permission-system"
+cp -f "$REPO/configs/permissions.json" "$REPO/extensions/pi-permission-system/config.json"
+
 echo "==> Installing pi packages (list comes from settings.json)"
 PACKAGES="$(python3 -c "import json;print('\n'.join(json.load(open('$REPO/settings.json'))['packages']))")"
 while IFS= read -r pkg; do
