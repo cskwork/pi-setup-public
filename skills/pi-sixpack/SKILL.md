@@ -172,9 +172,9 @@ if exposed). Loading replaces `settings.subagents` wholesale:
 
 | Profile | Routing |
 |---|---|
-| `codex-only` | all gates on `openai-codex` — sol (high) for spec/coder/arch/harden, codex-spark (low) for cleaner, gpt-5.4 (medium) for QA |
+| `codex-only` | all gates on `openai-codex` — sol (high) for spec/coder/arch/harden, luna (xhigh, `fast: true`) for cleaner and QA |
 | `claude-only` | all gates on `anthropic` — opus-5 (high) for coder/arch/harden, sonnet-5 (medium) spec/QA, haiku-4-5 (low) cleaner |
-| `mix` | coder = codex sol (high, `fast: true` tier), architects/hardender = cross-provider opus-5 (high), specifier = sonnet-5, cleaner = haiku-4-5, QA = glm-5.3 |
+| `mix` | coder + architect + hardender = codex sol (high), specifier = sonnet-5, cleaner = codex luna (xhigh, `fast: true`), QA = glm-5.3 |
 | `glm-max` | all gates on `zai/glm-5.3`, thinking max |
 
 Reviewers deliberately never share the coder's provider in `mix` —

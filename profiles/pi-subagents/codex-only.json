@@ -5,6 +5,7 @@
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "high",
         "fallbackModels": [
+          "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
         ]
       },
@@ -12,20 +13,23 @@
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "high",
         "fallbackModels": [
+          "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
         ]
       },
       "cleaner": {
-        "model": "openai-codex/gpt-5.3-codex-spark",
-        "thinking": "low",
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
         "fallbackModels": [
-          "openai-codex/gpt-5.4-mini"
+          "openai-codex/gpt-5.6-terra"
         ]
       },
       "sw-architect": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "high",
         "fallbackModels": [
+          "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
         ]
       },
@@ -33,14 +37,16 @@
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "high",
         "fallbackModels": [
+          "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
         ]
       },
       "qa": {
-        "model": "openai-codex/gpt-5.4",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
         "fallbackModels": [
-          "openai-codex/gpt-5.5"
+          "openai-codex/gpt-5.6-terra"
         ]
       }
     }
