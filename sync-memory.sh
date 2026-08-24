@@ -10,7 +10,7 @@ mkdir -p "$BACKUP_DIR"
 cd "$BACKUP_DIR"
 [ -d .git ] || git init -q -b main
 git remote remove origin 2>/dev/null || true
-git remote add origin "git@github.com:cskwork/pi-memory-backup.git"
+git remote add origin "https://github.com/cskwork/pi-memory-backup.git"
 
 # Atomic snapshot via sqlite3 .backup (falls back to file copy if sqlite3 absent)
 if command -v sqlite3 >/dev/null 2>&1 && [ -f "$MEMORY_DIR/memory.db" ]; then
