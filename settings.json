@@ -13,7 +13,11 @@
     "npm:pi-markdown-preview",
     "npm:pi-powerline-footer",
     "npm:@samfp/pi-memory",
-    "npm:glm-vision"
+    "npm:glm-vision",
+    "npm:pi-mcp-adapter",
+    "npm:pi-background-tasks",
+    "npm:pi-hermes-memory",
+    "npm:@gotgenes/pi-permission-system"
   ],
   "enableInstallTelemetry": false,
   "theme": "dark/dark",

@@ -21,13 +21,17 @@ One repo = the whole setup. Clone, run `install.sh`, done.
 |---|---|
 | `pi-subagents` | subagent spawning & workflows |
 | `pi-web-access` | web search & fetch |
+| `@juicesharp/rpiv-ask-user-question` | structured user questions |
+| `@juicesharp/rpiv-todo` | todo tool |
+| `context-mode` | context-saving sandbox (ctx_execute / ctx_search) |
+| `pi-mcp-adapter` | MCP server support (`/mcp` command, imports `.mcp.json`) |
+| `pi-background-tasks` | background task management |
+| `pi-hermes-memory` | Hermes memory system (MEMORY.md + knowledge base) |
+| `@gotgenes/pi-permission-system` | permission gates — config in `extensions/pi-permission-system/config.json` |
+| `pi-simplify` | code simplification skill |
 | `pi-markdown-preview` | render Markdown → PDF/HTML/PNG |
 | `pi-powerline-footer` | status footer |
 | `@samfp/pi-memory` (ai-memory) | wiki memory, session handoffs |
-| `@juicesharp/rpiv-todo` | todo tool |
-| `@juicesharp/rpiv-ask-user-question` | structured user questions |
-| `context-mode` | context-saving sandbox (ctx_execute / ctx_search) |
-| `pi-simplify` | code simplification skill |
 | `glm-vision` | image reading via GLM-4.6V |
 
 ### Local extensions (`extensions/`)
