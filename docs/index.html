@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pi-setup — one-command pi coding agent setup</title>
-<meta name="description" content="pi coding agent configuration: 10 curated skills, permission policy, extensions. Restore on any machine with one command.">
+<meta name="description" content="pi coding agent configuration: 12 curated skills, 16 packages, 4 subagent model profiles, and a friendly permission policy. Restore on any machine with one command.">
 <style>
 :root{
   --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
@@ -70,8 +70,8 @@ footer a:hover{text-decoration:underline}
   <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
   <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
   <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
-  <p class="sub en">10 curated skills, a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
-  <p class="sub ko">엄선한 스킬 10종, 기본은 편하게·위험만 막는 권한 정책, 실제로 쓰는 익스텐션 전부 — 하나의 레포에 담아 어떤 머신에서든 복원합니다.</p>
+  <p class="sub en">12 curated skills, 4 subagent model profiles, a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
+  <p class="sub ko">엄선한 스킬 12종, 서브에이전트 모델 프로필 4종, 기본은 편하게·위험만 막는 권한 정책, 실제로 쓰는 익스텐션 전부 — 하나의 레포에 담아 어떤 머신에서든 복원합니다.</p>
   <div class="install">
     <span class="cmt"># fresh machine</span>
     <code>git clone https://github.com/cskwork/pi-setup.git ~/pi-setup</code>
@@ -98,6 +98,8 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3><code>verify-skill</code></h3><p class="en">5 verification gates. Never calls a green build "verified".</p><p class="ko">5단계 검증 게이트. 빌드 성공을 '검증됨'이라 부르지 않음.</p><a class="src" href="https://github.com/cskwork/verify-skill">cskwork/verify-skill</a></div>
     <div class="card"><h3><code>ego-browser</code></h3><p class="en">Agent-friendly browser that shares your logged-in state, zero config.</p><p class="ko">로그인 상태를 공유하는 에이전트 친화 브라우저, 설정 제로.</p><a class="src" href="https://github.com/citrolabs/ego-lite">citrolabs/ego-lite</a></div>
     <div class="card"><h3><code>promptbox</code></h3><p class="en">One-shot adds to the promptbox prompt/skill collection site.</p><p class="ko">promptbox 프롬프트·스킬 컬렉션 사이트에 한 번에 추가.</p><a class="src" href="https://github.com/cskwork/promptbox">cskwork/promptbox</a></div>
+    <div class="card"><h3><code>pi-sixpack</code></h3><p class="en">Six-role gated pipeline — spec → code → clean → architect ∥ harden → QA, in packs of 2/4/6.</p><p class="ko">6역할 게이트 파이프라인 — 명세→구현→정리→설계∥강화→QA, 2/4/6 팩.</p><a class="src" href="https://github.com/cskwork/aidt-swarmforge-harness">SwarmForge port</a></div>
+    <div class="card"><h3><code>browser-qa</code></h3><p class="en">Browser QA on anything — YAML DAG scenarios, engine choice, real API evidence.</p><p class="ko">어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택, 실제 API 증적.</p><a class="src" href="https://github.com/cskwork/browser-qa">cskwork/browser-qa</a></div>
   </div>
 </div></section>
 
@@ -122,12 +124,37 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3>pi-goal</h3><p>Give pi a goal; it keeps working from each settled boundary until done.</p></div>
     <div class="card"><h3>pi-usage</h3><p>Token/cost tracking per session.</p></div>
     <div class="card"><h3>pi-subagents</h3><p>Parallel, scripted, and coordinated subagent workflows.</p></div>
+    <div class="card"><h3>pi-lens</h3><p>Real-time code feedback while the agent edits — LSP diagnostics, linters, formatters, type-checks.</p></div>
+    <div class="card"><h3>glm-vision</h3><p>GLM-4.6V image understanding for text-only zai models.</p></div>
     <div class="card"><h3>pi-background-tasks</h3><p>Named background shell tasks with durable notifications.</p></div>
     <div class="card"><h3>context-mode</h3><p>Big tool outputs stay out of your context window (FTS5-indexed).</p></div>
     <div class="card"><h3>pi-memory (@samfp)</h3><p>Learns corrections & preferences; injects them into future sessions.</p></div>
     <div class="card"><h3>pi-mcp-adapter</h3><p>MCP servers on-demand, without burning context on tool defs.</p></div>
     <div class="card"><h3>pi-web-access</h3><p>Web search and fetch.</p></div>
     <div class="card"><h3>locals</h3><p>permission-gate · dirty-repo-guard · herdr-agent-state · superset-hooks · ai-memory-pi</p></div>
+  </div>
+</div></section>
+
+<section id="profiles"><div class="wrap">
+  <h2><span class="n">04</span><span class="en">Subagent model profiles</span><span class="ko">서브에이전트 모델 프로필</span></h2>
+  <p class="lead en">Swap every gate's model in one command: <code style="font-size:13px">/subagents-load-profile &lt;name&gt;</code></p>
+  <p class="lead ko">명령 하나로 모든 게이트의 모델을 교체합니다: <code style="font-size:13px">/subagents-load-profile &lt;name&gt;</code></p>
+  <div class="policy" style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+      <thead><tr style="text-align:left;color:var(--dim)">
+        <th style="padding:8px 10px">Gate</th><th style="padding:8px 10px">codex-only</th><th style="padding:8px 10px">claude-only</th><th style="padding:8px 10px">mix</th><th style="padding:8px 10px">glm-max</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:8px 10px"><code>specifier</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">sonnet-5 · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>coder</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>cleaner</code></td><td style="padding:8px 10px">luna · xhigh</td><td style="padding:8px 10px">haiku-4-5 · low</td><td style="padding:8px 10px">luna · xhigh</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>sw-architect</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>hardender</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>qa</code></td><td style="padding:8px 10px">luna · xhigh</td><td style="padding:8px 10px">sonnet-5 · med</td><td style="padding:8px 10px">glm-5.3 · med</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+      </tbody>
+    </table>
+    <p class="en" style="color:var(--dim);margin-top:16px;font-size:13.5px">The hardender always gets a top model — it is the only gate that invents its own checks instead of reading a given artifact, and its failure mode is a silent <code>PASS</code> no later gate catches.</p>
+    <p class="ko" style="color:var(--dim);margin-top:16px;font-size:13.5px">hardender에는 항상 최상위 모델을 붙입니다 — 주어진 문서를 읽는 다른 게이트와 달리 검사 항목을 스스로 만들어야 하고, 실패 시 조용히 <code>PASS</code>를 내보내 이후 어느 게이트도 이를 잡지 못하기 때문입니다.</p>
   </div>
 </div></section>
 
