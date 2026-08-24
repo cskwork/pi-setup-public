@@ -29,6 +29,7 @@ link settings.json settings.json
 link extensions    extensions
 link agents        agents
 link skills        skills
+link profiles      profiles
 
 # Deploy permission config into the runtime extension dir
 mkdir -p "$REPO/extensions/pi-permission-system"
