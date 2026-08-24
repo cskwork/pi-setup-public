@@ -19,7 +19,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (16)
+### Skills (15)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -32,8 +32,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
 | `systematic-debugging` | Root-cause discipline before proposing any fix | [obra/superpowers](https://github.com/obra/superpowers) |
 | `test-driven-development` | Write the failing test first, always | [obra/superpowers](https://github.com/obra/superpowers) |
-| `tdd` | Red-green-refactor loop (compact variant) | local |
-| `decompose-into-slices` | Break a plan into independently-grabbable vertical slices | local |
+| `decompose-into-slices` Break a plan into independently-grabbable vertical slices | local |
 | `find-skills` | Discover and install new agent skills on demand | local |
 | `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
@@ -108,7 +107,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              16 curated skills
+skills/              15 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 install.sh           fresh-machine bootstrap
