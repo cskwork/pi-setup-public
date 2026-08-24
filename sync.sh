@@ -10,3 +10,8 @@ else
   git push --quiet
   echo "Committed and pushed ✅"
 fi
+
+# Re-deploy permission config (self-heals if the runtime copy vanishes)
+mkdir -p extensions/pi-permission-system
+cmp -s configs/permissions.json extensions/pi-permission-system/config.json || \
+  cp configs/permissions.json extensions/pi-permission-system/config.json
