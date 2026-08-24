@@ -11,102 +11,88 @@ description: |
 
 # Pi Six-Pack
 
-A pi-native port of the SwarmForge Six-Pack. Six role agents (installed as
-user agents: `specifier`, `coder`, `cleaner`, `sw-architect`, `hardender`,
-`qa`) run as a gated pipeline through `workflowScript`. The parent session is
-the orchestrator and final decision-maker at every gate.
+Six user agents — `specifier`, `coder`, `cleaner`, `sw-architect`,
+`hardender`, `qa` — run as a gated pipeline through `workflowScript`. The
+parent session orchestrates and decides at every gate.
 
-No tmux, no per-role worktrees, no commit handoffs — pi children run headless
-and the pipeline is serial where it writes. One checkout, one writer at a
-time, read-only gates in parallel. Roles hand off through managed output
-artifacts, not git commits.
-
-**Run directory.** Every artifact of one run lands in `.sixpack/<run-id>/`,
-where `<run-id>` is `YYYYMMDD-HHMM-<slug>` (e.g. `20260824-2140-tenant-filter`).
-The leading dot keeps it out of listings and globs; the run id keeps two runs
-on one checkout from overwriting each other. Files are numbered in pipeline
-order so `ls` reads as the timeline:
-
-```
-.sixpack/20260824-2140-tenant-filter/
-  00-baseline.md      parent: verify command + unmodified-tree result
-  10-spec.md          specifier
-  20-coder.md         coder
-  25-cleaner.md       cleaner            (pack 6)
-  30-arch.md          sw-architect
-  31-harden.md        hardender          (pack 6)
-  40-fix-1.md         fix coder, round 1 (pack 6)
-  41-recheck-1.md     targeted re-check, round 1
-  50-qa.md            qa
-  99-report.md        parent: final synthesis
-```
-
-Gaps in the numbering are deliberate — a wave can gain a step without
-renumbering the ones after it. Parallel gates in one wave share a tens digit
-(`30`/`31`), so ordering never implies a dependency that does not exist.
-
-**Ignore it before wave 1.** `.sixpack/` is scratch, and it must never reach a
-commit or a reviewer's diff. Prefer the local-only path so the user's repo is
-not modified:
-
-```bash
-git rev-parse --git-dir >/dev/null 2>&1 &&
-  grep -qxF '.sixpack/' "$(git rev-parse --git-dir)/info/exclude" 2>/dev/null ||
-  echo '.sixpack/' >> "$(git rev-parse --git-dir)/info/exclude"
-```
-
-Use `.gitignore` instead only when the user wants the rule shared with the
-team — that is a tracked-file change, so ask first. Non-git greenfield: skip.
+No tmux, no per-role worktrees, no commit handoffs. One checkout, one writer
+at a time, read-only gates in parallel. Roles hand off through files.
 
 ## Step 1 — Classify and choose the pack
 
-Classify the task first:
+- **Greenfield** — no tracked code at the target. No baseline; specifier works
+  from the brief.
+- **Brownfield** — existing repo. Needs clean-enough git state, a verify
+  command, and a baseline before the coder runs.
 
-- **Greenfield** — no existing tracked code at the target; building from a
-  brief or empty/new directory. Skip baselines; specifier works from the brief.
-- **Brownfield** — existing repo with tracked code. Requires: clean-enough git
-  state, a known verify command, and a captured baseline before the coder runs.
-
-Then recommend one pack with a one-sentence reason and ask the user to choose:
+Recommend one pack with a one-sentence reason, then ask:
 
 | Pack | Pipeline | Use when |
-|------|----------|----------|
-| 2 | coder → qa | localized, clear, low-risk task in one subsystem |
-| 4 | specifier → coder → sw-architect → qa | moderate cross-layer work; specification and architectural review add value |
-| 6 | specifier → coder → cleaner → sw-architect ∥ hardender → fix loop → qa | major, security-sensitive, migration, public-API, or high-regression-risk work |
+|---|---|---|
+| 2 | coder → qa | localized, clear, low-risk, one subsystem |
+| 4 | specifier → coder → sw-architect → qa | moderate cross-layer work |
+| 6 | specifier → coder → cleaner → sw-architect ∥ hardender → fix loop → qa | major, security-sensitive, migration, public-API, high-regression-risk |
 
-Default to pack 2 only when the user explicitly delegates the choice, gives
-no preference, or input is unavailable — and say so. Do not treat silence as
+Default to pack 2 only on explicit delegation, and say so. Silence is not
 consent.
 
-## Step 2 — Orient and capture the baseline (brownfield)
+## Step 2 — Set up the run
 
-Before launching anything, the parent itself:
+The parent, before launching anything:
 
-1. Picks the **run id** (`YYYYMMDD-HHMM-<slug>`), creates `.sixpack/<run-id>/`,
-   and adds `.sixpack/` to `.git/info/exclude` if it is not already ignored.
-   Every wave script below opens with `const RUN = ".sixpack/<run-id>";`.
-2. Reads the target seams the task touches and derives the **verify command**
-   (test suite / build / typecheck — the repo's real harness).
-3. Runs it once on the unmodified tree and writes the **baseline result**
-   (command, exit code, passes, failures, skips) to `<RUN>/00-baseline.md`.
-   Wave 2 and wave 5 both cite this file rather than a pasted blob.
-4. Greenfield: pick the target directory and intended stack with the user if
-   not already fixed; no baseline exists — the scaffold becomes it. Still
-   write `00-baseline.md` recording that there was none, and why.
+1. **Run id** — `YYYYMMDD-HHMM-<slug>`. Create `.sixpack/<run-id>/`. Every
+   wave script opens with `const RUN = ".sixpack/<run-id>";`.
+2. **Ignore scratch** — local-only, so the user's tracked files are untouched:
+   ```bash
+   grep -qxF '.sixpack/' "$(git rev-parse --git-dir)/info/exclude" 2>/dev/null ||
+     echo '.sixpack/' >> "$(git rev-parse --git-dir)/info/exclude"
+   ```
+   Use `.gitignore` only if the user wants it shared — ask first. Non-git: skip.
+3. **Verify command** — read the seams, derive the repo's real harness
+   (tests / build / typecheck).
+4. **Baseline** — run it on the unmodified tree, write command + exit code +
+   passes/failures/skips to `<RUN>/00-baseline.md`. Greenfield still writes
+   the file, recording that no baseline existed and why.
+
+### Artifacts
+
+Numbered in pipeline order, so `ls` reads as the timeline:
+
+| File | Written by | Pack |
+|---|---|---|
+| `00-baseline.md` | parent | all |
+| `10-spec.md` | specifier | 4/6 |
+| `20-coder.md` | coder | all |
+| `25-cleaner.md` | cleaner | 6 |
+| `30-arch.md` | sw-architect | 4/6 |
+| `31-harden.md` | hardender | 6 |
+| `40-fix-n.md` / `41-recheck-n.md` | fix coder / re-check | 6 |
+| `50-qa.md` | qa | all |
+| `99-report.md` | parent | all |
+
+Gaps are deliberate — a wave can gain a step without renumbering. Parallel
+gates share a tens digit (`30`/`31`), so order never implies dependency.
 
 ## Step 3 — Run the waves
 
-Launch each wave as its own async `workflowScript` (stable keys, managed
-relative outputs). Read each wave's results before launching the next — the
-parent synthesizes between waves; a single mega-script cannot pause for
-judgment. Fill each task text as a role-specific contract: goal, target +
-seams, authority, context/evidence (spec path, baseline, verify command),
-success criteria, validation, output, stop rules. `context: "fresh"` for every
-role — each agent file carries its own role contract.
+Each wave is its own async `workflowScript`. **Read the results before
+launching the next** — the parent synthesizes between waves; one mega-script
+cannot pause for judgment.
 
-**Wave 1 — Specify** (pack 4/6). Brownfield includes recon in the specifier's
-own read-only pass; greenfield works from the brief.
+Every launch item carries the same envelope, omitted from the waves below
+only where shown:
+
+```typescript
+{ context: "fresh", outputMode: "file-only", output: RUN + "/<file>" }
+```
+
+`context: "fresh"` is not a cost choice — it is why the gates are independent.
+An architect that inherited the coder's reasoning would review intent, not
+code. Fill each `task` as a role contract: goal · target + seams · authority ·
+evidence (spec path, baseline, verify command) · success criteria · output ·
+stop rules.
+
+**Wave 1 — Specify** (pack 4/6).
 
 ```typescript
 subagent({
@@ -114,22 +100,19 @@ subagent({
   workflowScript: `
     const RUN = ".sixpack/<run-id>";
     return runs.run("spec", {
-      agent: "specifier",
-      context: "fresh",
-      output: RUN + "/10-spec.md",
-      outputMode: "file-only",
-      task: "<BROWNFIELD: describe AS-IS/TO-BE from repo evidence; GREENFIELD: paste the brief. Name the target repo/cwd, the seams, the verify command, and any known constraints. Read-only; write only your output file.>"
+      agent: "specifier", context: "fresh",
+      output: RUN + "/10-spec.md", outputMode: "file-only",
+      task: "<BROWNFIELD: AS-IS/TO-BE from repo evidence. GREENFIELD: the brief. Name target repo/cwd, seams, verify command, constraints. Read-only; write only your output file.>"
     });
   `
 })
 ```
 
-Gate: read the spec. Any "Open decisions" that are product/scope calls go to
-the user before coding. Acceptance oracle missing or vague → resume the
-specifier, do not proceed.
+Gate: read the spec. Product/scope "open decisions" go to the user before
+coding. Missing or vague acceptance oracle → resume the specifier.
 
-**Wave 2 — Build** (all packs). Coder alone (pack 2/4), or coder then cleaner
-(pack 6). The coder is the sole writer of the active worktree.
+**Wave 2 — Build** (all packs). Coder is the sole writer; cleaner follows
+sequentially in pack 6.
 
 ```typescript
 subagent({
@@ -137,53 +120,47 @@ subagent({
   workflowScript: `
     const RUN = ".sixpack/<run-id>";
     const build = await runs.run("coder", {
-      agent: "coder",
-      context: "fresh",
-      output: RUN + "/20-coder.md",
-      outputMode: "file-only",
-      task: "<Implement the accepted spec at " + RUN + "/10-spec.md. Target/seams, baseline result, verify command, authority boundaries, and stop rules go here.>"
+      agent: "coder", context: "fresh",
+      output: RUN + "/20-coder.md", outputMode: "file-only",
+      task: "<Implement the accepted spec at " + RUN + "/10-spec.md. Target/seams, baseline, verify command, authority, stop rules.>"
     });
     const clean = await runs.run("cleaner", {          // pack 6 only
-      agent: "cleaner",
-      context: "fresh",
-      output: RUN + "/25-cleaner.md",
-      outputMode: "file-only",
-      task: "Behavior-preserving cleanup of the coder's diff. Start from the coder handoff: " + build.output + ". Baseline must stay green: <verify command>."
+      agent: "cleaner", context: "fresh",
+      output: RUN + "/25-cleaner.md", outputMode: "file-only",
+      task: "Behavior-preserving cleanup of the coder's diff. Coder handoff: " + build.output + ". Baseline stays green: <verify command>."
     });
     return { build: build.output, clean: clean.output };
   `
 })
 ```
 
-Gate: read the handoff. Result `blocked` or `partial` with a blocking cause →
-fix or re-scope before gates. Parent personally reviews the diff.
+Gate: `blocked` or `partial` → fix or re-scope before the review gates. The
+parent personally reviews the diff.
 
-**Wave 3 — Review gates** (pack 4: architect only; pack 6: both in parallel).
-Read-only, fresh context, distinct angles.
+**Wave 3 — Review gates** (pack 4: architect only; pack 6: both, parallel).
+Read-only, distinct angles.
 
 ```typescript
 subagent({
   async: true,
-  context: "fresh",
   workflowScript: `
     const RUN = ".sixpack/<run-id>";
     return await runs.all([
-      { key: "arch", agent: "sw-architect", output: RUN + "/30-arch.md", outputMode: "file-only",
-        task: "Review invariants, boundaries, dependency direction, data-shape flow of the current diff: <changed files / diff summary>. Read-only." },
-      { key: "harden", agent: "hardender", output: RUN + "/31-harden.md", outputMode: "file-only",   // pack 6 only
+      { key: "arch", agent: "sw-architect", context: "fresh",
+        output: RUN + "/30-arch.md", outputMode: "file-only",
+        task: "Review invariants, boundaries, dependency direction, data-shape flow of the diff: <changed files>. Read-only." },
+      { key: "harden", agent: "hardender", context: "fresh",   // pack 6 only
+        output: RUN + "/31-harden.md", outputMode: "file-only",
         task: "Derive adversarial checks from the changed risk in: <changed files>. Run them. No source edits. Baseline: <verify command>." }
     ]);
   `
 })
 ```
 
-**Wave 4 — Fix loop** (only when gates return BLOCK or P1 findings worth
-doing now). Round `n` writes two artifacts, so the loop is reconstructable
-from disk instead of living only in the parent's head.
-
-The parent first writes its triage decision into the fix coder's task: which
-findings are accepted, which are declined, and why. Declined findings are a
-record, not an omission.
+**Wave 4 — Fix loop** (only on BLOCK or P1 findings worth doing now). The
+parent triages first and puts both halves of the decision in the task —
+accepted findings and declined ones with reasons. Declined is a record, not
+an omission.
 
 ```typescript
 subagent({
@@ -191,40 +168,31 @@ subagent({
   workflowScript: `
     const RUN = ".sixpack/<run-id>";
     const fix = await runs.run("fix", {
-      agent: "coder",
-      context: "fresh",
-      output: RUN + "/40-fix-1.md",
-      outputMode: "file-only",
-      task: "Apply ONLY these accepted findings: <verbatim finding text + file:line for each>. Declined, do not touch: <finding + one-line reason>. Baseline must stay green: <verify command>. No scope beyond the named findings."
+      agent: "coder", context: "fresh",
+      output: RUN + "/40-fix-1.md", outputMode: "file-only",
+      task: "Apply ONLY these accepted findings: <verbatim finding + file:line>. Declined, do not touch: <finding + reason>. Baseline stays green: <verify command>. No scope beyond the named findings."
     });
     const recheck = await runs.run("recheck", {
-      agent: "hardender",                              // or sw-architect — whichever raised them
-      context: "fresh",
-      output: RUN + "/41-recheck-1.md",
-      outputMode: "file-only",
-      task: "Two questions only. (1) Is each named finding resolved: <finding list>? (2) Any new defect inside the fix blast radius: " + fix.output + ". Read-only. Do not re-review unrelated code."
+      agent: "hardender", context: "fresh",        // or sw-architect — whoever raised them
+      output: RUN + "/41-recheck-1.md", outputMode: "file-only",
+      task: "Two questions only. (1) Is each named finding resolved: <list>? (2) Any new defect inside the fix blast radius: " + fix.output + ". Read-only."
     });
     return { fix: fix.output, recheck: recheck.output };
   `
 })
 ```
 
-Max 3 rounds by default; round 2 uses `42-fix-2.md` / `43-recheck-2.md`.
-Unapproved product/scope changes surfaced by reviewers go to the user, not
-the fix coder.
+Max 3 rounds; round 2 uses `42-fix-2.md` / `43-recheck-2.md`. Unapproved
+scope changes go to the user, not the fix coder.
 
-**Wave 5 — QA** (all packs). Final independent verification.
+**Wave 5 — QA** (all packs). Independent verification against the spec.
 
-Visual-surface rule: when the deliverable has a UI, QA must capture real
-screenshots (browser-qa / agent-browser) and read them as evidence — never
-claim visual verification from DOM text alone. Vision wiring: every zai
-model is text-only in the registry; the `npm:glm-vision` extension gives any
-zai-model child image understanding automatically via ambient package
-discovery. Do NOT add an `extensions` override to the qa agent or the glm
-profile,
-because any explicit extensions list disables ambient loading and silently
-strips glm-vision (plus model-provider extensions). anthropic/openai-codex
-models are natively multimodal and need nothing.
+UI deliverables: QA captures real screenshots (browser-qa / agent-browser)
+and reads them. Never claim visual verification from DOM text. Every zai model
+is text-only, so a zai-model child gets vision from the ambient
+`npm:glm-vision` extension — **do not** add an `extensions` override to the qa
+agent or the glm profile, since any explicit list disables ambient loading and
+silently strips it. Anthropic and openai-codex models are natively multimodal.
 
 ```typescript
 subagent({
@@ -232,11 +200,9 @@ subagent({
   workflowScript: `
     const RUN = ".sixpack/<run-id>";
     return runs.run("qa", {
-      agent: "qa",
-      context: "fresh",
-      output: RUN + "/50-qa.md",
-      outputMode: "file-only",
-      task: "Independently verify through the real public surface. Acceptance oracle: " + RUN + "/10-spec.md. Baseline: " + RUN + "/00-baseline.md. Verify command: <cmd>. Coder handoff: <reference>. Read-only on source."
+      agent: "qa", context: "fresh",
+      output: RUN + "/50-qa.md", outputMode: "file-only",
+      task: "Independently verify through the real public surface. Oracle: " + RUN + "/10-spec.md. Baseline: " + RUN + "/00-baseline.md. Verify command: <cmd>. Read-only on source."
     });
   `
 })
@@ -244,112 +210,90 @@ subagent({
 
 ## Step 4 — Report
 
-The parent reports, in order: context · what changed (behavior, not file
-names) · what stayed untouched · status — verified vs unverified, separating
-passes, regressions, pre-existing failures, skipped checks, and environment
-limits · the QA verdict line (`integration: verified` / `not verified`) · the
-one open question that changes the next decision, if any.
+Report in order: context · what changed (behavior, not file names) · what
+stayed untouched · status, separating passes, regressions, pre-existing
+failures, skipped checks, environment limits · the QA verdict line
+(`integration: verified` / `not verified`) · the one open question that
+changes the next decision.
 
-Write the same report to `<RUN>/99-report.md` and end it with the run
-manifest — every artifact produced, each gate's verdict, and the model each
-gate actually ran on. That file plus the numbered artifacts beside it are the
-full record of the run; the chat transcript is not.
+Write the same thing to `<RUN>/99-report.md`, ending with the manifest:
+artifacts produced, each gate's verdict, the model each gate ran on.
 
-## Step 5 — Commit the code and the report together
+### Plain language
+
+The reader is a teammate six months later, or a non-engineer.
+
+- One idea per sentence. Short sentences. Active voice.
+- Behavior, not file names — "users of one tenant can no longer read another
+  tenant's invoices", not "patched `InvoiceRepo.findAll`".
+- No pipeline vocabulary. "Gate", "pack 6", "hardender", "P1" are our words,
+  not the reader's. The manifest may name them; the summary may not.
+- Say what is **not** done: unverified, declined, still needs a human.
+- Facts only. No adjectives about the work's quality.
+
+## Step 5 — Commit code and report together
 
 `.sixpack/` is ignored scratch and disappears. The report is the one artifact
-worth keeping, so it lands on a **tracked** path:
-
-```
-docs/changes/<run-id>.md
-```
-
-**One commit.** The report ships with the code it describes. They are the same
-change, so they stay atomic — a reviewer reading the diff gets the plain-language
-explanation in the same place, and a revert takes both.
+worth keeping, so it lands on a tracked path — **in the same commit as the
+code it describes**. They are one change: a reviewer gets the explanation
+beside the diff, and a revert takes both.
 
 ```bash
 mkdir -p docs/changes
 cp .sixpack/<run-id>/99-report.md docs/changes/<run-id>.md
 
-git add <the files the coder actually changed> docs/changes/<run-id>.md
-git status                                # confirm staged set — no strays
+git add <files the coder changed> docs/changes/<run-id>.md
+git status                       # confirm the staged set — no strays
 git commit -m "<type>: <what changed, in plain words>"
 git push
 ```
 
-Stage named paths only. Never `git add -A` or `git add .` — a sixpack run
-leaves scratch and stray files, and the staged set must be exactly the
-coder's diff plus the report.
+Stage named paths only. Never `git add -A` or `git add .` — a run leaves
+scratch that must not be swept in.
 
-Show the user the staged file list and the commit message before committing.
-Stop and ask before pushing if the branch is shared, protected, or unclear.
-Skip the whole step in a non-git directory.
+Subject takes the **code** change's type, not `docs:` — the report is a
+passenger. Imperative, under ~70 chars. Good: `fix: stop one tenant from
+reading another tenant's invoices`. Bad: `docs: add 99-report.md for run
+20260824-2140`. Body: three or four plain sentences, then
+`Report: docs/changes/<run-id>.md`.
 
-### Write it in plain language
+Show the user the staged list and message before committing. Pushing a shared
+or protected branch needs explicit approval. Non-git: skip.
 
-Someone who did not follow the run must understand it. That includes a
-teammate six months later and a non-engineer.
+## Model profiles
 
-- One idea per sentence. Short sentences. Active voice.
-- Describe **behavior**, not file names. "Users of one tenant can no longer
-  read another tenant's invoices" — not "patched `InvoiceRepo.findAll`".
-- Gloss any term the reader may not share, once, on first use.
-- No pipeline vocabulary. "Gate", "pack 6", "hardender", and "P1 finding" are
-  our words, not the reader's. The manifest section may name them; the
-  summary may not.
-- Say plainly what is **not** done: what stayed unverified, what was declined,
-  what a human must still check.
-- No praise, no adjectives about the work's quality. Facts only.
+Loadable from `profiles/pi-subagents/` via `/subagents-load-profile <name>`.
+Loading replaces `settings.subagents` wholesale.
 
-Commit subject: the type of the **code** change, not `docs:` — the report is
-a passenger, not the point. Plain words, imperative, under ~70 characters.
-Good — `fix: stop one tenant from reading another tenant's invoices`.
-Bad — `docs: add 99-report.md for run 20260824-2140`.
+| Gate | codex-only | claude-only | mix | glm-max |
+|---|---|---|---|---|
+| specifier | sol · high | sonnet-5 · med | opus-5 · high | glm-5.3 · max |
+| coder | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| cleaner | luna · xhigh · fast | haiku-4-5 · low | luna · xhigh · fast | glm-5.3 · max |
+| sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
 
-Commit body: three or four plain sentences on what changed and what was
-verified, then `Report: docs/changes/<run-id>.md`.
+The hardener always gets a top model. It is the only gate that invents its own
+checks rather than reading a given artifact, its failure mode is a silent
+`PASS` no later gate catches, and it holds BLOCK authority.
 
-The committed report keeps the same section order as the chat report, then
-the manifest last.
+`mix` spends its Anthropic budget upstream: opus-5 writes the spec, codex sol
+builds and reviews against it, glm-5.3 verifies. The cross-provider check sits
+between the spec and the code, not between the code and its review.
 
-## Model profiles (per-gate model routing)
-
-Four loadable profiles live in `profiles/pi-subagents/` and are switched
-with `/subagents-load-profile <name>` (or `subagent({ action: "load-profile" })`
-if exposed). Loading replaces `settings.subagents` wholesale:
-
-| Profile | Routing |
-|---|---|
-| `codex-only` | all gates on `openai-codex` — sol (high) for spec/coder/arch/harden, luna (xhigh, `fast: true`) for cleaner and QA |
-| `claude-only` | all gates on `anthropic` — opus-5 (high) for coder/arch/harden, sonnet-5 (medium) spec/QA, haiku-4-5 (low) cleaner |
-| `mix` | coder + architect + hardender = codex sol (high), specifier = sonnet-5, cleaner = codex luna (xhigh, `fast: true`), QA = glm-5.3 |
-| `glm-max` | all gates on `zai/glm-5.3`, thinking max; QA gets vision via the ambient `glm-vision` extension (no vision model exists to pin — see Wave 5) |
-
-Reviewers deliberately never share the coder's provider in `mix` —
-cross-provider review catches what a same-family model misses. When the
-active profile routes a gate to `openai-codex/*`, pass `fast: true` on that
-wave's launch item for the priority tier; the flag is a no-op on other
-providers.
+`fast: true` is the openai-codex priority tier; a no-op elsewhere. `glm-max`
+QA gets vision from the ambient `glm-vision` extension — see Wave 5.
 
 ## Constraints
 
-- One writer per checkout at all times; never launch two write-capable roles
-  concurrently. Parallel lanes are read-only (architect ∥ hardender, re-checks).
-- Children never run subagents and never decide loop outcomes or scope — the
-  parent synthesizes every wave.
-- All scratch outputs stay under one run directory (`.sixpack/<run-id>/...`);
-  nothing lands in the repo root. Add `.sixpack/` to `.git/info/exclude`
-  before wave 1. The report is the only artifact copied to a tracked path.
-- The commit contains the coder's diff plus `docs/changes/<run-id>.md`, staged
-  by name. Never `git add -A` or `git add .` — a run leaves scratch that must
-  not be swept in. Show the staged list and message to the user before
-  committing; pushing a shared or protected branch needs explicit approval.
-- Every wave that changes the tree or a verdict leaves a numbered artifact —
-  including each fix round. A run must be reconstructable from disk alone.
-- Brownfield requires the baseline before wave 2. Never present a QA pass
+- One writer per checkout, always. Parallel lanes are read-only.
+- Children never run subagents and never decide loop outcomes or scope.
+- Every wave that changes the tree or a verdict leaves a numbered artifact,
+  including each fix round. A run is reconstructable from disk alone.
+- Brownfield needs the baseline before wave 2. Never present a QA pass
   without the baseline diff.
-- Greenfield in a non-git directory: git is optional (no worktree handoffs),
-  but the coder must leave a runnable scaffold the verify command can execute.
-- Preserve user-owned decisions: pack choice, spec open decisions, unapproved
-  scope changes, and merge/publish boundaries all go to the user.
+- Greenfield non-git: git optional, but the coder leaves a runnable scaffold
+  the verify command can execute.
+- User-owned decisions: pack choice, spec open decisions, unapproved scope
+  changes, merge/publish boundaries.
