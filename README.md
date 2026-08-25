@@ -134,3 +134,9 @@ sync.sh              save drift back to GitHub
 ## Backup
 
 `sync.sh` commits and pushes local drift. Memory and session data live outside this repo by design.
+
+### Memory backup
+
+`sync-memory.sh` mirrors `~/.pi/agent/memory` (pi-memory's markdown store) to the private
+`cskwork/pi-memory-backup` repo, and aborts if that remote is not private. A LaunchAgent
+(`com.cskwork.pi-memory-sync`) runs it daily at 21:00; logs land in `~/Library/Logs/pi-memory-sync.*.log`.
