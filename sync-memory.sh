@@ -1,28 +1,34 @@
 #!/usr/bin/env bash
-# Backup pi-memory (learned preferences/lessons) to the private GitHub mirror.
-# Safe: checkpoints SQLite first so the pushed copy is never a torn WAL state.
+# Backup pi-memory (MEMORY.md, daily logs, scratchpad) to the PRIVATE GitHub mirror.
+# pi-memory stores plain markdown, so this is a straight copy — no SQLite checkpoint needed.
 set -euo pipefail
 
-MEMORY_DIR="${MEMORY_DIR:-$HOME/.pi/memory}"
+MEMORY_DIR="${MEMORY_DIR:-$HOME/.pi/agent/memory}"
 BACKUP_DIR="${BACKUP_DIR:-$HOME/pi-memory-backup}"
+REMOTE="${REMOTE:-https://github.com/cskwork/pi-memory-backup.git}"
 
 mkdir -p "$BACKUP_DIR"
 cd "$BACKUP_DIR"
 [ -d .git ] || git init -q -b main
 git remote remove origin 2>/dev/null || true
-git remote add origin "https://github.com/cskwork/pi-memory-backup.git"
+git remote add origin "$REMOTE"
 
-# Atomic snapshot via sqlite3 .backup (falls back to file copy if sqlite3 absent)
-if command -v sqlite3 >/dev/null 2>&1 && [ -f "$MEMORY_DIR/memory.db" ]; then
-  sqlite3 "$MEMORY_DIR/memory.db" ".backup '$BACKUP_DIR/memory.db'"
-else
-  cp -f "$MEMORY_DIR/memory.db" "$BACKUP_DIR/memory.db" 2>/dev/null || true
+# Refuse to push to a public repo — this content is personal.
+if command -v gh >/dev/null 2>&1; then
+  slug=$(printf '%s' "$REMOTE" | sed -E 's#.*github\.com[:/]##; s#\.git$##')
+  if [ "$(gh repo view "$slug" --json isPrivate -q .isPrivate 2>/dev/null)" = "false" ]; then
+    echo "refusing to push memory to PUBLIC repo $slug" >&2
+    exit 1
+  fi
 fi
-# .backup snapshots are self-contained; stale sidecars must not ship
-rm -f "$BACKUP_DIR/memory.db-shm" "$BACKUP_DIR/memory.db-wal"
 
-# Include free-standing artifacts if present (ai-memory, vault wiki).
-# Copied content ships as plain files — strip their .git so nothing nests.
+# pi-memory markdown store (authoritative).
+rm -rf "${BACKUP_DIR:?}/memory"
+mkdir -p "$BACKUP_DIR/memory"
+cp -R "$MEMORY_DIR/." "$BACKUP_DIR/memory/" 2>/dev/null || true
+
+# ai-memory server data + wiki still back other agents up; ship them if present.
+# Copied as plain files — strip their .git so nothing nests.
 for d in "$HOME/Applications/ai-memory" "$HOME/wiki"; do
   [ -d "$d" ] || continue
   n=$(basename "$d")
