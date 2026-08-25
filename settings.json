@@ -12,7 +12,6 @@
     "npm:context-mode",
     "npm:pi-markdown-preview",
     "npm:pi-powerline-footer",
-    "npm:@samfp/pi-memory",
     "npm:glm-vision",
     "npm:pi-mcp-adapter",
     "npm:pi-background-tasks",
@@ -21,7 +20,8 @@
     "npm:pi-agent-browser-native",
     "npm:@narumitw/pi-goal",
     "npm:@narumitw/pi-usage",
-    "npm:pi-lens"
+    "npm:pi-lens",
+    "npm:pi-memory"
   ],
   "enableInstallTelemetry": false,
   "theme": "dark/dark",

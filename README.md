@@ -65,7 +65,7 @@ Installed via `pi install` (see `settings.json`):
 | `npm:pi-ponytail` | Lazy-senior-dev mode (YAGNI ladder) — skills wired to coder/cleaner; default mode `off`, opt in with `/ponytail` |
 | `npm:pi-agent-browser-native` | agent-browser as a native `agent_browser` tool — first pick in browser-qa's engine cascade (requires upstream `agent-browser` CLI on PATH) |
 
-Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
+Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`.
 
 ### Subagent model profiles (6)
 
