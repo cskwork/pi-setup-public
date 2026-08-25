@@ -6,6 +6,9 @@
         "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-sonnet-4-6"
+        ],
+        "skills": [
+          "db-intelligence"
         ]
       },
       "coder": {
@@ -16,7 +19,8 @@
           "anthropic/claude-sonnet-5"
         ],
         "skills": [
-          "test-driven-development"
+          "test-driven-development",
+          "ponytail"
         ]
       },
       "cleaner": {
@@ -24,6 +28,9 @@
         "thinking": "medium",
         "fallbackModels": [
           "anthropic/claude-sonnet-5"
+        ],
+        "skills": [
+          "ponytail-review"
         ]
       },
       "sw-architect": {
@@ -31,6 +38,9 @@
         "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-opus-4-8"
+        ],
+        "skills": [
+          "api-and-interface-design"
         ]
       },
       "hardender": {
@@ -41,7 +51,8 @@
         ],
         "skills": [
           "systematic-debugging",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa": {
@@ -52,7 +63,8 @@
         ],
         "skills": [
           "browser-qa",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa-tester": {

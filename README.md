@@ -19,12 +19,13 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (15)
+### Skills (16)
 
 | Skill | What it does | Source |
 |---|---|---|
 | `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
-| `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice, API evidence, `superqa` runtime | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `db-intelligence` | One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
 | `e2e-testing` | Playwright E2E patterns — POM, CI/CD, artifact management, flaky-test strategy | local |
 | `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
@@ -37,7 +38,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `pi-sixpack` | SwarmForge-style 6-role gated pipeline (specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
+| `pi-sixpack` | SwarmForge-style 6-role gated pipeline (Wave 0 parallel explore → specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
 
 ### Extensions
 
@@ -61,6 +62,8 @@ Installed via `pi install` (see `settings.json`):
 | `npm:glm-vision` | GLM-4.6V vision |
 | `npm:@juicesharp/rpiv-todo` | Todo management |
 | `npm:@juicesharp/rpiv-ask-user-question` | Structured questions |
+| `npm:pi-ponytail` | Lazy-senior-dev mode (YAGNI ladder) — skills wired to coder/cleaner; default mode `off`, opt in with `/ponytail` |
+| `npm:pi-agent-browser-native` | agent-browser as a native `agent_browser` tool — first pick in browser-qa's engine cascade (requires upstream `agent-browser` CLI on PATH) |
 
 Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
 
@@ -97,6 +100,12 @@ agent instead of per-call wiring:
 - **QA/browser tier** — `qa`, `qa-tester`, `qa-auditor`, `agent-browser` get `browser-qa` (+ `agent-browser`, `playwright-cli` where relevant)
 - **Persona tier** — `customer-agent`, `persona-product-tester` get `browser-qa` + `agent-browser`
 - **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / TDD / systematic-debugging skills
+- **Domain-data tier** — `specifier`, `hardender`, `qa` get `db-intelligence` (domain data before code, integrity probes, read-only DB evidence)
+- **Minimalism tier** — `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`; `sw-architect` gets `api-and-interface-design` (optional — lives in `~/.agents/skills`, warns if absent)
+
+The six-pack's **Wave 0** fans these out in parallel before specification: Jira
+requirements (atlassian-cli, when present) ∥ code graph ∥ DB evidence ∥ browser
+as-is — read-only nodes of a dependency DAG whose artifacts the spec must cite.
 
 ### Permission policy (default)
 
@@ -114,7 +123,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              15 curated skills
+skills/              16 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 install.sh           fresh-machine bootstrap

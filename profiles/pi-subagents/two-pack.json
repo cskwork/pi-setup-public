@@ -5,7 +5,8 @@
         "model": "zai/glm-5.3",
         "thinking": "max",
         "skills": [
-          "test-driven-development"
+          "test-driven-development",
+          "ponytail"
         ]
       },
       "qa": {
@@ -13,7 +14,8 @@
         "thinking": "max",
         "skills": [
           "browser-qa",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa-tester": {

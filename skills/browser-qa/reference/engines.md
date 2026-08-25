@@ -12,7 +12,7 @@ Two layers, do not confuse them:
 
 | Task needs | Use |
 |---|---|
-| API request **and response body** | `agent-browser network request <id> --json`, or chrome-devtools-mcp `get_network_request` |
+| API request **and response body** | native `agent_browser` tool (`{"args":["network","request","<id>","--json"]}`), `agent-browser network request <id> --json`, or chrome-devtools-mcp `get_network_request` |
 | popup / multi-window flow | `agent-browser tab list`, or chrome-devtools-mcp `list_pages` + `select_page` |
 | a login the user already has | ego-browser, or shared Chrome with a hand-done login |
 | Windows parity | agent-browser, playwright-cli (both ship native win32 binaries) |
@@ -22,7 +22,8 @@ Two layers, do not confuse them:
 
 | # | Engine | Detect | Use via |
 |---|---|---|---|
-| 1 | **agent-browser** - default: cheapest loop, popups and network built in, native on macOS/Linux/Windows | `command -v agent-browser` | `reference/agent-browser.md` |
+| 0 | **`agent_browser` native tool** (pi-agent-browser-native) - same engine as #1 but a native Pi tool: no shell quoting, compact main-content-first snapshots with `@eN` refs, screenshots as artifacts, spill files instead of context dumps. Prefer it whenever the tool is in your registry | `agent_browser` tool present in session | call the tool directly: `{"args":["open","<url>"]}` → `{"args":["snapshot","-i"]}` → `{"semanticAction":{"action":"click","locator":"text","value":"..."}}`; same command surface as `reference/agent-browser.md` minus the shell |
+| 1 | **agent-browser** CLI - fallback when the native tool is not registered (e.g. stripped tool allowlist): same engine over bash | `command -v agent-browser` | `reference/agent-browser.md` |
 | 2 | **ego-browser** (ego-lite) - macOS only; take it when the target needs the user's own logged-in session | `command -v ego-browser` | the `ego-browser` skill if installed, else `ego-browser nodejs <<'EOF' ... EOF` heredocs |
 | 3 | Playwright MCP | playwright/browser MCP tools present in the session | its `browser_*` tools |
 | 4 | `playwright-cli` | `command -v playwright-cli` | commands in `reference/agent-qa.md` step 2 |
@@ -36,7 +37,9 @@ engine: ego-browser        # exploration engine; replay is always superqa
 ```
 
 If the recorded engine stops working, fall through the cascade again and
-update the value.
+update the value. The native `agent_browser` tool and the `agent-browser` CLI
+are the **same engine** (one profile/session space) — switching between them
+mid-flow is allowed and does not violate one-engine-per-page.
 
 ## One engine per page
 
