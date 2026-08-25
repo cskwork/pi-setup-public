@@ -73,49 +73,93 @@
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "qa-auditor": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "agent-browser": {
         "skills": [
           "browser-qa",
           "agent-browser",
           "playwright-cli"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "customer-agent": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "persona-product-tester": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "verify": {
         "skills": [
           "verify",
           "verification-before-completion"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "tester": {
         "skills": [
           "test-driven-development",
           "e2e-testing"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       },
       "debugger": {
         "skills": [
           "systematic-debugging"
-        ]
+        ],
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
+      },
+      "scout": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
+      },
+      "researcher": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
+      },
+      "reviewer": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
+      },
+      "worker": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
       }
     }
   }
