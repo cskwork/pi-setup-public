@@ -58,6 +58,12 @@ first.
 This is what makes the data *domain knowledge* rather than rows:
 
 1. Extract schema (per-engine command in its reference file).
+   **Staleness check first**: if a `schema_metadata.json` (or cached DDL dump)
+   already exists, compare its mtime against the repo's migration/DDL files
+   (`migration*/`, `db/`, `*.sql`, `prisma/`, Flyway/Liquibase dirs) — older
+   than the newest migration means re-extract before trusting it. MongoDB has
+   no migrations: re-sample when the metadata is older than the feature you
+   are specifying, or on any field-shape surprise.
 2. Build the **entity-relationship graph**: nodes = tables/collections, edges =
    FKs / embedded refs / join-table links. For engines without declared FKs
    (MongoDB, legacy MySQL), infer edges from `*_id` naming and sampled values.
@@ -81,6 +87,14 @@ Output shape (write it to the path the task names, else `db-evidence.md`):
 
 Keep the graph to the **relevant slice** — the 5–15 entities the task touches,
 not the whole schema.
+
+**Cache the stable part in the domain pack.** Entity-graph edges and
+ubiquitous language change rarely; data shapes and row realities drift.
+When a `reference/domain/<project>.md` pack exists, read its cached graph
+slice first and only re-verify the *data* (shapes, counts, code values)
+against the live DB. After a session that mapped new entities or decoded new
+terms, append them to the domain pack (dated) so the next run starts warm.
+No pack, recurring project → offer to create one.
 
 ## Step 3 — Query
 

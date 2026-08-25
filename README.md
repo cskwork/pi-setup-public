@@ -101,7 +101,8 @@ agent instead of per-call wiring:
 - **Persona tier** — `customer-agent`, `persona-product-tester` get `browser-qa` + `agent-browser`
 - **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / TDD / systematic-debugging skills
 - **Domain-data tier** — `specifier`, `hardender`, `qa` get `db-intelligence` (domain data before code, integrity probes, read-only DB evidence)
-- **Minimalism tier** — `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`; `sw-architect` gets `api-and-interface-design` (optional — lives in `~/.agents/skills`, warns if absent)
+- **Minimalism tier** — `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`
+- **Architecture tier** — `sw-architect` gets `api-and-interface-design`. **Optional external skill**: it lives in `~/.agents/skills` (a separate skill hub, not this repo). Missing skills never fail a run — the result summary just shows a warning — so fresh installs work without it; install your own copy or drop the entry from the profiles.
 
 The six-pack's **Wave 0** fans these out in parallel before specification: Jira
 requirements (atlassian-cli, when present) ∥ code graph ∥ DB evidence ∥ browser
