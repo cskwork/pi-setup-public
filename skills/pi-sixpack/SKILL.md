@@ -108,7 +108,7 @@ gets read, gets quoted in your report, then gets deleted. Cite the evidence,
 do not carry it.
 ```
 
-**Wave 0 — Explore fanout** (pack 4/6; pack 2 runs only the nodes it needs).
+**Wave 0 — Explore fanout** (pack 4/6; pack 2 see below).
 
 The run is a dependency DAG. Wave 0 nodes have **no dependencies on each
 other** — all read-only, so they run in one parallel `runs.all`. Skip any node
@@ -148,6 +148,14 @@ Gate: the three graphs must **agree**. Code graph names a table the DB evidence
 doesn't have, or the browser shows a state no data shape explains → that
 contradiction is a finding for the spec, not something to smooth over. Merge
 verdict in one paragraph, then launch Wave 1.
+
+**Pack 2** has no specifier to consume artifacts, so the parent absorbs Wave 0
+itself: run at most the one or two nodes the change actually touches (usually
+none — pack 2 exists for localized, well-understood changes), read the
+artifacts, and inline the deciding facts (table + column shapes, the Jira
+acceptance line, the as-is behavior) directly into the coder's task text.
+If pack 2 seems to need all four nodes, that is evidence the pack choice is
+wrong — re-recommend pack 4 to the user instead of proceeding.
 
 **Wave 1 — Specify** (pack 4/6).
 

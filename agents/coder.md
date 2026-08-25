@@ -19,6 +19,10 @@ worktree while you run.
 - Greenfield: scaffold the minimal runnable project (build + test harness)
   before adding features. Commit nothing unless the task says otherwise.
 - Do not broaden the change into unrelated cleanup — that is the cleaner's job.
+- Skill precedence: **TDD governs process** (failing test first when practical),
+  **ponytail governs size** (smallest working diff, stdlib before dependencies).
+  They compose; when they seem to conflict on a trivial change, one focused
+  test plus the minimal diff satisfies both.
 
 ## Verification
 

@@ -45,7 +45,27 @@ while IFS= read -r pkg; do
   esac
 done <<< "$PACKAGES"
 
+echo "==> External CLI dependencies"
+# pi-agent-browser-native deliberately does not bundle the upstream CLI.
+if command -v agent-browser >/dev/null 2>&1; then
+  echo "  ✓ agent-browser ($(agent-browser --version 2>/dev/null))"
+else
+  if npm install -g agent-browser >/dev/null 2>&1; then
+    echo "  ✓ agent-browser (installed globally via npm)"
+  else
+    echo "  ⚠ agent-browser CLI missing — pi-agent-browser-native will fail its doctor."
+    echo "    Run: npm install -g agent-browser"
+  fi
+fi
+# browser-qa's deterministic replay runtime is optional but recommended.
+if ! command -v superqa >/dev/null 2>&1; then
+  echo "  ⚠ superqa not on PATH — browser-qa scenario replay unavailable."
+  echo "    Interactive exploration still works via the agent_browser tool."
+  echo "    Install: https://github.com/cskwork/browser-qa"
+fi
+
 echo
 echo "Done. Next steps:"
 echo "  1. pi auth        # log in to your providers (zai, anthropic, openai-codex)"
 echo "  2. restart pi"
+echo "  3. optional: verify browser tooling — npx pi-agent-browser-doctor"

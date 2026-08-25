@@ -19,22 +19,26 @@ pi auth   # 사용하는 프로바이더에 로그인
 
 ## 구성
 
-### 스킬 (12)
+### 스킬 (16)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
 | `agent-browser` | 에이전트용 브라우저 자동화 CLI | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
-| `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
-| `gpt-image-2` | Codex CLI + ChatGPT 요금제로 이미지 생성 | local |
-| `improve-codebase-architecture` | 테스트를 통과시킨 채 탐색성 위주로 리팩터링 | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `handoff` | 세션 인계 요약 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임 | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `db-intelligence` | DB 스킬 하나로 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
+| `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
+| `e2e-testing` | Playwright E2E 패턴 — POM, CI/CD, 아티팩트, flaky 대응 | local |
 | `call-agent` | 작업을 가장 적합한 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
-| `clean-code` | 동작을 바꾸지 않는 레거시 리팩터링 | [cskwork/clean-code](https://github.com/cskwork/clean-code) |
-| `verify-skill` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
+| `verify` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
+| `verification-before-completion` | 주장보다 증거 먼저 — 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
+| `systematic-debugging` | 수정 제안 전 근본 원인 규명 원칙 | [obra/superpowers](https://github.com/obra/superpowers) |
+| `test-driven-development` | 항상 실패하는 테스트부터 작성 | [obra/superpowers](https://github.com/obra/superpowers) |
+| `decompose-into-slices` | 계획을 독립적으로 집을 수 있는 수직 조각으로 분해 | local |
+| `find-skills` | 새 에이전트 스킬 탐색/설치 | local |
+| `gpt-image-2` | Codex CLI + ChatGPT 요금제로 이미지 생성 | local |
+| `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | 로그인 상태를 공유하는 에이전트 친화 브라우저 | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `promptbox` | promptbox 컬렉션에 원샷으로 항목 추가 | [cskwork/promptbox](https://github.com/cskwork/promptbox) |
-| `pi-sixpack` | SwarmForge 방식 6역할 게이트 파이프라인 (specifier→coder→cleaner→architect∥hardender→QA, 팩 2/4/6) | [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) 이식 |
-| `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택, API 증적, `superqa` 런타임 | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `pi-sixpack` | SwarmForge 방식 6역할 게이트 파이프라인 (Wave 0 병렬 탐색 → specifier→coder→cleaner→architect∥hardender→QA, 팩 2/4/6) | [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) 이식 |
 
 ### 익스텐션
 
@@ -58,6 +62,8 @@ pi auth   # 사용하는 프로바이더에 로그인
 | `npm:glm-vision` | GLM-4.6V 비전 |
 | `npm:@juicesharp/rpiv-todo` | 할 일 관리 |
 | `npm:@juicesharp/rpiv-ask-user-question` | 구조화된 질문 |
+| `npm:pi-ponytail` | 게으른 시니어 개발자 모드(YAGNI 사다리) — coder/cleaner에 스킬 연결; 기본 `off`, `/ponytail`로 켜기 |
+| `npm:pi-agent-browser-native` | agent-browser를 네이티브 `agent_browser` 도구로 — browser-qa 엔진 캐스케이드 1순위 (업스트림 `agent-browser` CLI 필요, install.sh가 설치) |
 
 추가로 `extensions/`에 로컬 익스텐션이 있다: `permission-gate.ts` (위험 명령 확인), `dirty-repo-guard.ts` (세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
 
@@ -85,6 +91,19 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 그대로 남아 통째 로드해도 아무것도 벗겨지지 않는다. 팩 6은 모델 프로필을
 그대로 쓴다.
 
+### 기본 스킬 연결
+
+모든 프로필이 `agentOverrides.<agent>.skills`를 설정해 호출마다 연결할 필요 없이 에이전트와 함께 스킬이 로드된다:
+
+- **QA/브라우저** — `qa`, `qa-tester`, `qa-auditor`, `agent-browser`에 `browser-qa` (+ 필요한 곳에 `agent-browser`, `playwright-cli`)
+- **페르소나** — `customer-agent`, `persona-product-tester`에 `browser-qa` + `agent-browser`
+- **검증/TDD/디버깅** — `verify`, `tester`, `hardender`, `debugger`, `coder`에 검증/TDD/체계적 디버깅 스킬
+- **도메인 데이터** — `specifier`, `hardender`, `qa`에 `db-intelligence` (코딩 전 도메인 데이터 확보, 무결성 프로브, 읽기 전용 DB 증거)
+- **미니멀리즘** — `coder`에 `ponytail`, `cleaner`/`refactorer`에 `ponytail-review`
+- **아키텍처** — `sw-architect`에 `api-and-interface-design`. **선택적 외부 스킬**: `~/.agents/skills`(별도 스킬 허브)에 있다. 없어도 실행은 실패하지 않고 경고만 뜨므로 새 설치에서도 동작한다.
+
+식스팩의 **Wave 0**은 명세 전에 이 스킬들을 병렬로 퍼뜨린다: Jira 요구사항(atlassian-cli, 있을 때) ∥ 코드 그래프 ∥ DB 증거 ∥ 브라우저 현재 동작 — 읽기 전용 의존성 DAG 노드들이며, 이 아티팩트를 명세가 반드시 인용해야 한다.
+
 ### 권한 정책 (기본값)
 
 `configs/permissions.json`이 `extensions/pi-permission-system/config.json`으로 배치된다. 체감은 기본 pi와 거의 같다 — 읽기, 파일 도구, 스킬, ctx 도구, 일반 셸 명령은 확인 없이 통과하고, 정말 필요한 곳에만 가드를 둔다:
@@ -101,7 +120,7 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              선별한 스킬 12개
+skills/              선별한 스킬 16개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 install.sh           새 머신 부트스트랩
