@@ -26,6 +26,7 @@ link() { # link <repo-item> <dest-name>
 echo "==> Linking pi setup into $PI_DIR"
 link AGENTS.md     AGENTS.md
 link settings.json settings.json
+link models.json   models.json
 link extensions    extensions
 link agents        agents
 link skills        skills

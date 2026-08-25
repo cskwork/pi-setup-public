@@ -52,6 +52,13 @@ first.
 7. **Evidence, not bulk.** Quote the executed statement, row count, and the
    deciding rows in your report. Large dumps go to scratch files, get read,
    get deleted.
+8. **Code is the oracle for code claims.** When explaining why a production
+   query/CTE/ORM call behaves a certain way, first quote the actual SQL from
+   the repo (mapper XML, migration, ORM output) and evaluate ONLY the
+   conditions that text contains. Never evaluate conditions inferred from
+   requirements prose or column names — a plausible invented condition is the
+   classic false root cause. If you cannot locate the real query, say so
+   instead of reconstructing it.
 
 ## Step 2 — Schema → entity graph (the domain model)
 
