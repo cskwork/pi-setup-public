@@ -4,9 +4,9 @@
 
 **Domain rules** — Always read `~/.agents/rules/rules.md` (Windows: `%USERPROFILE%\.agents\rules\rules.md`).
 
-**Skill routing** — `~/.agents/skills/` is the skill hub; `using-superpowers` is the router. Lifecycle: `brainstorming` → `using-git-worktrees` → `writing-plans` → `subagent-driven-development` → `test-driven-development` → `requesting-code-review` → `finishing-a-development-branch`. Steps 1–8 below are how a phase is executed, not a second pipeline.
+**Skill routing** — `~/.agents/skills/` is the skill hub. A useful lifecycle for large work: `brainstorming` → `using-git-worktrees` → `writing-plans` → `subagent-driven-development` → `test-driven-development` → `requesting-code-review` → `finishing-a-development-branch`. Steps 1–8 below are how a phase is executed, not a second pipeline.
 
-**1. Orient** — Read repo instructions, the domain model and real data shapes, then relevant tests/contracts, and the closest analogous code. Route through `using-superpowers`. Map entry points, callers, dependencies, side effects, and real verification commands. Batch independent reads.
+**1. Orient** — Read repo instructions, the domain model and real data shapes, then relevant tests/contracts, and the closest analogous code. Map entry points, callers, dependencies, side effects, and real verification commands. Batch independent reads.
 
 **2. Options** — Right after exploration, before any plan or code, give exactly three genuinely distinct approaches — different in strategy, not in wording. One line each: approach · main tradeoff · cost/risk. Rank them 1/2/3, mark 1 as recommended with one clause of why. Then stop and ask the user to pick. No code, no long prose. Skip only when one approach is obviously the only sane one.
 
@@ -15,7 +15,7 @@ Skip delegation only when you already know the exact file and symbol, or the cha
 
 **4. Plan** — State: `task type · goal · files · contracts · verification · assumptions`.
 
-After stating the plan, run `brainstorming` — one question at a time until the user's intent is clear and confirmed at ~95% confidence — and record the reviewed plan with `writing-plans`. Do not start implementation before this confirmation. Skip the interview for trivial or unambiguous changes — state assumptions and proceed.
+After stating the plan, if intent is still unclear, run `brainstorming` — one question at a time until the user's intent is clear and confirmed at ~95% confidence — and record the reviewed plan with `writing-plans`. Do not start implementation before this confirmation. Skip the interview for trivial or unambiguous changes — state assumptions and proceed.
 
 **5. Adversarial review** — After every plan, challenge:
 

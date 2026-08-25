@@ -65,7 +65,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 | `npm:pi-ponytail` | 게으른 시니어 개발자 모드(YAGNI 사다리) — coder/cleaner에 스킬 연결; 기본 `off`, `/ponytail`로 켜기 |
 | `npm:pi-agent-browser-native` | agent-browser를 네이티브 `agent_browser` 도구로 — browser-qa 엔진 캐스케이드 1순위 (업스트림 `agent-browser` CLI 필요, install.sh가 설치) |
 
-추가로 `extensions/`에 로컬 익스텐션이 있다: `permission-gate.ts` (위험 명령 확인), `dirty-repo-guard.ts` (세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`, `superset-hooks.ts`, `ai-memory-pi.ts`.
+추가로 `extensions/`에 로컬 익스텐션이 있다: `permission-gate.ts` (위험 명령 확인), `dirty-repo-guard.ts` (세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`.
 
 ### 서브에이전트 모델 프로필 (6)
 
