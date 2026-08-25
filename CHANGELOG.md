@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## v0.3.0 — 2026-08-26
+
+Swaps pi's memory for the first-party `pi-memory` extension, stops forcing a
+skill on every turn, and puts the memory backup on a daily schedule.
+
 ### Added
 
 - **`db-intelligence` skill** — one consolidated database skill for
@@ -33,6 +38,30 @@
   as the behavior-preserving cleanup gate (artifact `25-refactorer.md`),
   matching upstream's four-pack branch. The independent QA gate stays in
   every pack.
+- **Daily memory backup** — the `com.cskwork.pi-memory-sync` LaunchAgent runs
+  `sync-memory.sh` at 21:00 (plist checked in under `configs/`). Logs land in
+  `~/Library/Logs/pi-memory-sync.*.log`.
+
+### Changed
+
+- **Memory is now `npm:pi-memory`** (<https://pi.dev/packages/pi-memory>),
+  replacing `@samfp/pi-memory` and the `ai-memory` server wiring. Memory lives
+  as plain markdown under `~/.pi/agent/memory/` — no server, no port, no
+  autostart. The five facts held in the old SQLite store were migrated into
+  `MEMORY.md` with their original timestamps.
+- **Skill routing is no longer mandatory.** `AGENTS.md` dropped the
+  "route through `using-superpowers`" directive from the routing line and from
+  step 1, and the step 4 interview is now conditional on intent still being
+  unclear. The router skill stays installed and model-invokable; it is simply
+  not commanded every turn.
+- **`sync-memory.sh` backs up the markdown store** instead of the retired
+  SQLite database, and refuses to push when the remote is not private.
+
+### Removed
+
+- **`extensions/ai-memory-pi.ts`** — the generated ai-memory lifecycle hooks.
+  The ai-memory server and its wiring for other agents are untouched.
+- **`extensions/superset-hooks.ts`** — Superset lifecycle notifications.
 
 ## v0.2.0 — 2026-08-24
 
