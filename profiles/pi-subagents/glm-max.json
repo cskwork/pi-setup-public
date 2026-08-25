@@ -52,49 +52,81 @@
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "qa-auditor": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "agent-browser": {
         "skills": [
           "browser-qa",
           "agent-browser",
           "playwright-cli"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "customer-agent": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "persona-product-tester": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "verify": {
         "skills": [
           "verify",
           "verification-before-completion"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "tester": {
         "skills": [
           "test-driven-development",
           "e2e-testing"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       },
       "debugger": {
         "skills": [
           "systematic-debugging"
-        ]
+        ],
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "scout": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "researcher": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "reviewer": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "worker": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
       }
     }
   }

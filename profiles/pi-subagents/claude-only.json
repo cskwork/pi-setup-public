@@ -71,49 +71,81 @@
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "qa-auditor": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "agent-browser": {
         "skills": [
           "browser-qa",
           "agent-browser",
           "playwright-cli"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "customer-agent": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "persona-product-tester": {
         "skills": [
           "browser-qa",
           "agent-browser"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "verify": {
         "skills": [
           "verify",
           "verification-before-completion"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "tester": {
         "skills": [
           "test-driven-development",
           "e2e-testing"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
       },
       "debugger": {
         "skills": [
           "systematic-debugging"
-        ]
+        ],
+        "model": "anthropic/claude-sonnet-5",
+        "thinking": "medium"
+      },
+      "scout": {
+        "model": "anthropic/claude-haiku-4-5",
+        "thinking": "medium"
+      },
+      "researcher": {
+        "model": "anthropic/claude-haiku-4-5",
+        "thinking": "medium"
+      },
+      "reviewer": {
+        "model": "anthropic/claude-haiku-4-5",
+        "thinking": "medium"
+      },
+      "worker": {
+        "model": "anthropic/claude-haiku-4-5",
+        "thinking": "medium"
       }
     }
   }
