@@ -71,7 +71,7 @@ Output shape (write it to the path the task names, else `db-evidence.md`):
 
 ```markdown
 # DB evidence — <task/feature>
-## Engines & connections   (names only, no credentials)
+## Engines & connections   (names + source environment e.g. dev/audit — never credentials; non-prod data is never prod truth)
 ## Entity graph            (mermaid erDiagram or adjacency list, relevant slice only)
 ## Ubiquitous language     (term → table.column → meaning, code values decoded)
 ## Data shapes             (types, nullability-in-practice, gotchas)
@@ -98,7 +98,7 @@ optionally a **chart** via the legacy visualizer scripts.
 ## Pipeline use (pi-sixpack)
 
 - **Explore / Wave 0 (parent or scout):** schema + entity graph + language →
-  `05-db-evidence.md`. Read-only.
+  `03-db-evidence.md`. Read-only.
 - **Specifier:** consumes/extends the evidence; every data claim in the spec
   cites a query from it.
 - **Hardender:** adversarial data probes — orphan rows, constraint gaps,
