@@ -116,6 +116,26 @@ whose subject doesn't exist (no ticket, no DB, no UI) and say so; never fake an
 artifact. Downstream, artifacts are the DAG's edges: the specifier consumes
 `01`–`04`, the coder consumes `10`, the gates consume the diff.
 
+**Pre-flight (parent, before launching the fanout).** Verify child tooling so
+supervisor round-trips don't stall the wave: browser tool doctor passes (e.g.
+`pi-agent-browser-doctor`), the DB toolkit/venv is runnable, and required CLIs
+resolve. A version-gate or approval discovered mid-run costs a full child
+restart.
+
+**Task-contract rules (bake into the node tasks):**
+
+- *db evidence*: the child must quote the production SQL (mapper/migration/ORM
+  output) from the repo BEFORE evaluating conditions against data, and may only
+  evaluate conditions that quoted text contains — conditions inferred from
+  requirements prose are the classic false root cause.
+- *browser as-is*: pin the expected entity ids (course/class/record ids from
+  the user report) in the task, and require the child to assert them from the
+  captured API calls — an entry page may land on a different, empty account and
+  silently invalidate every observation.
+- *UI findings*: a defect claim against an ambiguous selector/widget is an
+  **open question, not a finding**, until re-verified with the widget correctly
+  identified (widget type, exact selector, and the network call it should fire).
+
 | Node | Who | Output | What it establishes |
 |---|---|---|---|
 | requirements | **parent itself**, `atlassian-cli` skill | `01-requirements.md` | Jira ticket: acceptance criteria, comments, linked issues — verbatim quotes, ticket key cited |
@@ -146,8 +166,12 @@ subagent({
 
 Gate: the three graphs must **agree**. Code graph names a table the DB evidence
 doesn't have, or the browser shows a state no data shape explains → that
-contradiction is a finding for the spec, not something to smooth over. Merge
-verdict in one paragraph, then launch Wave 1.
+contradiction is a finding for the spec, not something to smooth over. The
+parent settles contradictions itself with primary evidence (e.g. run the real
+query, check the deployed tag vs the fixing commit — `git merge-base
+--is-ancestor <deployed-tag> <fix>` proves deployment lag). Merge verdict in
+one paragraph, then launch Wave 1. A defect that reproduces in data but not in
+code is usually deploy lag; check it before specifying any fix.
 
 **Pack 2** has no specifier to consume artifacts, so the parent absorbs Wave 0
 itself: run at most the one or two nodes the change actually touches (usually
