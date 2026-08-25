@@ -4,6 +4,26 @@
 
 ### Added
 
+- **`db-intelligence` skill** — one consolidated database skill for
+  PostgreSQL, MySQL, SQLite, and MongoDB: engine detection, credential-safe
+  connect, schema-before-SQL, read-first writes with approval, and a domain
+  evidence artifact (entity-relationship graph slice + ubiquitous language +
+  data shapes). Per-engine references under `reference/`; private per-project
+  routing lives in gitignored `reference/domain/` packs.
+- **Six-pack Wave 0 — parallel explore fanout** — before specification, the
+  parent fetches Jira requirements (atlassian-cli) while read-only DAG nodes
+  run in parallel: code graph (scout), DB evidence (scout + db-intelligence),
+  browser as-is (qa). Artifacts `01`–`04` become the edges the spec must cite;
+  a merge gate requires the code/entity/UI graphs to agree.
+- **`npm:pi-ponytail`** — lazy-senior-dev (YAGNI) mode; `ponytail` skill wired
+  to the coder, `ponytail-review` to cleaner/refactorer. Default mode `off`.
+- **`npm:pi-agent-browser-native`** — agent-browser as a native `agent_browser`
+  tool; now rank 0 in browser-qa's engine cascade (CLI stays as fallback).
+- **Skill wiring across all profiles** — specifier/hardender/qa get
+  `db-intelligence`, sw-architect gets `api-and-interface-design`; synced
+  through settings.json and all six profiles so a wholesale load strips
+  nothing.
+
 - **Pack profiles `two-pack` and `four-pack`** (`profiles/pi-subagents/`) —
   load a decided pack's gate set with `/subagents-load-profile two-pack |
   four-pack`. Both pin the `glm-max` models and keep utility agents' skill

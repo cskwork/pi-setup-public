@@ -61,6 +61,10 @@ Numbered in pipeline order, so `ls` reads as the timeline:
 | File | Written by | Pack |
 |---|---|---|
 | `00-baseline.md` | parent | all |
+| `01-requirements.md` | parent (atlassian-cli) | when a Jira ticket exists |
+| `02-code-graph.md` | scout | 4/6 |
+| `03-db-evidence.md` | scout + db-intelligence | when data is touched |
+| `04-browser-asis.md` | qa | when a UI exists |
 | `10-spec.md` | specifier | 4/6 |
 | `20-coder.md` | coder | all |
 | `25-cleaner.md` / `25-refactorer.md` | cleaner / refactorer | 6 / 4 |
@@ -104,6 +108,47 @@ gets read, gets quoted in your report, then gets deleted. Cite the evidence,
 do not carry it.
 ```
 
+**Wave 0 — Explore fanout** (pack 4/6; pack 2 runs only the nodes it needs).
+
+The run is a dependency DAG. Wave 0 nodes have **no dependencies on each
+other** — all read-only, so they run in one parallel `runs.all`. Skip any node
+whose subject doesn't exist (no ticket, no DB, no UI) and say so; never fake an
+artifact. Downstream, artifacts are the DAG's edges: the specifier consumes
+`01`–`04`, the coder consumes `10`, the gates consume the diff.
+
+| Node | Who | Output | What it establishes |
+|---|---|---|---|
+| requirements | **parent itself**, `atlassian-cli` skill | `01-requirements.md` | Jira ticket: acceptance criteria, comments, linked issues — verbatim quotes, ticket key cited |
+| code graph | `scout` | `02-code-graph.md` | module/dependency graph slice for the touched area: entry points, seams, blast radius (`project_report` / `module_report` where available) |
+| db evidence | `scout` + `skill: "db-intelligence"` | `03-db-evidence.md` | entity-relationship graph slice, ubiquitous language, real data shapes, evidence queries |
+| browser as-is | `qa` | `04-browser-asis.md` | current UI behavior on the real surface: flow walked, screenshots read + deleted per the bulk rule |
+
+```typescript
+// parent first fetches Jira itself (atlassian-cli) → RUN + "/01-requirements.md"
+subagent({
+  async: true,
+  workflowScript: `
+    const RUN = ".sixpack/<run-id>";
+    return await runs.all([
+      { key: "code", agent: "scout", context: "fresh",
+        output: RUN + "/02-code-graph.md", outputMode: "file-only",
+        task: "Map the module/dependency graph slice for: <feature area>. Entry points, seams, callers, blast radius. Read-only." },
+      { key: "db", agent: "scout", context: "fresh", skill: "db-intelligence",
+        output: RUN + "/03-db-evidence.md", outputMode: "file-only",
+        task: "Per the db-intelligence skill: detect engine(s), extract schema, build the entity-graph slice + ubiquitous language + data shapes for: <feature area>. Read-only; strictly no writes." },
+      { key: "asis", agent: "qa", context: "fresh",
+        output: RUN + "/04-browser-asis.md", outputMode: "file-only",
+        task: "Walk the current UI flow for <feature area> on <url/env>. Record actual behavior, API calls, console errors. Screenshots to " + RUN + "/scratch/, read, quote, delete. Read-only." }
+    ]);
+  `
+})
+```
+
+Gate: the three graphs must **agree**. Code graph names a table the DB evidence
+doesn't have, or the browser shows a state no data shape explains → that
+contradiction is a finding for the spec, not something to smooth over. Merge
+verdict in one paragraph, then launch Wave 1.
+
 **Wave 1 — Specify** (pack 4/6).
 
 ```typescript
@@ -114,7 +159,7 @@ subagent({
     return runs.run("spec", {
       agent: "specifier", context: "fresh",
       output: RUN + "/10-spec.md", outputMode: "file-only",
-      task: "<BROWNFIELD: AS-IS/TO-BE from repo evidence. GREENFIELD: the brief. Name target repo/cwd, seams, verify command, constraints. Read-only; write only your output file.>"
+      task: "<BROWNFIELD: AS-IS/TO-BE from repo evidence. GREENFIELD: the brief. Name target repo/cwd, seams, verify command, constraints. Consume Wave 0 artifacts " + RUN + "/01..04 — every data claim cites 03-db-evidence.md, every requirement cites 01-requirements.md. Read-only; write only your output file.>"
     });
   `
 })
@@ -134,7 +179,7 @@ subagent({
     const build = await runs.run("coder", {
       agent: "coder", context: "fresh",
       output: RUN + "/20-coder.md", outputMode: "file-only",
-      task: "<Implement the accepted spec at " + RUN + "/10-spec.md. Target/seams, baseline, verify command, authority, stop rules.>"
+      task: "<Implement the accepted spec at " + RUN + "/10-spec.md. Target/seams, baseline, verify command, authority, stop rules. Apply the ponytail skill's ladder: smallest working diff, stdlib/native before new dependencies, no speculative structure. DB access goes through " + RUN + "/03-db-evidence.md, not ad-hoc queries.>"
     });
     const clean = await runs.run("clean", {          // packs 4/6 only
       agent: "<pack 6: cleaner | pack 4: refactorer>", context: "fresh",

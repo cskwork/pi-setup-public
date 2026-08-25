@@ -45,7 +45,9 @@ browser evidence -> report in the user's language.
    before writing a new one (`reference/domain-packs.md`).
 9. **Capability picks the engine, then the cascade.** Response bodies, popups, or Windows
    parity - go straight to the proven engine. One engine per page. Never lightpanda.
-   Replay is always the browser-qa engine (`reference/engines.md`).
+   Replay is always the browser-qa engine. When the native `agent_browser` tool is in
+   your tool registry, prefer it over shelling out to the CLI - same engine, less
+   context (`reference/engines.md`).
 10. **The DAG is the review contract.** `dag.nodes` with stable `id`, `story`, `acceptance`,
     `depends_on` - no selectors or values, those live in the local runtime binding. Run
     `superqa dag check --all --site <site>` before executing. Legacy `steps:` files stay

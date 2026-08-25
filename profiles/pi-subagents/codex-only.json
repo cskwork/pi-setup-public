@@ -7,6 +7,9 @@
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
+        ],
+        "skills": [
+          "db-intelligence"
         ]
       },
       "coder": {
@@ -17,7 +20,8 @@
           "openai-codex/gpt-5.5"
         ],
         "skills": [
-          "test-driven-development"
+          "test-driven-development",
+          "ponytail"
         ]
       },
       "cleaner": {
@@ -26,6 +30,9 @@
         "fast": true,
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra"
+        ],
+        "skills": [
+          "ponytail-review"
         ]
       },
       "sw-architect": {
@@ -34,6 +41,9 @@
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
+        ],
+        "skills": [
+          "api-and-interface-design"
         ]
       },
       "hardender": {
@@ -45,7 +55,8 @@
         ],
         "skills": [
           "systematic-debugging",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa": {
@@ -57,7 +68,8 @@
         ],
         "skills": [
           "browser-qa",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa-tester": {

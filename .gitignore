@@ -13,3 +13,6 @@ skills/grafana-loki-proxy
 skills/release-notify
 skills/qa-engineer
 skills/cms-jk-deploy
+
+# Domain-specific DB packs stay local (private work IP)
+skills/db-intelligence/reference/domain/

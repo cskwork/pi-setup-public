@@ -17,6 +17,8 @@
     "npm:pi-mcp-adapter",
     "npm:pi-background-tasks",
     "npm:@gotgenes/pi-permission-system",
+    "npm:pi-ponytail",
+    "npm:pi-agent-browser-native",
     "npm:@narumitw/pi-goal",
     "npm:@narumitw/pi-usage",
     "npm:pi-lens"
@@ -30,29 +32,40 @@
     "agentOverrides": {
       "specifier": {
         "model": "zai/glm-5.3",
-        "thinking": "max"
+        "thinking": "max",
+        "skills": [
+          "db-intelligence"
+        ]
       },
       "coder": {
         "model": "zai/glm-5.3",
         "thinking": "max",
         "skills": [
-          "test-driven-development"
+          "test-driven-development",
+          "ponytail"
         ]
       },
       "cleaner": {
         "model": "zai/glm-5.3",
-        "thinking": "max"
+        "thinking": "max",
+        "skills": [
+          "ponytail-review"
+        ]
       },
       "sw-architect": {
         "model": "zai/glm-5.3",
-        "thinking": "max"
+        "thinking": "max",
+        "skills": [
+          "api-and-interface-design"
+        ]
       },
       "hardender": {
         "model": "zai/glm-5.3",
         "thinking": "max",
         "skills": [
           "systematic-debugging",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa": {
@@ -60,7 +73,8 @@
         "thinking": "max",
         "skills": [
           "browser-qa",
-          "verification-before-completion"
+          "verification-before-completion",
+          "db-intelligence"
         ]
       },
       "qa-tester": {
