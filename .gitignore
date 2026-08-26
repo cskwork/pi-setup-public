@@ -17,5 +17,7 @@ skills/cms-jk-deploy
 # Domain-specific DB packs stay local (private work IP)
 skills/db-intelligence/reference/domain/
 
-# Domain packs for screen-policy-map stay local (private work IP)
-skills/screen-policy-map/reference/domain/
+# screen-policy-map lives in its own public repo:
+#   https://github.com/cskwork/screen-policy-map
+# The local copy is a working checkout; domain packs never leave this machine.
+skills/screen-policy-map/
