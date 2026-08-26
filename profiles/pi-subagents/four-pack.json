@@ -12,7 +12,7 @@
         "model": "zai/glm-5.3",
         "thinking": "max",
         "skills": [
-          "test-driven-development",
+          "tdd",
           "ponytail"
         ]
       },
@@ -90,7 +90,7 @@
       },
       "tester": {
         "skills": [
-          "test-driven-development",
+          "tdd",
           "playwright-cli"
         ],
         "model": "zai/glm-5.3",
@@ -102,7 +102,7 @@
       },
       "debugger": {
         "skills": [
-          "systematic-debugging"
+          "diagnosing-bugs"
         ],
         "model": "zai/glm-5.3",
         "thinking": "max"

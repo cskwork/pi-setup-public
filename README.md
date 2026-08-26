@@ -30,8 +30,19 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
-| `systematic-debugging` | Root-cause discipline before proposing any fix | [obra/superpowers](https://github.com/obra/superpowers) |
-| `test-driven-development` | Write the failing test first, always | [obra/superpowers](https://github.com/obra/superpowers) |
+| `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions — reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `tdd` | Test-driven development — red-green-refactor, integration tests, mocking patterns | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `code-review` | Review changes since a fixed point along Standards and Spec axes, in parallel sub-agents | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `implement` | Implement a piece of work based on a spec or tickets | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `research` | Investigate against high-trust primary sources, capture findings as Markdown | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `domain-modeling` | Build and sharpen a project's domain model — CONTEXT.md, ADRs | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `improve-codebase-architecture` | Scan for deepening opportunities, visual HTML report, then grill through the pick | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `resolving-merge-conflicts` | Resolve an in-progress git merge/rebase conflict | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `grilling` | Relentlessly stress-test a plan, decision, or idea | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `wait-what` | Stop — that last message did not land, re-pitch it | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `writing-for-agents` | Writing documents for agents — skills, AGENTS.md, CLAUDE.md | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `handoff` | Compact the conversation into a handoff doc for the next agent | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `teach` | Teach a skill or concept within the workspace | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `find-skills` | Discover and install new agent skills on demand | local |
 | `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
@@ -97,7 +108,7 @@ agent instead of per-call wiring:
 
 - **QA/browser tier** — `qa`, `qa-tester`, `qa-auditor`, `agent-browser` get `browser-qa` (+ `agent-browser`, `playwright-cli` where relevant)
 - **Persona tier** — `customer-agent`, `persona-product-tester` get `browser-qa` + `agent-browser`
-- **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / TDD / systematic-debugging skills
+- **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / tdd / diagnosing-bugs skills
 - **Domain-data tier** — `specifier`, `hardender`, `qa` get `db-intelligence` (domain data before code, integrity probes, read-only DB evidence)
 - **Minimalism tier** — `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`
 - **Architecture tier** — `sw-architect` gets `api-and-interface-design`. **Optional external skill**: it lives in `~/.agents/skills` (a separate skill hub, not this repo). Missing skills never fail a run — the result summary just shows a warning — so fresh installs work without it; install your own copy or drop the entry from the profiles.

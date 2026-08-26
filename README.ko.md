@@ -30,8 +30,19 @@ pi auth   # 사용하는 프로바이더에 로그인
 | `call-agent` | 작업을 가장 적합한 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저 — 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
-| `systematic-debugging` | 수정 제안 전 근본 원인 규명 원칙 | [obra/superpowers](https://github.com/obra/superpowers) |
-| `test-driven-development` | 항상 실패하는 테스트부터 작성 | [obra/superpowers](https://github.com/obra/superpowers) |
+| `diagnosing-bugs` | 버그·성능 회귀 진단 루프 — 재현 → 최소화 → 가설 → 계측 → 수정 → 회귀 테스트 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `tdd` | 테스트 주도 개발 — red-green-refactor, 통합 테스트, mocking 패턴 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `code-review` | 기준점 이후 변경을 Standards/Spec 두 축으로 병렬 서브에이전트 리뷰 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `implement` | 스펙·티켓 기반으로 작업 구현 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `research` | 신뢰 원천 조사 후 결과를 Markdown로 저장 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `domain-modeling` | 프로젝트 도메인 모델 구축 — CONTEXT.md, ADR | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `improve-codebase-architecture` | 개선 기회 스캔 → HTML 리포트 → 선택 항목 그릴링 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `resolving-merge-conflicts` | 진행 중인 git merge/rebase 충돌 해결 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `grilling` | 계획·결정을 끝까지 압박 검증 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `wait-what` | 멈춤 — 직전 메시지가 안 통했으면 다시 제안 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `writing-for-agents` | 에이전트용 문서 작성 — skills, AGENTS.md, CLAUDE.md | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `handoff` | 대화를 다음 에이전트용 인수인계 문서로 압축 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `teach` | 워크스페이스 내에서 기술·개념을 가르침 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `find-skills` | 새 에이전트 스킬 탐색/설치 | local |
 | `gpt-image-2` | Codex CLI + ChatGPT 요금제로 이미지 생성 | local |
 | `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
