@@ -24,16 +24,14 @@ pi auth   # 사용하는 프로바이더에 로그인
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
 | `agent-browser` | 에이전트용 브라우저 자동화 CLI | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
-| `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임 | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임; Playwright E2E 패턴은 `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | DB 스킬 하나로 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
 | `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
-| `e2e-testing` | Playwright E2E 패턴 — POM, CI/CD, 아티팩트, flaky 대응 | local |
 | `call-agent` | 작업을 가장 적합한 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저 — 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
 | `systematic-debugging` | 수정 제안 전 근본 원인 규명 원칙 | [obra/superpowers](https://github.com/obra/superpowers) |
 | `test-driven-development` | 항상 실패하는 테스트부터 작성 | [obra/superpowers](https://github.com/obra/superpowers) |
-| `decompose-into-slices` | 계획을 독립적으로 집을 수 있는 수직 조각으로 분해 | local |
 | `find-skills` | 새 에이전트 스킬 탐색/설치 | local |
 | `gpt-image-2` | Codex CLI + ChatGPT 요금제로 이미지 생성 | local |
 | `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |

@@ -100,7 +100,7 @@
       "tester": {
         "skills": [
           "test-driven-development",
-          "e2e-testing"
+          "playwright-cli"
         ],
         "model": "zai/glm-5.3",
         "thinking": "max"

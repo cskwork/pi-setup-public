@@ -24,16 +24,14 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | Skill | What it does | Source |
 |---|---|---|
 | `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
-| `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
+| `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime; Playwright E2E patterns in `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
-| `e2e-testing` | Playwright E2E patterns — POM, CI/CD, artifact management, flaky-test strategy | local |
 | `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
 | `systematic-debugging` | Root-cause discipline before proposing any fix | [obra/superpowers](https://github.com/obra/superpowers) |
 | `test-driven-development` | Write the failing test first, always | [obra/superpowers](https://github.com/obra/superpowers) |
-| `decompose-into-slices` Break a plan into independently-grabbable vertical slices | local |
 | `find-skills` | Discover and install new agent skills on demand | local |
 | `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
