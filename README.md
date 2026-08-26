@@ -19,11 +19,12 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (26)
+### Skills (27)
 
 | Skill | What it does | Source |
 |---|---|---|
 | `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
+| `api-and-interface-design` | Stable API/interface design — contract-first, Hyrum's Law, idempotency-key claiming, consistent error shapes | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime; Playwright E2E patterns in `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
@@ -124,7 +125,7 @@ agent instead of per-call wiring:
 - **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / tdd / diagnosing-bugs skills
 - **Domain-data tier** — `specifier`, `hardender`, `qa` get `db-intelligence` (domain data before code, integrity probes, read-only DB evidence)
 - **Minimalism tier** — `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`
-- **Architecture tier** — `sw-architect` carries no skill; its agent prompt is the whole contract.
+- **Architecture tier** — `sw-architect` gets `api-and-interface-design` (vendored in `skills/`, so a fresh clone has it). The agent prompt says *what* to review; the skill supplies the reference material — Hyrum's Law, idempotency-key claiming and its TOCTOU trap, error-shape consistency, additive-change rules.
 
 The six-pack's **Wave 0** fans these out in parallel before specification: Jira
 requirements (atlassian-cli, when present) ∥ code graph ∥ DB evidence ∥ browser
@@ -147,7 +148,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              26 curated skills
+skills/              27 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift

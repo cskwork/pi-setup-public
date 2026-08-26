@@ -19,12 +19,15 @@ and configs — minus everything private (memory, domain packs, backup machinery
 - **README skill tables were stale** — header said 16, table had 25 rows,
   `skills/` has 26 (the `pi-settings` row was missing). The Layout block
   repeated the wrong 16 too. Both READMEs, both languages.
-- **`api-and-interface-design` referenced but nonexistent** — wired into
-  `sw-architect` in 5 profiles plus `settings.json`, but present in neither
-  `skills/` nor `~/.agents/skills`. Removed from every profile and from the
-  README skill-tier docs; `sw-architect` now carries no skill and relies on its
-  agent prompt. `ponytail`/`ponytail-review` stay — they ship inside the
-  `pi-ponytail` package and resolve at runtime.
+- **`api-and-interface-design` was referenced but never installed** — wired into
+  `sw-architect` in 5 profiles plus `settings.json` since 2026-08-25, but present
+  in neither `skills/` nor `~/.agents/skills`. Traced to
+  [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) (MIT) and
+  installed for real rather than dropped: vendored into `skills/` (real copy, so
+  a fresh clone works) and symlinked into `~/.agents/skills` from
+  `sources/addyosmani/agent-skills` for Claude Code and Codex. pi excludes the
+  hub, so both roots are required. `ponytail`/`ponytail-review` need no copy —
+  they ship inside the `pi-ponytail` package and resolve at runtime.
 
 ### Added
 
