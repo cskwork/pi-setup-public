@@ -4,8 +4,6 @@
 
 **Domain rules** — Always read `~/.agents/rules/rules.md` (Windows: `%USERPROFILE%\.agents\rules\rules.md`).
 
-**Skill routing** — `~/.agents/skills/` is the skill hub. A useful lifecycle for large work: `brainstorming` → `using-git-worktrees` → `writing-plans` → `subagent-driven-development` → `tdd` → `requesting-code-review` → `finishing-a-development-branch`. Steps 1–8 below are how a phase is executed, not a second pipeline.
-
 **1. Orient** — Read repo instructions, the domain model and real data shapes, then relevant tests/contracts, and the closest analogous code. Map entry points, callers, dependencies, side effects, and real verification commands. Batch independent reads.
 
 **2. Options** — Right after exploration, before any plan or code, give exactly three genuinely distinct approaches — different in strategy, not in wording. One line each: approach · main tradeoff · cost/risk. Rank them 1/2/3, mark 1 as recommended with one clause of why. Then stop and ask the user to pick. No code, no long prose. Skip only when one approach is obviously the only sane one.
