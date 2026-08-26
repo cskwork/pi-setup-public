@@ -222,6 +222,6 @@
   },
   "defaultProjectTrust": "always",
   "skills": [
-    "!/Users/danny/.agents/skills/**"
+    "!~/.agents/skills/**"
   ]
 }

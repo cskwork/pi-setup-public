@@ -4,10 +4,10 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 git add -A
 
-# Privacy tripwire: block domain identifiers from entering the public repo.
-# Checks only ADDED lines; 'swarmforge' allowlisted (public repo name).
-LEAKS=$(git diff --cached -- . ':(exclude)sync.sh' | grep -E '^\+[^+]' | grep -iv 'swarmforge' \
-  | grep -inE 'aidt|sso2|lcms|심사계|tb_lms_|tb_sso_|dongahub|aidtbook|d-aidt' || true)
+# Privacy tripwire: block YOUR private identifiers from entering this public repo.
+# Edit the keyword list to match your employer/project names before use.
+LEAKS=$(git diff --cached -- . ':(exclude)sync.sh' | grep -E '^\+[^+]' \
+  | grep -inE 'YOUR-COMPANY|YOUR-PROJECT' || true)
 if [ -n "$LEAKS" ]; then
   echo "⛔ PRIVATE LEAK? Staged additions contain domain identifiers:"
   echo "$LEAKS" | head -10
