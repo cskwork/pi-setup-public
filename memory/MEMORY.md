@@ -12,3 +12,7 @@
 
 <!-- 2026-08-25 12:59:18 [71f2f248] migrated-from-pi-memory-db -->
 #fact [[pi-setup.skill-collision-rule]] pi dedupes skills silently when duplicate names resolve to the SAME realpath, and only warns when realpaths differ. Convention: every shared skill name across ~/.pi/agent/skills, ~/.agents/skills, ~/.pi/skills must symlink to one owner — /Users/danny/pi-setup/skills/<name>. Verify with loadSkills() from @earendil-works/pi-coding-agent/dist/core/skills.js; expect collisions=0.
+
+
+<!-- 2026-08-26 22:59:25 [01a03e45] -->
+#decision [[project.pi-setup.skills]] 2026-08-26 skill swap: obra's systematic-debugging + test-driven-development REMOVED from pi-setup; replaced with Matt Pocock's diagnosing-bugs + tdd. Added 11 more from mattpocock/skills (MIT): code-review, implement, research, domain-modeling, improve-codebase-architecture, resolving-merge-conflicts, grilling, wait-what, writing-for-agents, handoff, teach. Source clone lives at ~/.agents/sources/mattpocock/skills (copies, not symlinks). prime-agent-sync fully removed (launchd + dir → Trash; last sync 13:27 pushed to cskwork/prime-agent-sync). e2e-testing folded into browser-qa/reference/e2e-patterns.md; decompose-into-slices deleted (orphaned GSD dep). pi-setup/skills = 26 skills, all configs reference new names.
