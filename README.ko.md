@@ -2,7 +2,7 @@
 
 [pi 코딩 에이전트](https://github.com/badlogic/pi-mono) 설정 모음 — 스킬, 익스텐션, 서브에이전트, 그리고 과하지 않은 권한 정책. 새 머신에서 명령 한 줄로 복원한다.
 
-**랜딩 페이지:** https://cskwork.github.io/pi-setup/ · **English:** [README.md](README.md)
+**랜딩 페이지:** https://cskwork.github.io/pi-setup-public/ · **English:** [README.md](README.md)
 
 ## 빠른 시작
 
