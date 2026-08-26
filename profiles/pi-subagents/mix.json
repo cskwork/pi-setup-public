@@ -165,6 +165,74 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true
+      },
+      "planner": {
+        "model": "anthropic/claude-opus-5",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-sol",
+          "zai/glm-5.3"
+        ]
+      },
+      "security": {
+        "model": "anthropic/claude-opus-5",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-sol",
+          "zai/glm-5.3"
+        ],
+        "skills": [
+          "verification-before-completion"
+        ]
+      },
+      "refactorer": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "zai/glm-5.3"
+        ],
+        "skills": [
+          "ponytail-review"
+        ]
+      },
+      "doc-writer": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "zai/glm-5.3"
+        ]
+      },
+      "git-ops": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "zai/glm-5.3"
+        ]
+      },
+      "javascript-pro": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "zai/glm-5.3"
+        ],
+        "skills": [
+          "tdd"
+        ]
+      },
+      "typescript-pro": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "zai/glm-5.3"
+        ],
+        "skills": [
+          "tdd"
+        ]
       }
     }
   }

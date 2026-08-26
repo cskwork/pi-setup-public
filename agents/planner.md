@@ -1,7 +1,6 @@
 ---
 name: planner
 description: Architecture and implementation planning — outputs plans, not code
-model: zai/glm-5.3-flash
 conflicts_with: plan-milestone, plan-slice, plan-task, research-milestone, research-slice
 ---
 
