@@ -31,6 +31,14 @@ and configs — minus everything private (memory, domain packs, backup machinery
 
 ### Added
 
+- **`scripts/prune-sessions.sh` — session transcript retention.** `~/.pi/agent/sessions/`
+  keeps every user prompt verbatim in JSONL and nothing prunes it; it had reached
+  72 MB across 385 files. The script defaults to a 90-day retention, dry-runs
+  unless given `--apply`, and tars what it deletes to
+  `sessions.prune-backup-<timestamp>.tar.gz` so a prune is reversible. Retention
+  is tunable with `DAYS=` or `--days=`. First run removed 26 files / 2.1 MB
+  (everything from before 2026-06-14).
+
 - **`scripts/check-docs.py` + `check-docs` workflow** — CI guard for the drift
   class above. Six assertions: README skill header/rows match `skills/`, the
   Layout block count matches, no `agents/*.md` pins `model:` in frontmatter,

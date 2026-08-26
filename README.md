@@ -152,6 +152,7 @@ skills/              27 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
+                     prune-sessions.sh — session transcript retention
 install.sh           fresh-machine bootstrap
 sync.sh              save drift back to GitHub
 ```
@@ -159,6 +160,22 @@ sync.sh              save drift back to GitHub
 ## Backup
 
 `sync.sh` commits and pushes local drift. Memory and session data live outside this repo by design.
+
+### Session retention
+
+`~/.pi/agent/sessions/` stores every session as JSONL, and **every user prompt is
+kept verbatim**. Nothing prunes it, so it grows without bound (72 MB / 385 files
+before the first prune here). It is local only — never committed to any repo.
+
+```bash
+scripts/prune-sessions.sh              # dry run, 90-day retention
+scripts/prune-sessions.sh --apply      # delete, tar.gz backup first
+DAYS=30 scripts/prune-sessions.sh --apply
+scripts/prune-sessions.sh --apply --no-backup
+```
+
+Deleted files are archived to `sessions.prune-backup-<timestamp>.tar.gz` next to
+the sessions directory unless `--no-backup` is passed, so a prune is reversible.
 
 ### Memory
 
