@@ -2,7 +2,7 @@
 
 My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skills, extensions, agents, and a friendly permission policy. Restore on any machine in one command.
 
-**Landing page:** https://cskwork.github.io/pi-setup/ · **한국어:** [README.ko.md](README.ko.md)
+**Landing page:** https://cskwork.github.io/pi-setup-public/ · **한국어:** [README.ko.md](README.ko.md)
 
 ## Quick start
 
