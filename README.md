@@ -124,7 +124,7 @@ agent instead of per-call wiring:
 - **Verify/TDD/debug tier** — `verify`, `tester`, `hardender`, `debugger`, `coder` get the verify / tdd / diagnosing-bugs skills
 - **Domain-data tier** — `specifier`, `hardender`, `qa` get `db-intelligence` (domain data before code, integrity probes, read-only DB evidence)
 - **Minimalism tier** — `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`
-- **Architecture tier** — `sw-architect` gets `api-and-interface-design`. **Optional external skill**: it lives in `~/.agents/skills` (a separate skill hub, not this repo). Missing skills never fail a run — the result summary just shows a warning — so fresh installs work without it; install your own copy or drop the entry from the profiles.
+- **Architecture tier** — `sw-architect` carries no skill; its agent prompt is the whole contract.
 
 The six-pack's **Wave 0** fans these out in parallel before specification: Jira
 requirements (atlassian-cli, when present) ∥ code graph ∥ DB evidence ∥ browser
@@ -147,9 +147,10 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              16 curated skills
+skills/              26 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
+scripts/             check-docs.py — CI guard for doc/config drift
 install.sh           fresh-machine bootstrap
 sync.sh              save drift back to GitHub
 ```

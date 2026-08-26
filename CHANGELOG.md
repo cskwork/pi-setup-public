@@ -12,6 +12,30 @@ and configs — minus everything private (memory, domain packs, backup machinery
   agent library, docs landing page.
 - Memory and private sync scripts intentionally excluded.
 
+## Unreleased
+
+### Fixed
+
+- **README skill tables were stale** — header said 16, table had 25 rows,
+  `skills/` has 26 (the `pi-settings` row was missing). The Layout block
+  repeated the wrong 16 too. Both READMEs, both languages.
+- **`api-and-interface-design` referenced but nonexistent** — wired into
+  `sw-architect` in 5 profiles plus `settings.json`, but present in neither
+  `skills/` nor `~/.agents/skills`. Removed from every profile and from the
+  README skill-tier docs; `sw-architect` now carries no skill and relies on its
+  agent prompt. `ponytail`/`ponytail-review` stay — they ship inside the
+  `pi-ponytail` package and resolve at runtime.
+
+### Added
+
+- **`scripts/check-docs.py` + `check-docs` workflow** — CI guard for the drift
+  class above. Six assertions: README skill header/rows match `skills/`, the
+  Layout block count matches, no `agents/*.md` pins `model:` in frontmatter,
+  every profile-referenced skill resolves (in `skills/` or an installed
+  package), every agent has a `settings.json` override, and every README
+  profile-table cell matches the profile JSON. Each assertion was verified to
+  fail on its own bug before being kept.
+
 ## v0.5.0 — 2026-08-27
 
 Makes subagent model profiles actually authoritative.

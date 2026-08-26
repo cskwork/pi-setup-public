@@ -122,7 +122,7 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 - **검증/TDD/디버깅** — `verify`, `tester`, `hardender`, `debugger`, `coder`에 검증/TDD/체계적 디버깅 스킬
 - **도메인 데이터** — `specifier`, `hardender`, `qa`에 `db-intelligence` (코딩 전 도메인 데이터 확보, 무결성 프로브, 읽기 전용 DB 증거)
 - **미니멀리즘** — `coder`에 `ponytail`, `cleaner`/`refactorer`에 `ponytail-review`
-- **아키텍처** — `sw-architect`에 `api-and-interface-design`. **선택적 외부 스킬**: `~/.agents/skills`(별도 스킬 허브)에 있다. 없어도 실행은 실패하지 않고 경고만 뜨므로 새 설치에서도 동작한다.
+- **아키텍처** — `sw-architect`는 스킬을 붙이지 않는다. 에이전트 프롬프트 자체가 계약이다.
 
 식스팩의 **Wave 0**은 명세 전에 이 스킬들을 병렬로 퍼뜨린다: Jira 요구사항(atlassian-cli, 있을 때) ∥ 코드 그래프 ∥ DB 증거 ∥ 브라우저 현재 동작 — 읽기 전용 의존성 DAG 노드들이며, 이 아티팩트를 명세가 반드시 인용해야 한다.
 
@@ -143,9 +143,10 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              선별한 스킬 16개
+skills/              선별한 스킬 26개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
+scripts/             check-docs.py — 문서/설정 불일치 CI 가드
 install.sh           새 머신 부트스트랩
 sync.sh              로컬 변경을 GitHub로 저장
 ```

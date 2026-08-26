@@ -71,9 +71,6 @@
         "fallbackModels": [
           "anthropic/claude-opus-5",
           "anthropic/claude-opus-4-8"
-        ],
-        "skills": [
-          "api-and-interface-design"
         ]
       },
       "hardender": {

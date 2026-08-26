@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+"""Assert the hand-maintained docs still match the config they describe.
+
+Every count and table in the READMEs is written by hand, so they drift silently.
+These are the four drifts that actually shipped:
+  1. README skill header/table out of sync with skills/          (v0.5.0)
+  2. agents/*.md pinning `model:`, which mutes every profile      (v0.5.0)
+  3. profiles referencing a skill that exists nowhere             (v0.5.0)
+  4. a profile table cell disagreeing with the profile JSON       (v0.5.0)
+
+Run from the repo root: python3 scripts/check-docs.py
+"""
+import json
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GATES = ["specifier", "coder", "cleaner", "sw-architect", "hardender", "qa"]
+TABLE_PROFILES = ["codex-only", "claude-only", "mix", "glm-max"]
+
+# Skills that ship inside an npm package rather than skills/, so they resolve at
+# runtime and must not be flagged as missing. Keyed to the package that owns them.
+PACKAGED_SKILLS = {
+    "ponytail": "pi-ponytail",
+    "ponytail-review": "pi-ponytail",
+    "ponytail-audit": "pi-ponytail",
+    "ponytail-debt": "pi-ponytail",
+    "ponytail-help": "pi-ponytail",
+}
+
+failures = []
+
+
+def fail(msg):
+    failures.append(msg)
+
+
+def rel(*p):
+    return os.path.join(ROOT, *p)
+
+
+def profiles():
+    d = rel("profiles", "pi-subagents")
+    return {f[:-5]: json.load(open(os.path.join(d, f))) for f in sorted(os.listdir(d)) if f.endswith(".json")}
+
+
+def overrides(doc):
+    return doc["subagents"]["agentOverrides"]
+
+
+def check_skill_tables():
+    """README skill header count and table rows match skills/ exactly."""
+    actual = sorted(os.listdir(rel("skills")))
+    for readme in ["README.md", "README.ko.md"]:
+        s = open(rel(readme)).read()
+        m = re.search(r"### (?:Skills|스킬) \((\d+)\)(.*?)\n### ", s, re.S)
+        if not m:
+            fail(f"{readme}: no '### Skills (N)' section found")
+            continue
+        header = int(m.group(1))
+        rows = sorted(re.findall(r"^\|\s+`([^`]+)`", m.group(2), re.M))
+        if header != len(actual):
+            fail(f"{readme}: header says {header} skills, skills/ has {len(actual)}")
+        if rows != actual:
+            missing = sorted(set(actual) - set(rows))
+            extra = sorted(set(rows) - set(actual))
+            fail(f"{readme}: table drift — missing rows {missing}, stale rows {extra}")
+
+
+def check_layout_skill_count():
+    """The Layout block repeats the skill count in prose; it drifts independently."""
+    actual = len(os.listdir(rel("skills")))
+    for readme, pat in [("README.md", r"^skills/\s+(\d+) curated skills$"),
+                        ("README.ko.md", r"^skills/\s+선별한 스킬 (\d+)개$")]:
+        s = open(rel(readme)).read()
+        m = re.search(pat, s, re.M)
+        if not m:
+            fail(f"{readme}: Layout block has no skills/ count line")
+        elif int(m.group(1)) != actual:
+            fail(f"{readme}: Layout block says {m.group(1)} skills, skills/ has {actual}")
+
+
+def check_no_frontmatter_model():
+    """A `model:` in agent frontmatter outranks agentOverrides and mutes every profile."""
+    pinned = []
+    for f in sorted(os.listdir(rel("agents"))):
+        if not f.endswith(".md"):
+            continue
+        head = open(rel("agents", f)).read().split("---")[1] if "---" in open(rel("agents", f)).read() else ""
+        if re.search(r"^model:", head, re.M):
+            pinned.append(f)
+    if pinned:
+        fail(f"agents/ pin `model:` in frontmatter, which silently overrides every profile: {pinned}")
+
+
+def check_referenced_skills_exist():
+    """Every skill named in a profile resolves — in skills/ or an installed package."""
+    have = set(os.listdir(rel("skills")))
+    packages = set(json.load(open(rel("settings.json")))["packages"])
+    docs = dict(profiles())
+    docs["settings.json"] = json.load(open(rel("settings.json")))
+    for name, doc in docs.items():
+        for agent, cfg in overrides(doc).items():
+            for skill in cfg.get("skills", []):
+                if skill in have:
+                    continue
+                pkg = PACKAGED_SKILLS.get(skill)
+                if pkg and f"npm:{pkg}" in packages:
+                    continue
+                fail(f"{name}: agent '{agent}' references skill '{skill}' which is in neither skills/ nor an installed package")
+
+
+def check_agents_have_overrides():
+    """Every agent is routed by settings.json, so no agent launches without a fallback chain."""
+    agents = {f[:-3] for f in os.listdir(rel("agents")) if f.endswith(".md")}
+    ov = overrides(json.load(open(rel("settings.json"))))
+    missing = sorted(agents - set(ov))
+    if missing:
+        fail(f"settings.json: agents with no override (no model, no fallback chain): {missing}")
+
+
+def check_profile_tables():
+    """README profile tables match the profile JSON cell for cell."""
+    docs = profiles()
+    for readme in ["README.md", "README.ko.md"]:
+        s = open(rel(readme)).read()
+        for gate in GATES:
+            m = re.search(rf"^\| {re.escape(gate)} \|(.+)$", s, re.M)
+            if not m:
+                fail(f"{readme}: profile table has no row for gate '{gate}'")
+                continue
+            cells = [c.strip() for c in m.group(1).split("|") if c.strip()]
+            if len(cells) != len(TABLE_PROFILES):
+                fail(f"{readme}: gate '{gate}' has {len(cells)} cells, expected {len(TABLE_PROFILES)}")
+                continue
+            for prof, cell in zip(TABLE_PROFILES, cells):
+                cfg = overrides(docs[prof]).get(gate)
+                if not cfg:
+                    fail(f"{readme}: table lists gate '{gate}' for '{prof}', but the profile has no such entry")
+                    continue
+                model = cfg["model"].split("/")[-1]
+                # Cells abbreviate: "luna · max" for gpt-5.6-luna, "sonnet-5 · high", etc.
+                stub = cell.split("·")[0].strip().replace("codex ", "")
+                if stub not in model:
+                    fail(f"{readme}: gate '{gate}' / '{prof}' cell says '{stub}', profile says '{model}'")
+
+
+def main():
+    check_skill_tables()
+    check_layout_skill_count()
+    check_no_frontmatter_model()
+    check_referenced_skills_exist()
+    check_agents_have_overrides()
+    check_profile_tables()
+    if failures:
+        print(f"✗ {len(failures)} doc/config mismatch(es):\n")
+        for f in failures:
+            print(f"  - {f}")
+        return 1
+    print("✓ docs match config — skill tables, profile tables, skill refs, agent routing")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
