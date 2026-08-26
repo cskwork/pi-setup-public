@@ -19,11 +19,12 @@ pi auth   # 사용하는 프로바이더에 로그인
 
 ## 구성
 
-### 스킬 (26)
+### 스킬 (27)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
 | `agent-browser` | 에이전트용 브라우저 자동화 CLI | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
+| `api-and-interface-design` | 안정적인 API·인터페이스 설계 — 계약 우선, Hyrum의 법칙, 멱등키 확보, 일관된 에러 형태 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임; Playwright E2E 패턴은 `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | DB 스킬 하나로 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
 | `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
@@ -122,7 +123,7 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 - **검증/TDD/디버깅** — `verify`, `tester`, `hardender`, `debugger`, `coder`에 검증/TDD/체계적 디버깅 스킬
 - **도메인 데이터** — `specifier`, `hardender`, `qa`에 `db-intelligence` (코딩 전 도메인 데이터 확보, 무결성 프로브, 읽기 전용 DB 증거)
 - **미니멀리즘** — `coder`에 `ponytail`, `cleaner`/`refactorer`에 `ponytail-review`
-- **아키텍처** — `sw-architect`는 스킬을 붙이지 않는다. 에이전트 프롬프트 자체가 계약이다.
+- **아키텍처** — `sw-architect`에 `api-and-interface-design` (`skills/`에 실물 복사본이 있어 새로 클론해도 동작한다). 에이전트 프롬프트는 *무엇을* 볼지 정하고, 스킬은 판단 근거를 제공한다 — Hyrum의 법칙, 멱등키(idempotency key) 확보와 TOCTOU 함정, 에러 형태 일관성, 추가 전용 변경 규칙.
 
 식스팩의 **Wave 0**은 명세 전에 이 스킬들을 병렬로 퍼뜨린다: Jira 요구사항(atlassian-cli, 있을 때) ∥ 코드 그래프 ∥ DB 증거 ∥ 브라우저 현재 동작 — 읽기 전용 의존성 DAG 노드들이며, 이 아티팩트를 명세가 반드시 인용해야 한다.
 
@@ -143,7 +144,7 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              선별한 스킬 26개
+skills/              선별한 스킬 27개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py — 문서/설정 불일치 CI 가드

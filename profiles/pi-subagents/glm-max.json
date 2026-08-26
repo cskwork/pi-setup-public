@@ -25,7 +25,10 @@
       },
       "sw-architect": {
         "model": "zai/glm-5.3",
-        "thinking": "max"
+        "thinking": "max",
+        "skills": [
+          "api-and-interface-design"
+        ]
       },
       "hardender": {
         "model": "zai/glm-5.3",
