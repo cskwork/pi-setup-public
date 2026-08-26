@@ -31,11 +31,11 @@
   "subagents": {
     "agentOverrides": {
       "specifier": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
         "fallbackModels": [
-          "openai-codex/gpt-5.6-terra",
-          "openai-codex/gpt-5.5"
+          "anthropic/claude-sonnet-5",
+          "anthropic/claude-sonnet-4-6"
         ],
         "skills": [
           "db-intelligence"
@@ -45,8 +45,9 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "max",
         "fallbackModels": [
-          "openai-codex/gpt-5.6-terra",
-          "openai-codex/gpt-5.5"
+          "anthropic/claude-opus-5",
+          "anthropic/claude-opus-4-8",
+          "anthropic/claude-sonnet-5"
         ],
         "skills": [
           "test-driven-development",
@@ -56,9 +57,9 @@
       "cleaner": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true,
         "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
+          "anthropic/claude-haiku-4-5",
+          "anthropic/claude-sonnet-5"
         ],
         "skills": [
           "ponytail-review"
@@ -68,8 +69,8 @@
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "high",
         "fallbackModels": [
-          "openai-codex/gpt-5.6-terra",
-          "openai-codex/gpt-5.5"
+          "anthropic/claude-opus-5",
+          "anthropic/claude-opus-4-8"
         ],
         "skills": [
           "api-and-interface-design"
@@ -79,8 +80,8 @@
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "high",
         "fallbackModels": [
-          "openai-codex/gpt-5.6-terra",
-          "openai-codex/gpt-5.5"
+          "anthropic/claude-opus-5",
+          "anthropic/claude-opus-4-8"
         ],
         "skills": [
           "systematic-debugging",
@@ -91,9 +92,9 @@
       "qa": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true,
         "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
+          "anthropic/claude-sonnet-5",
+          "anthropic/claude-haiku-4-5"
         ],
         "skills": [
           "browser-qa",
@@ -108,7 +109,9 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "qa-auditor": {
         "skills": [
@@ -117,7 +120,9 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "agent-browser": {
         "skills": [
@@ -127,7 +132,9 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "customer-agent": {
         "skills": [
@@ -136,7 +143,9 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "persona-product-tester": {
         "skills": [
@@ -145,7 +154,9 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "verify": {
         "skills": [
@@ -154,21 +165,20 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "tester": {
         "skills": [
           "test-driven-development",
-          "e2e-testing"
+          "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
-      },
-      "delegate": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "debugger": {
         "skills": [
@@ -176,29 +186,42 @@
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-sonnet-5"
+        ]
       },
       "scout": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-haiku-4-5"
+        ]
       },
       "researcher": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-haiku-4-5"
+        ]
       },
       "reviewer": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-haiku-4-5"
+        ]
       },
       "worker": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true
+        "fallbackModels": [
+          "anthropic/claude-haiku-4-5"
+        ]
       }
     }
   },
-  "defaultProjectTrust": "always"
+  "defaultProjectTrust": "always",
+  "skills": [
+    "!/Users/danny/.agents/skills/**"
+  ]
 }
