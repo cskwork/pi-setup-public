@@ -133,6 +133,11 @@
         "thinking": "xhigh",
         "fast": true
       },
+      "delegate": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true
+      },
       "debugger": {
         "skills": [
           "systematic-debugging"

@@ -96,6 +96,10 @@
         "model": "zai/glm-5.3",
         "thinking": "max"
       },
+      "delegate": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
       "debugger": {
         "skills": [
           "systematic-debugging"
