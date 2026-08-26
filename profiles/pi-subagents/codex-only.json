@@ -168,6 +168,74 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true
+      },
+      "planner": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra",
+          "openai-codex/gpt-5.5"
+        ]
+      },
+      "security": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra",
+          "openai-codex/gpt-5.5"
+        ],
+        "skills": [
+          "verification-before-completion"
+        ]
+      },
+      "refactorer": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra"
+        ],
+        "skills": [
+          "ponytail-review"
+        ]
+      },
+      "doc-writer": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra"
+        ]
+      },
+      "git-ops": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra"
+        ]
+      },
+      "javascript-pro": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra"
+        ],
+        "skills": [
+          "tdd"
+        ]
+      },
+      "typescript-pro": {
+        "model": "openai-codex/gpt-5.6-luna",
+        "thinking": "xhigh",
+        "fast": true,
+        "fallbackModels": [
+          "openai-codex/gpt-5.6-terra"
+        ],
+        "skills": [
+          "tdd"
+        ]
       }
     }
   }

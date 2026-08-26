@@ -95,6 +95,18 @@ The hardender always gets a top model: it is the only gate that invents its own
 checks instead of reading a given artifact, its failure mode is a silent `PASS`
 no later gate catches, and it holds BLOCK authority.
 
+**Utility agents** — every profile also routes the non-gate agents on a two-tier
+scheme: `planner` and `security` get the profile's deep model (they reason about
+what to build, not just execute), while `refactorer`, `doc-writer`, `git-ops`,
+`javascript-pro`, `typescript-pro`, `delegate`, `scout`, `researcher`,
+`reviewer`, `worker`, `tester`, `debugger` get the cheap/fast one.
+
+**Gotcha — no `model:` in agent frontmatter.** pi-subagents resolves frontmatter
+`model:` *before* `agentOverrides`, so an agent that pins a model in its `.md`
+silently ignores every profile. All `agents/*.md` here ship without a `model:`
+line on purpose; profiles are the single source of truth for routing. Add one
+back only when an agent must never follow the profile.
+
 **Pack profiles** — `two-pack` and `four-pack` pin the `glm-max` models to only the
 gates that pack runs (two-pack: coder → qa; four-pack: specifier → coder →
 refactorer → sw-architect → qa). Role orders mirror the upstream SwarmForge

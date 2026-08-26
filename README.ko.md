@@ -85,13 +85,25 @@ pi auth   # 사용하는 프로바이더에 로그인
 | 게이트 | `codex-only` | `claude-only` | `mix` | `glm-max` |
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
-| coder | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
+| coder | luna · max | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
 
 hardender에는 항상 최상위 모델을 붙인다. 주어진 문서를 읽는 다른 게이트와 달리 검사 항목 자체를 스스로 만들어내야 하고, 실패했을 때 조용히 `PASS`를 내보내 이후 어떤 게이트도 이를 잡지 못하며, BLOCK 권한을 가지기 때문이다.
+
+**유틸리티 에이전트** — 모든 프로필은 게이트가 아닌 에이전트도 2단 티어로
+배정한다. `planner`와 `security`는 해당 프로필의 상위 모델을 받고(무엇을
+만들지 판단하는 역할이라서), `refactorer`·`doc-writer`·`git-ops`·
+`javascript-pro`·`typescript-pro`·`delegate`·`scout`·`researcher`·
+`reviewer`·`worker`·`tester`·`debugger`는 저렴하고 빠른 쪽을 받는다.
+
+**함정 — 에이전트 frontmatter에 `model:`을 넣지 말 것.** pi-subagents는
+frontmatter의 `model:`을 `agentOverrides`보다 **먼저** 해석한다. 따라서 `.md`에
+모델을 박아둔 에이전트는 모든 프로필을 조용히 무시한다. 이 저장소의
+`agents/*.md`에는 의도적으로 `model:` 줄이 없다 — 라우팅의 단일 진실 공급원은
+프로필이다. 특정 에이전트가 프로필을 절대 따르면 안 될 때만 다시 넣는다.
 
 **팩 프로필** — `two-pack`과 `four-pack`은 `glm-max` 모델을 해당 팩이 실제로
 돌리는 게이트에만 고정한다 (two-pack: coder → qa; four-pack: specifier →

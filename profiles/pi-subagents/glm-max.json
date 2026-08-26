@@ -131,6 +131,46 @@
       "worker": {
         "model": "zai/glm-5.3",
         "thinking": "max"
+      },
+      "planner": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "security": {
+        "model": "zai/glm-5.3",
+        "thinking": "max",
+        "skills": [
+          "verification-before-completion"
+        ]
+      },
+      "refactorer": {
+        "model": "zai/glm-5.3",
+        "thinking": "max",
+        "skills": [
+          "ponytail-review"
+        ]
+      },
+      "doc-writer": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "git-ops": {
+        "model": "zai/glm-5.3",
+        "thinking": "max"
+      },
+      "javascript-pro": {
+        "model": "zai/glm-5.3",
+        "thinking": "max",
+        "skills": [
+          "tdd"
+        ]
+      },
+      "typescript-pro": {
+        "model": "zai/glm-5.3",
+        "thinking": "max",
+        "skills": [
+          "tdd"
+        ]
       }
     }
   }
