@@ -8,8 +8,8 @@ description: Configure pi's own settings.json and audit skill-link leakage - ski
 ## Always run the audit first
 
 ```bash
-~/pi-setup/skills/pi-settings/audit-links.sh          # report
-~/pi-setup/skills/pi-settings/audit-links.sh --fix    # sever leaks into copies
+~/pi-setup-public/skills/pi-settings/audit-links.sh          # report
+~/pi-setup-public/skills/pi-settings/audit-links.sh --fix    # sever leaks into copies
 ```
 
 It lists every `~/.agents/skills` entry that symlinks back into `pi-setup` and
@@ -19,19 +19,16 @@ from pi-setup on every later edit. Ask before running it.
 
 ## Layout
 
-`pi-setup` is the private sync repo (github.com/cskwork/pi-setup). pi points at
+`pi-setup-public` is the public repo (github.com/cskwork/pi-setup-public). pi points at
 it through symlinks, so a `git pull` updates a live install:
 
 | pi path | → | repo path |
 |---|---|---|
 | `~/.pi/agent/settings.json` | → | `pi-setup/settings.json` |
 | `~/.pi/agent/skills` | → | `pi-setup/skills` |
-| `~/.pi/agent/memory` | → | `pi-setup/memory` |
-
-Memory (`MEMORY.md`, `daily/`, `recovery/`) lives in the repo, so the repo must
-stay **private** — verify with `gh repo view --json isPrivate`. `.gitignore`
-excludes work-IP skills (`skills/aidt-*`, `sql-check`, `jira-*`, …); keep new
-private skills listed there.
+Memory (`MEMORY.md`, `daily/`) stays in `~/.pi/agent/memory` and is NEVER
+synced to this public repo. If you fork with private content, make your fork
+private and keep `.gitignore` excluding anything confidential.
 
 Back up before every settings write:
 `cp settings.json settings.json.bak-$(date +%Y%m%d-%H%M%S)`, then validate with
@@ -52,7 +49,7 @@ pi auto-discovers skills from four roots (`package-manager.js:1960-2019`):
 them. To keep pi on its own set, exclude the hub in settings:
 
 ```json
-{ "skills": ["!/Users/danny/.agents/skills/**"] }
+{ "skills": ["!~/.agents/skills/**"] }
 ```
 
 `!` excludes, `+path` force-includes one back, `-path` force-excludes
@@ -61,7 +58,7 @@ force-exclude beats everything.
 
 Keep one hub skill:
 ```json
-{ "skills": ["!~/.agents/skills/**", "+~/.agents/skills/aidt-debug"] }
+{ "skills": ["!~/.agents/skills/**", "+~/.agents/skills/<one-shared-skill>"] }
 ```
 
 Verify the count actually changed — never assume:

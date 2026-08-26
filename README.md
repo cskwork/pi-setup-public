@@ -7,7 +7,7 @@ My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skil
 ## Quick start
 
 ```bash
-git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
 ~/pi-setup/install.sh
 pi auth   # log in to your providers
 # restart pi
@@ -19,7 +19,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (16)
+### Skills (26)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -30,6 +30,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
+| `pi-settings` | Audit and configure pi's own settings.json — skill isolation, subagent routing, packages | local |
 | `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions — reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | Test-driven development — red-green-refactor, integration tests, mocking patterns | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `code-review` | Review changes since a fixed point along Standards and Spec axes, in parallel sub-agents | [mattpocock/skills](https://github.com/mattpocock/skills) |
@@ -144,8 +145,6 @@ sync.sh              save drift back to GitHub
 
 `sync.sh` commits and pushes local drift. Memory and session data live outside this repo by design.
 
-### Memory backup
+### Memory
 
-`sync-memory.sh` mirrors `~/.pi/agent/memory` (pi-memory's markdown store) to the private
-`cskwork/pi-memory-backup` repo, and aborts if that remote is not private. A LaunchAgent
-(`com.cskwork.pi-memory-sync`) runs it daily at 21:00; logs land in `~/Library/Logs/pi-memory-sync.*.log`.
+No memory is stored or synced in this public replica — it stays on your machine (`~/.pi/agent/memory`) by design.

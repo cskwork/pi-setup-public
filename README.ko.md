@@ -7,7 +7,7 @@
 ## 빠른 시작
 
 ```bash
-git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
 ~/pi-setup/install.sh
 pi auth   # 사용하는 프로바이더에 로그인
 # pi 재시작
@@ -19,7 +19,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 
 ## 구성
 
-### 스킬 (16)
+### 스킬 (26)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
@@ -30,6 +30,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 | `call-agent` | 작업을 가장 적합한 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저 — 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
+| `pi-settings` | pi 자체 settings.json 감사·구성 — 스킬 격리, 서브에이전트 라우팅, 패키지 | local |
 | `diagnosing-bugs` | 버그·성능 회귀 진단 루프 — 재현 → 최소화 → 가설 → 계측 → 수정 → 회귀 테스트 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | 테스트 주도 개발 — red-green-refactor, 통합 테스트, mocking 패턴 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `code-review` | 기준점 이후 변경을 Standards/Spec 두 축으로 병렬 서브에이전트 리뷰 | [mattpocock/skills](https://github.com/mattpocock/skills) |

@@ -2,22 +2,5 @@
 *.log
 extensions/pi-permission-system/
 
-# Domain-specific skills must never be synced (private work IP)
-skills/aidt-*
-skills/ai-engine-reset
-skills/sql-check
-skills/service-build
-skills/jira-*
-skills/bo-account-recovery
-skills/grafana-loki-proxy
-skills/release-notify
-skills/qa-engineer
-skills/cms-jk-deploy
-
-# Domain-specific DB packs stay local (private work IP)
-skills/db-intelligence/reference/domain/
-
-# screen-policy-map lives in its own public repo:
-#   https://github.com/cskwork/screen-policy-map
-# The local copy is a working checkout; domain packs never leave this machine.
-skills/screen-policy-map/
+# This is the PUBLIC replica. Anything private (memory, domain skills) must
+# never be added here — it lives only in the private pi-setup repo.
