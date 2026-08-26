@@ -119,7 +119,7 @@
       "tester": {
         "skills": [
           "test-driven-development",
-          "e2e-testing"
+          "playwright-cli"
         ],
         "model": "anthropic/claude-sonnet-5",
         "thinking": "medium"

@@ -127,7 +127,7 @@
       "tester": {
         "skills": [
           "test-driven-development",
-          "e2e-testing"
+          "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
