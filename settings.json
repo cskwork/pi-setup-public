@@ -50,7 +50,7 @@
           "anthropic/claude-sonnet-5"
         ],
         "skills": [
-          "test-driven-development",
+          "tdd",
           "ponytail"
         ]
       },
@@ -84,7 +84,7 @@
           "anthropic/claude-opus-4-8"
         ],
         "skills": [
-          "systematic-debugging",
+          "diagnosing-bugs",
           "verification-before-completion",
           "db-intelligence"
         ]
@@ -171,7 +171,7 @@
       },
       "tester": {
         "skills": [
-          "test-driven-development",
+          "tdd",
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-luna",
@@ -182,7 +182,7 @@
       },
       "debugger": {
         "skills": [
-          "systematic-debugging"
+          "diagnosing-bugs"
         ],
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
