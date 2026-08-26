@@ -148,6 +148,7 @@ skills/              선별한 스킬 27개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py — 문서/설정 불일치 CI 가드
+                     prune-sessions.sh — 세션 기록 보존 기간 정리
 install.sh           새 머신 부트스트랩
 sync.sh              로컬 변경을 GitHub로 저장
 ```
@@ -155,3 +156,19 @@ sync.sh              로컬 변경을 GitHub로 저장
 ## 백업
 
 `sync.sh`가 로컬 변경을 커밋하고 푸시한다. 메모리와 세션 데이터는 의도적으로 이 저장소 바깥에 둔다.
+
+### 세션 보존 기간
+
+`~/.pi/agent/sessions/`는 모든 세션을 JSONL로 저장하며 **사용자 프롬프트가 원문 그대로**
+남는다. 자동 정리가 없어 무한정 쌓인다(여기서 첫 정리 전 기준 72 MB / 385개). 로컬에만
+있고 어떤 저장소에도 커밋되지 않는다.
+
+```bash
+scripts/prune-sessions.sh              # 미리보기(삭제 안 함), 90일 보존
+scripts/prune-sessions.sh --apply      # 삭제, 먼저 tar.gz 백업
+DAYS=30 scripts/prune-sessions.sh --apply
+scripts/prune-sessions.sh --apply --no-backup
+```
+
+`--no-backup`을 주지 않으면 삭제된 파일은 세션 디렉터리 옆
+`sessions.prune-backup-<시각>.tar.gz`로 보관되므로 되돌릴 수 있다.
