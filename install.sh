@@ -6,6 +6,8 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PI_DIR="${PI_DIR:-$HOME/.pi/agent}"
 BACKUP="$PI_DIR.backup.$(date +%Y%m%d-%H%M%S)"
+# ponytail: on Windows (no Developer Mode/admin) symlinks fail — fall back to
+# copying. Copies drift instead of tracking the repo; re-run install.sh to refresh.
 
 link() { # link <repo-item> <dest-name>
   local src="$REPO/$1" dst="$PI_DIR/$2"
@@ -19,8 +21,12 @@ link() { # link <repo-item> <dest-name>
     mv "$dst" "$BACKUP/"
     echo "  ↩ existing $2 backed up to $BACKUP/"
   fi
-  ln -s "$src" "$dst"
-  echo "  🔗 $2 → $src"
+  if ln -s "$src" "$dst" 2>/dev/null; then
+    echo "  🔗 $2 → $src"
+  else
+    cp -R "$src" "$dst"
+    echo "  📄 $2 copied (symlinks unavailable — enable Windows Developer Mode for live links)"
+  fi
 }
 
 echo "==> Linking pi setup into $PI_DIR"
@@ -37,7 +43,7 @@ mkdir -p "$REPO/extensions/pi-permission-system"
 cp -f "$REPO/configs/permissions.json" "$REPO/extensions/pi-permission-system/config.json"
 
 echo "==> Installing pi packages (list comes from settings.json)"
-PACKAGES="$(python3 -c "import json;print('\n'.join(json.load(open('$REPO/settings.json'))['packages']))")"
+PACKAGES="$("$(command -v python3 || command -v python)" -c "import json;print('\n'.join(json.load(open('$REPO/settings.json'))['packages']))")"
 while IFS= read -r pkg; do
   [ -z "$pkg" ] && continue
   case "$pkg" in

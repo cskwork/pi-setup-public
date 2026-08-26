@@ -12,6 +12,39 @@
           "contextWindow": 500000
         }
       }
+    },
+    "zai": {
+      "models": [
+        {
+          "id": "glm-5.3-flash",
+          "name": "GLM-5.3-Flash",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "low": "low",
+            "high": "high",
+            "max": "max"
+          },
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "compat": {
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": true,
+            "maxTokensField": "max_tokens",
+            "thinkingFormat": "zai",
+            "zaiToolStream": true
+          },
+          "contextWindow": 1000000,
+          "maxTokens": 131072
+        }
+      ]
     }
   }
 }
