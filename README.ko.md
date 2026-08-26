@@ -119,7 +119,8 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 `configs/permissions.json`이 `extensions/pi-permission-system/config.json`으로 배치된다. 체감은 기본 pi와 거의 같다 — 읽기, 파일 도구, 스킬, ctx 도구, 일반 셸 명령은 확인 없이 통과하고, 정말 필요한 곳에만 가드를 둔다:
 
 - `.env*`와 `~/.ssh/*`는 모든 도구에서 읽기 차단 (`path` deny, 전역 적용)
-- `rm -rf`는 거부, 그 외 `rm`/`sudo`는 확인
+- `rm -rf /`(및 `--no-preserve-root` 변형)는 거부, 그 외 `rm`/`rmdir`/`sudo`는 확인
+- 디스크 초기화/파티션(`diskutil erase*`, `secureErase*`, `partitionDisk*`)은 거부
 - 나머지는 허용
 
 실제 사용 중인 설정은 **본인 것**이다. 이 저장소에서는 gitignore 처리되어 있고, pi 권한 모달로 수정한 내용은 로컬에만 남는다. 저장소 사본은 새로 설치하는 사람을 위한 깔끔한 기본값으로 유지한다.
