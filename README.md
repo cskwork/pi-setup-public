@@ -123,7 +123,8 @@ as-is — read-only nodes of a dependency DAG whose artifacts the spec must cite
 `configs/permissions.json` deploys as `extensions/pi-permission-system/config.json`. It feels like stock pi — reads, file tools, skills, ctx tools, and normal shell commands all flow without prompts — with rails only where it matters:
 
 - `.env*` and `~/.ssh/*` unreadable by every tool (`path` deny, cross-cutting)
-- `rm -rf` denied; any other `rm`/`sudo` asks
+- `rm -rf /` (and `--no-preserve-root` variants) denied; any other `rm`/`rmdir`/`sudo` asks
+- disk erase/repartition (`diskutil erase*`, `secureErase*`, `partitionDisk*`) denied
 - everything else allowed
 
 Your live config is **yours**: it's gitignored here, and edits via pi's permission modal stay local. The repo copy stays a clean, friendly default for fresh installs.
