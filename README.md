@@ -8,7 +8,7 @@ My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skil
 
 ```bash
 git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
-~/pi-setup/install.sh
+~/pi-setup-public/install.sh
 pi auth   # log in to your providers
 # restart pi
 ```
