@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pi-setup — one-command pi coding agent setup</title>
-<meta name="description" content="pi coding agent configuration: 15 curated skills, 16 packages, 6 subagent model profiles — four per-gate model tiers plus two-pack/four-pack gate sets — with per-agent skill defaults, and a friendly permission policy. Restore on any machine with one command.">
+<meta name="description" content="pi coding agent configuration: 26 curated skills, 18 packages, 6 subagent model profiles — four per-gate model tiers plus two-pack/four-pack gate sets — with per-agent skill defaults, and a friendly permission policy. Restore on any machine with one command.">
 <style>
 :root{
   --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
@@ -70,7 +70,7 @@ footer a:hover{text-decoration:underline}
   <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
   <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
   <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
-  <p class="sub en">15 curated skills, 6 subagent model profiles — four model tiers plus lean two-pack and four-pack gate sets — a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
+  <p class="sub en">26 curated skills, 6 subagent model profiles — four model tiers plus lean two-pack and four-pack gate sets — a friendly-by-default permission policy, and every extension I actually use — versioned in one repo, restorable on any machine.</p>
   <p class="sub ko">엄선한 스킬 15종, 서브에이전트 모델 프로필 6종 — 모델 티어 4종과 간결한 two-pack·four-pack 게이트 세트 — 기본은 편하게·위험만 막는 권한 정책, 실제로 쓰는 익스텐션 전부를 하나의 레포에 담아 어떤 머신에서든 복원합니다.</p>
   <div class="install">
     <span class="cmt"># fresh machine</span>
@@ -97,14 +97,25 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3><code>pi-sixpack</code></h3><p class="en">Six-role gated pipeline — spec → code → clean → architect ∥ harden → QA, in packs of 2/4/6.</p><p class="ko">6역할 게이트 파이프라인 — 명세→구현→정리→설계∥강화→QA, 2/4/6 팩.</p><a class="src" href="https://github.com/cskwork/aidt-swarmforge-harness">SwarmForge port</a></div>
     <div class="card"><h3><code>browser-qa</code></h3><p class="en">Browser QA on anything — YAML DAG scenarios, engine choice, real API evidence.</p><p class="ko">어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택, 실제 API 증적.</p><a class="src" href="https://github.com/cskwork/browser-qa">cskwork/browser-qa</a></div>
     <div class="card"><h3><code>playwright-cli</code></h3><p class="en">Drive a browser directly; inspect or author Playwright tests.</p><p class="ko">브라우저를 직접 조작하고 Playwright 테스트를 검사·작성.</p></div>
-    <div class="card"><h3><code>e2e-testing</code></h3><p class="en">Playwright E2E patterns — Page Object Model, CI/CD, artifact management.</p><p class="ko">Playwright E2E 패턴 — POM, CI/CD, 아티팩트 관리.</p></div>
-    <div class="card"><h3><code>test-driven-development</code> <span class="tag">superpowers</span></h3><p class="en">Write the failing test first — every feature, every bugfix.</p><p class="ko">실패하는 테스트부터 — 모든 기능, 모든 버그 수정.</p><a class="src" href="https://github.com/obra/superpowers">obra/superpowers</a></div>
-    <div class="card"><h3><code>systematic-debugging</code> <span class="tag">superpowers</span></h3><p class="en">Root-cause discipline before any fix is proposed.</p><p class="ko">해결책을 제안하기 전 루트 코즈 규율.</p><a class="src" href="https://github.com/obra/superpowers">obra/superpowers</a></div>
     <div class="card"><h3><code>verification-before-completion</code> <span class="tag">superpowers</span></h3><p class="en">Evidence before assertions — never claim unverified work done.</p><p class="ko">주장 전에 증거 — 검증 안 된 일을 끝났다고 말하지 않음.</p><a class="src" href="https://github.com/obra/superpowers">obra/superpowers</a></div>
-    <div class="card"><h3><code>decompose-into-slices</code></h3><p class="en">Break a plan into independently-grabbable vertical slices.</p><p class="ko">계획을 독립적으로 잡을 수 있는 수직 슬라이스로 분해.</p></div>
     <div class="card"><h3><code>find-skills</code></h3><p class="en">Discover and install new agent skills on demand.</p><p class="ko">새 에이전트 스킬을 필요할 때 발견·설치.</p></div>
+    <div class="card"><h3><code>tdd</code></h3><p class="en">Test-driven development — red-green-refactor, integration tests, mocking.</p><p class="ko">테스트 주도 개발 — red-green-refactor, 통합 테스트, mocking.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>diagnosing-bugs</code></h3><p class="en">Diagnosis loop for hard bugs and perf regressions: reproduce → minimise → hypothesise → instrument.</p><p class="ko">버그·성능 회귀 진단 루프 — 재현→최소화→가설→계측.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>code-review</code></h3><p class="en">Review changes since a fixed point — Standards and Spec axes, parallel sub-agents.</p><p class="ko">기준점 이후 변경 리뷰 — Standards/Spec 두 축, 병렬 서브에이전트.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>implement</code></h3><p class="en">Implement a piece of work from a spec or tickets.</p><p class="ko">스펙·티켓 기반 작업 구현.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>research</code></h3><p class="en">Investigate against high-trust primary sources, capture as Markdown.</p><p class="ko">신뢰 원천 조사 후 Markdown로 저장.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>domain-modeling</code></h3><p class="en">Build and sharpen a project's domain model — CONTEXT.md, ADRs.</p><p class="ko">도메인 모델 구축·정교화 — CONTEXT.md, ADR.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>improve-codebase-architecture</code></h3><p class="en">Scan for deepening opportunities, visual HTML report, then grill the pick.</p><p class="ko">개선 기회 스캔 → HTML 리포트 → 선택 항목 그릴링.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>resolving-merge-conflicts</code></h3><p class="en">Resolve an in-progress git merge/rebase conflict.</p><p class="ko">진행 중 git merge/rebase 충돌 해결.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>grilling</code></h3><p class="en">Relentlessly stress-test a plan, decision, or idea.</p><p class="ko">계획·결정을 끝까지 압박 검증.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>wait-what</code></h3><p class="en">Stop — that last message did not land; re-pitch it.</p><p class="ko">멈춤 — 직전 메시지가 안 통했으면 다시 제안.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>writing-for-agents</code></h3><p class="en">Writing documents for agents — skills, AGENTS.md, CLAUDE.md.</p><p class="ko">에이전트용 문서 작성 — skills, AGENTS.md, CLAUDE.md.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>handoff</code></h3><p class="en">Compact the conversation into a handoff doc for the next agent.</p><p class="ko">대화를 다음 에이전트용 인수인계 문서로 압축.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>teach</code></h3><p class="en">Teach a skill or concept within the workspace.</p><p class="ko">워크스페이스 내 기술·개념 교육.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
+    <div class="card"><h3><code>db-intelligence</code></h3><p class="en">One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first.</p><p class="ko">하나의 DB 스킬에 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 보호, 읽기 우선.</p></div>
+    <div class="card"><h3><code>pi-settings</code></h3><p class="en">Audit and configure pi's own settings.json — skill isolation, routing, packages.</p><p class="ko">pi 자체 settings.json 감사·구성 — 스킬 격리, 라우팅, 패키지.</p></div>
   </div>
-  <p class="lead en" style="margin-top:18px">Selected agents load their domain skills by default — QA agents get <code>browser-qa</code>, coders get TDD, verifiers get the verify gate. No per-call wiring.</p>
+  <p class="lead en" style="margin-top:18px"Selected agents load their domain skills by default — QA agents get <code>browser-qa</code>, coders get TDD, verifiers get the verify gate. No per-call wiring.</p>
   <p class="lead ko" style="margin-top:4px">주요 에이전트는 도메인 스킬을 기본으로 로드 — QA엔 browser-qa, 코더엔 TDD, 검증엔 verify 게이트. 호출마다 연결할 필요 없음.</p>
 </div></section>
 
