@@ -2,13 +2,13 @@
 
 My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skills, extensions, agents, and a friendly permission policy. Restore on any machine in one command.
 
-**Landing page:** https://cskwork.github.io/pi-setup-public/ (public repo) · **한국어:** [README.ko.md](README.ko.md)
+**Landing page:** <https://cskwork.github.io/pi-setup-public/> (public repo) · **한국어:** [README.ko.md](README.ko.md)
 
 ## Quick start
 
 ```bash
-git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
-~/pi-setup/install.sh
+git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
+~/pi-setup-public/install.sh
 pi auth   # log in to your providers
 # restart pi
 ```
@@ -17,14 +17,14 @@ pi auth   # log in to your providers
 
 The default model is `zai/glm-5.3-flash` at thinking `max`; `models.json` declares native text and image input with a 1M context window.
 
-Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
+Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
 ## What's inside
 
 ### Skills (27)
 
 | Skill | What it does | Source |
-|---|---|---|
+| --- | --- | --- |
 | `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
 | `api-and-interface-design` | Stable API/interface design — contract-first, Hyrum's Law, idempotency-key claiming, consistent error shapes | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime; Playwright E2E patterns in `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
@@ -58,7 +58,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 Installed via `pi install` (see `settings.json`):
 
 | Package | Purpose |
-|---|---|
+| --- | --- |
 | `npm:@gotgenes/pi-permission-system` | Pattern-based permissions (see below) |
 | `npm:@narumitw/pi-goal` | Session goals — pi keeps working to completion |
 | `npm:@narumitw/pi-usage` | Usage/cost tracking |
@@ -85,7 +85,7 @@ Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-chang
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
 
 | Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | luna · max | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |

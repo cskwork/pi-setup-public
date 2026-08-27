@@ -7,8 +7,8 @@
 ## 빠른 시작
 
 ```bash
-git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
-~/pi-setup/install.sh
+git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
+~/pi-setup-public/install.sh
 pi auth   # 사용하는 프로바이더에 로그인
 # pi 재시작
 ```
@@ -17,7 +17,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 
 기본 모델은 사고 수준 `max`의 `zai/glm-5.3-flash`다. `models.json`은 컨텍스트 100만과 텍스트·이미지 입력을 선언한다.
 
-이후 로컬에서 바뀐 내용은 `~/pi-setup/sync.sh`로 저장소에 반영한다.
+이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
 
 ## 구성
 

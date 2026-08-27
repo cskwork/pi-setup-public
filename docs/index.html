@@ -75,7 +75,7 @@ footer a:hover{text-decoration:underline}
   <div class="install">
     <span class="cmt"># fresh machine</span>
     <code>git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public</code>
-    <code>~/pi-setup/install.sh && pi auth</code>
+    <code>~/pi-setup-public/install.sh && pi auth</code>
   </div>
   <div class="btns">
     <a class="btn pri" href="https://github.com/cskwork/pi-setup-public">★ GitHub</a>
@@ -115,7 +115,7 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3><code>db-intelligence</code></h3><p class="en">One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first.</p><p class="ko">하나의 DB 스킬에 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 보호, 읽기 우선.</p></div>
     <div class="card"><h3><code>pi-settings</code></h3><p class="en">Audit and configure pi's own settings.json — skill isolation, routing, packages.</p><p class="ko">pi 자체 settings.json 감사·구성 — 스킬 격리, 라우팅, 패키지.</p></div>
   </div>
-  <p class="lead en" style="margin-top:18px"Selected agents load their domain skills by default — QA agents get <code>browser-qa</code>, coders get TDD, verifiers get the verify gate. No per-call wiring.</p>
+  <p class="lead en" style="margin-top:18px">Selected agents load their domain skills by default — QA agents get <code>browser-qa</code>, coders get TDD, verifiers get the verify gate. No per-call wiring.</p>
   <p class="lead ko" style="margin-top:4px">주요 에이전트는 도메인 스킬을 기본으로 로드 — QA엔 browser-qa, 코더엔 TDD, 검증엔 verify 게이트. 호출마다 연결할 필요 없음.</p>
 </div></section>
 
@@ -185,7 +185,7 @@ footer a:hover{text-decoration:underline}
 </div></footer>
 
 <script>
-const b=document.body,en=document.getElementById('btn-en'),ko=document.getElementById('btn-ko');
+const b=document.body,en=document.querySelector('#btn-en'),ko=document.querySelector('#btn-ko');
 function set(l){b.className='lang-'+l;en.classList.toggle('on',l==='en');ko.classList.toggle('on',l==='ko');try{localStorage.setItem('pi-setup-lang',l)}catch(e){}}
 en.onclick=()=>set('en');ko.onclick=()=>set('ko');
 try{const s=localStorage.getItem('pi-setup-lang');if(s)set(s)}catch(e){}
