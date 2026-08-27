@@ -19,7 +19,10 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PUBLIC="${PI_SETUP_PUBLIC:-$HOME/pi-setup-public}"
 POLICY="$REPO/.sync-public"
 
-die() { printf '\n⛔ %s\n' "$*" >&2; exit 1; }
+die() {
+  printf '\n⛔ %s\n' "$*" >&2
+  exit 1
+}
 note() { printf '   %s\n' "$*"; }
 
 # Identifiers that must never appear in the public repo.
@@ -55,14 +58,16 @@ cd "$REPO"
    Commit them first so the published state matches a real commit."
 
 # ---------- read policy ----------
-never=(); keep=(); publiconly=()
+never=()
+keep=()
+publiconly=()
 while read -r policy glob; do
   case "${policy:-}" in
-    ''|'#'*) continue ;;
-    never)       never+=("$glob") ;;
-    keep-public) keep+=("$glob") ;;
-    public-only) publiconly+=("$glob") ;;
-    *) die "unknown policy '$policy' in $POLICY" ;;
+  '' | '#'*) continue ;;
+  never) never+=("$glob") ;;
+  keep-public) keep+=("$glob") ;;
+  public-only) publiconly+=("$glob") ;;
+  *) die "unknown policy '$policy' in $POLICY" ;;
   esac
 done < <(sed 's/#.*//' "$POLICY" | grep -v '^[[:space:]]*$')
 
@@ -78,7 +83,8 @@ done < <(sed 's/#.*//' "$POLICY" | grep -v '^[[:space:]]*$')
 # That silently classified a to-be-published file as 'never' and pruned it
 # from the public repo. Literal comparison cannot misfire that way.
 matches() { # matches <path> <glob...>
-  local path=$1; shift
+  local path=$1
+  shift
   local g prefix
   for g in "$@"; do
     # Detect the '/**' SUFFIX by string surgery, never by `case $g in */**)`.
@@ -90,7 +96,7 @@ matches() { # matches <path> <glob...>
     if [ "${g%/\*\*}" != "$g" ]; then
       prefix="${g%/\*\*}/"
       case $path in
-        "$prefix"*) return 0 ;;
+      "$prefix"*) return 0 ;;
       esac
     elif [ "$path" = "$g" ]; then
       return 0
@@ -100,10 +106,18 @@ matches() { # matches <path> <glob...>
 }
 
 echo "==> Classifying tracked files"
-sync_files=(); skipped_never=(); skipped_keep=()
+sync_files=()
+skipped_never=()
+skipped_keep=()
 while IFS= read -r f; do
-  if matches "$f" "${never[@]}";      then skipped_never+=("$f"); continue; fi
-  if matches "$f" "${keep[@]}";       then skipped_keep+=("$f");  continue; fi
+  if matches "$f" "${never[@]}"; then
+    skipped_never+=("$f")
+    continue
+  fi
+  if matches "$f" "${keep[@]}"; then
+    skipped_keep+=("$f")
+    continue
+  fi
   sync_files+=("$f")
 done < <(git ls-files)
 
@@ -142,7 +156,7 @@ echo "==> Pruning public files that no longer exist privately"
 pruned=0
 while IFS= read -r f; do
   matches "$f" "${publiconly[@]}" && continue
-  matches "$f" "${keep[@]}"       && continue
+  matches "$f" "${keep[@]}" && continue
   if ! printf '%s\n' "${sync_files[@]}" | grep -qxF "$f"; then
     note "prune $f"
     rm -- "$PUBLIC/$f"
@@ -162,8 +176,8 @@ if git diff --cached --quiet; then
 fi
 
 echo "==> Asserting no domain content in the staged diff"
-staged_leaks=$(git diff --cached | grep -E '^\+[^+]' | grep -iv "$ALLOW_RE" \
-  | grep -inE "$DOMAIN_RE" || true)
+staged_leaks=$(git diff --cached | grep -E '^\+[^+]' | grep -iv "$ALLOW_RE" |
+  grep -inE "$DOMAIN_RE" || true)
 if [ -n "$staged_leaks" ]; then
   git reset --quiet
   die "domain identifiers in staged additions (unstaged, nothing committed):
