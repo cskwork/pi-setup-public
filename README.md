@@ -2,18 +2,20 @@
 
 My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skills, extensions, agents, and a friendly permission policy. Restore on any machine in one command.
 
-**Landing page:** https://cskwork.github.io/pi-setup-public/ · **한국어:** [README.ko.md](README.ko.md)
+**Landing page:** https://cskwork.github.io/pi-setup-public/ (public repo) · **한국어:** [README.ko.md](README.ko.md)
 
 ## Quick start
 
 ```bash
-git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
-~/pi-setup-public/install.sh
+git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+~/pi-setup/install.sh
 pi auth   # log in to your providers
 # restart pi
 ```
 
 `install.sh` symlinks `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, installs every package below, and deploys the default permission config. Existing files are backed up, never overwritten.
+
+The default model is `zai/glm-5.3-flash` at thinking `max`; `models.json` declares native text and image input with a 1M context window.
 
 Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
@@ -70,13 +72,12 @@ Installed via `pi install` (see `settings.json`):
 | `npm:pi-simplify` | Code simplification |
 | `npm:pi-markdown-preview` | Rendered markdown previews |
 | `npm:pi-powerline-footer` | Status footer |
-| `npm:glm-vision` | GLM-4.6V vision |
 | `npm:@juicesharp/rpiv-todo` | Todo management |
 | `npm:@juicesharp/rpiv-ask-user-question` | Structured questions |
 | `npm:pi-ponytail` | Lazy-senior-dev mode (YAGNI ladder) — skills wired to coder/cleaner; default mode `off`, opt in with `/ponytail` |
 | `npm:pi-agent-browser-native` | agent-browser as a native `agent_browser` tool — first pick in browser-qa's engine cascade (requires upstream `agent-browser` CLI on PATH) |
 
-Plus local extensions in `extensions/`: `permission-gate.ts` (dangerous-command confirm), `dirty-repo-guard.ts` (uncommitted-change guard on session switch), `herdr-agent-state.ts`.
+Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-change guard on session switch) and `herdr-agent-state.ts`. Bash permissions are owned solely by `@gotgenes/pi-permission-system`.
 
 ### Subagent model profiles (6)
 
@@ -135,10 +136,10 @@ as-is — read-only nodes of a dependency DAG whose artifacts the spec must cite
 
 `configs/permissions.json` deploys as `extensions/pi-permission-system/config.json`. It feels like stock pi — reads, file tools, skills, ctx tools, and normal shell commands all flow without prompts — with rails only where it matters:
 
-- `.env*` and `~/.ssh/*` unreadable by every tool (`path` deny, cross-cutting)
-- `rm -rf /` (and `--no-preserve-root` variants) denied; any other `rm`/`rmdir`/`sudo` asks
-- disk erase/repartition (`diskutil erase*`, `secureErase*`, `partitionDisk*`) denied
-- everything else allowed
+- secret-bearing files (`.env*`, credentials, private keys, application configs, `~/.ssh/*`) denied across tools
+- recursive deletion, privilege escalation, disk writes, and destructive Git operations ask
+- filesystem-root deletion and disk formatting deny
+- normal commands and external directories allow
 
 Your live config is **yours**: it's gitignored here, and edits via pi's permission modal stay local. The repo copy stays a clean, friendly default for fresh installs.
 
@@ -177,6 +178,8 @@ scripts/prune-sessions.sh --apply --no-backup
 Deleted files are archived to `sessions.prune-backup-<timestamp>.tar.gz` next to
 the sessions directory unless `--no-backup` is passed, so a prune is reversible.
 
-### Memory
+### Memory backup
 
-No memory is stored or synced in this public replica — it stays on your machine (`~/.pi/agent/memory`) by design.
+`sync-memory.sh` mirrors `~/.pi/agent/memory` (pi-memory's markdown store) to the private
+`cskwork/pi-memory-backup` repo, and aborts if that remote is not private. A LaunchAgent
+(`com.cskwork.pi-memory-sync`) runs it daily at 21:00; logs land in `~/Library/Logs/pi-memory-sync.*.log`.

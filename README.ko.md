@@ -2,18 +2,20 @@
 
 [pi 코딩 에이전트](https://github.com/badlogic/pi-mono) 설정 모음 — 스킬, 익스텐션, 서브에이전트, 그리고 과하지 않은 권한 정책. 새 머신에서 명령 한 줄로 복원한다.
 
-**랜딩 페이지:** https://cskwork.github.io/pi-setup-public/ · **English:** [README.md](README.md)
+**랜딩 페이지:** https://cskwork.github.io/pi-setup-public/ (퍼블릭 레포) · **English:** [README.md](README.md)
 
 ## 빠른 시작
 
 ```bash
-git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
+git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
 ~/pi-setup/install.sh
 pi auth   # 사용하는 프로바이더에 로그인
 # pi 재시작
 ```
 
 `install.sh`는 `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`를 이 저장소로 심볼릭 링크하고, 아래 패키지를 전부 설치하고, 기본 권한 설정을 배치한다. 기존 파일은 백업되며 덮어쓰지 않는다.
+
+기본 모델은 사고 수준 `max`의 `zai/glm-5.3-flash`다. `models.json`은 컨텍스트 100만과 텍스트·이미지 입력을 선언한다.
 
 이후 로컬에서 바뀐 내용은 `~/pi-setup/sync.sh`로 저장소에 반영한다.
 
@@ -70,13 +72,12 @@ pi auth   # 사용하는 프로바이더에 로그인
 | `npm:pi-simplify` | 코드 단순화 |
 | `npm:pi-markdown-preview` | 마크다운 렌더 미리보기 |
 | `npm:pi-powerline-footer` | 상태 푸터 |
-| `npm:glm-vision` | GLM-4.6V 비전 |
 | `npm:@juicesharp/rpiv-todo` | 할 일 관리 |
 | `npm:@juicesharp/rpiv-ask-user-question` | 구조화된 질문 |
 | `npm:pi-ponytail` | 게으른 시니어 개발자 모드(YAGNI 사다리) — coder/cleaner에 스킬 연결; 기본 `off`, `/ponytail`로 켜기 |
 | `npm:pi-agent-browser-native` | agent-browser를 네이티브 `agent_browser` 도구로 — browser-qa 엔진 캐스케이드 1순위 (업스트림 `agent-browser` CLI 필요, install.sh가 설치) |
 
-추가로 `extensions/`에 로컬 익스텐션이 있다: `permission-gate.ts` (위험 명령 확인), `dirty-repo-guard.ts` (세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`.
+추가로 `extensions/`에 로컬 익스텐션이 있다: `dirty-repo-guard.ts`(세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`. Bash 권한은 `@gotgenes/pi-permission-system` 하나가 담당한다.
 
 ### 서브에이전트 모델 프로필 (6)
 
@@ -131,10 +132,10 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 
 `configs/permissions.json`이 `extensions/pi-permission-system/config.json`으로 배치된다. 체감은 기본 pi와 거의 같다 — 읽기, 파일 도구, 스킬, ctx 도구, 일반 셸 명령은 확인 없이 통과하고, 정말 필요한 곳에만 가드를 둔다:
 
-- `.env*`와 `~/.ssh/*`는 모든 도구에서 읽기 차단 (`path` deny, 전역 적용)
-- `rm -rf /`(및 `--no-preserve-root` 변형)는 거부, 그 외 `rm`/`rmdir`/`sudo`는 확인
-- 디스크 초기화/파티션(`diskutil erase*`, `secureErase*`, `partitionDisk*`)은 거부
-- 나머지는 허용
+- 비밀 가능성이 높은 파일(`.env*`, credentials, 개인키, application 설정, `~/.ssh/*`)은 모든 도구에서 차단
+- 재귀 삭제, 권한 상승, 디스크 쓰기, 파괴적 Git 명령은 확인
+- 파일시스템 루트 삭제와 디스크 포맷은 거부
+- 일반 명령과 외부 디렉터리 접근은 허용
 
 실제 사용 중인 설정은 **본인 것**이다. 이 저장소에서는 gitignore 처리되어 있고, pi 권한 모달로 수정한 내용은 로컬에만 남는다. 저장소 사본은 새로 설치하는 사람을 위한 깔끔한 기본값으로 유지한다.
 
