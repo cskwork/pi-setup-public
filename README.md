@@ -67,6 +67,7 @@ Installed via `pi install` (see `settings.json`):
 | `npm:pi-background-tasks` | Named background shell tasks |
 | `npm:context-mode` | Keep big tool outputs out of your context |
 | `npm:pi-memory` (`@samfp/`) | Persistent learned preferences |
+| `npm:pi-oracle` | Async ChatGPT Pro/Grok web jobs with isolated one-time browser auth |
 | `npm:pi-mcp-adapter` | MCP servers without context bloat |
 | `npm:pi-web-access` | Web search/fetch |
 | `npm:pi-simplify` | Code simplification |
