@@ -278,14 +278,12 @@ scope changes go to the user, not the fix coder.
 **Wave 5 — QA** (all packs). Independent verification against the spec.
 
 UI deliverables: **save the screenshot to a file, then `read` that file.** A
-snapshot held in memory is never seen — `glm-vision` hooks the `read` tool, so
-an unsaved capture yields no description and QA would be reporting from DOM
-text. Then the bulk rule applies: cite what the image showed, delete the file.
+snapshot held in memory is never seen, so an unsaved capture yields no
+description and QA would be reporting from DOM text. Then the bulk rule
+applies: cite what the image showed, delete the file.
 
-Vision applies to `zai` children only — the extension gates on the child's
-provider. It is ambient, so **do not** add an `extensions` list to the qa
-agent or any profile; an explicit list disables ambient loading and silently
-strips it. Anthropic and openai-codex models are natively multimodal.
+Every routed model is natively multimodal — zai `glm-5.3`, anthropic, and
+openai-codex all read images directly. No vision extension is involved.
 
 ```typescript
 subagent({
@@ -382,8 +380,8 @@ checks rather than reading a given artifact, its failure mode is a silent
 builds and reviews against it, glm-5.3 verifies. The cross-provider check sits
 between the spec and the code, not between the code and its review.
 
-`fast: true` is the openai-codex priority tier; a no-op elsewhere. `glm-max`
-QA gets vision from the ambient `glm-vision` extension — see Wave 5.
+`fast: true` is the openai-codex priority tier; a no-op elsewhere. QA vision
+is native to the routed model — see Wave 5.
 
 **Pack profiles** — `two-pack` and `four-pack` — pin the `glm-max` models to
 only the gates that pack runs (two-pack: coder, qa; four-pack: specifier,

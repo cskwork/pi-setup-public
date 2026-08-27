@@ -38,9 +38,25 @@ else
 fi
 
 # The exclusion is what actually keeps pi off the hub — verify it is still set.
-python3 - "$REPO/settings.json" <<'PY'
-import json, sys
+python3 - "$REPO/settings.json" "$HUB" <<'PY'
+import json, os, sys
 s = json.load(open(sys.argv[1])).get("skills", [])
+hub = os.path.realpath(sys.argv[2])
 print("settings.skills:", s or "(unset)")
-print("hub excluded:", any(p.startswith("!") and ".agents/skills" in p for p in s))
+
+# The pattern is matched against real absolute paths with no ~ or $HOME
+# expansion, so a literal home dir baked in on another machine silently
+# excludes nothing. Only accept patterns that can match THIS hub.
+def reaches_hub(p):
+    body = p[1:]
+    if "/Users/" in body or body.startswith("~") or "\\Users\\" in body:
+        return hub.rstrip("/").startswith(body.split("**")[0].rstrip("/"))
+    return ".agents/skills" in body
+
+excludes = [p for p in s if p.startswith("!") and ".agents/skills" in p]
+live = [p for p in excludes if reaches_hub(p)]
+print("hub excluded:", bool(live))
+for p in excludes:
+    if p not in live:
+        print(f"  !! dead pattern (does not match {hub}): {p}")
 PY

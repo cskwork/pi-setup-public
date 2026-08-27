@@ -25,7 +25,8 @@
             "max": "max"
           },
           "input": [
-            "text"
+            "text",
+            "image"
           ],
           "cost": {
             "input": 0,
