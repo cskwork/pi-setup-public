@@ -6,7 +6,27 @@
       "*": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
+      "*application*.yml": "deny",
+      "*application*.yaml": "deny",
+      "*application*.properties": "deny",
+      "*credentials*": "deny",
+      "*secrets.*": "deny",
+      "*.pem": "deny",
+      "*.p12": "deny",
       "*.env.example": "allow",
+      "*.env.sample": "allow",
+      "*.env.template": "allow",
+      "*.env.dist": "allow",
+      "*example*.env": "allow",
+      "*template*.env": "allow",
+      "*sample*.env": "allow",
+      "*application*example*": "allow",
+      "*application*sample*": "allow",
+      "*application*template*": "allow",
+      "*.example": "allow",
+      "*.sample": "allow",
+      "*.template": "allow",
+      "*.dist": "allow",
       "~/.ssh/*": "deny"
     },
     "ctx_purge": "ask",
@@ -17,16 +37,17 @@
     "bash": {
       "*": "allow",
 
-      "rm *": "ask",
-      "rmdir *": "ask",
-      "unlink *": "ask",
+      "rm -r*": "ask",
+      "rm -fr*": "ask",
+      "rm --recursive *": "ask",
       "shred *": "ask",
       "truncate *": "ask",
       "dd *": "ask",
       "sudo *": "ask",
 
-      "git reset *": "ask",
-      "git clean *": "ask",
+      "git reset --hard *": "ask",
+      "git reset --merge *": "ask",
+      "git clean *-f*": "ask",
       "git restore *": "ask",
       "git checkout -- *": "ask",
       "git checkout -f *": "ask",
@@ -37,7 +58,6 @@
       "git stash clear": "ask",
       "git reflog delete *": "ask",
       "git reflog expire *": "ask",
-      "git gc *": "ask",
       "git worktree remove *": "ask",
       "git filter-branch *": "ask",
       "git filter-repo *": "ask",
@@ -54,6 +74,14 @@
         "reason": "Refusing to recursively delete the filesystem root"
       },
       "rm -rf --no-preserve-root /": {
+        "action": "deny",
+        "reason": "Refusing to recursively delete the filesystem root"
+      },
+      "rm -R /": {
+        "action": "deny",
+        "reason": "Refusing to recursively delete the filesystem root"
+      },
+      "rm --recursive /": {
         "action": "deny",
         "reason": "Refusing to recursively delete the filesystem root"
       },

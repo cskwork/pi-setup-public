@@ -1,0 +1,36 @@
+# Per-file policy for sync-public.sh (private pi-setup -> public pi-setup-public).
+#
+# Format: <policy> <glob>
+#   never        tracked here, must NEVER reach the public repo
+#   keep-public  public's own version wins; private changes are ignored
+#   public-only  exists only in public; never delete it
+#
+# Anything tracked and unmatched is synced private -> public.
+#
+# SAFETY LAYERS (all must hold, the script enforces each):
+#   1. Source is `git ls-files` only. Gitignored paths - every work-IP skill,
+#      every .env, the db-intelligence domain pack - are structurally
+#      unreachable, not merely filtered.
+#   2. `never` removes private-but-tracked files (memory, its sync plumbing).
+#   3. A domain-identifier assertion runs over the final file set AND the
+#      staged diff. Any hit aborts before anything is committed.
+#   4. The script stages only. A human reviews `git diff --cached` and pushes.
+
+# ---- never: private work knowledge and its plumbing ----
+never  memory/**
+never  sync-memory.sh
+never  configs/com.cskwork.pi-memory-sync.plist
+never  skills/db-intelligence/reference/domain/**
+
+# ---- keep-public: deliberately sanitized, public version is authoritative ----
+# .gitignore      - public says "PUBLIC replica"; private lists work-IP skills
+# sync.sh         - public uses YOUR-COMPANY placeholders; private uses real
+#                   employer/project keywords. Publishing private would leak
+#                   the exact identifiers the tripwire exists to hide.
+# pi-settings     - public documents the public repo; private documents memory
+keep-public  .gitignore
+keep-public  sync.sh
+keep-public  skills/pi-settings/SKILL.md
+
+# ---- public-only: landing page, private has no copy ----
+public-only  docs/**
