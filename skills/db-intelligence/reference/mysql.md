@@ -2,20 +2,41 @@
 
 ## Connect (credential-safe)
 
-Preferred: the proven `mysql-intelligence` toolkit if present in the project
-(`.agents/skills/mysql-intelligence/`), configured via `.env` with named
-connections `DB1..DB3`:
+Credentials come from a `.env` that **`scripts/config.py` locates itself** —
+never hardcode a path. Resolution order: `$DB_INTELLIGENCE_ENV` →
+`$DB_INTELLIGENCE_HOME/.env` → `<skill>/.env` → known agent hubs
+(`~/.pi/agent/skills`, `~/.agents/skills`, `~/.claude/skills`,
+`~/.codex/skills` × `db-intelligence`, `mysql-intelligence`). The two env vars
+are explicit input: if set and missing they raise `EnvFileNotFound` rather
+than silently connecting to another environment's database.
+
+Validate — prints connections, never secrets:
 
 ```bash
-python scripts/config.py               # validate .env (DB1..DB3) without secrets
-python scripts/db_connector.py         # test connections
-python scripts/schema_extractor.py     # → schema_metadata.json (DDL, FKs, comments)
-python scripts/query_executor.py "SELECT ...;"     # primary DB only
+SKILL="$(dirname "$(dirname "$0")")"      # or the skill dir from the loader message
+python3 "$SKILL/scripts/config.py"
+```
+
+Connection names come from `DB*_NAME`, not index — always select by name.
+Project-specific names and routing live in `reference/domain/*.md`.
+
+Only `config.py` is bundled. The heavier executors (`db_connector.py`,
+`query_executor.py`, `schema_extractor.py`, visualizers) live in the upstream
+`mysql-intelligence` toolkit when it is installed; locate it rather than
+assuming a path:
+
+```bash
+MI=$(find ~/.agents/skills ~/.pi/agent/skills ~/.claude/skills -maxdepth 2 \
+        -type d -name mysql-intelligence 2>/dev/null | head -1)
+[ -n "$MI" ] && python3 "$MI/scripts/db_connector.py"      # test connections
+[ -n "$MI" ] && python3 "$MI/scripts/schema_extractor.py"  # → schema_metadata.json
 ```
 
 Multi-DB (named connections) via Python import:
 
 ```python
+import sys, pathlib
+sys.path.insert(0, str(pathlib.Path(MI)))      # MI = located toolkit dir
 from scripts.db_connector import MySQLConnector
 from scripts.query_executor import QueryExecutor
 from scripts.config import get_all_configs
@@ -24,11 +45,13 @@ executor = QueryExecutor(MySQLConnector(config=configs['<name>']).get_connection
 success, result = executor.execute_with_retry(sql, max_retries=3)
 ```
 
-Fallback raw CLI (credentials loaded by shell from .env, never printed):
+Fallback raw CLI (credentials loaded by the shell, never printed — note the
+`.env` path comes from the loader, not a literal):
 
 ```bash
-source <path>/.env
-mysql -h "$DB1_HOST" -P "$DB1_PORT" -u "$DB1_USER" -p"$DB1_PASSWORD" "$DB1_DATABASE" -e "<SQL>"
+ENV_FILE=$(python3 -c "import sys;sys.path.insert(0,'$SKILL/scripts');import config;print(config.find_env_file())")
+set -a; source "$ENV_FILE"; set +a
+mysql -h "$DB4_HOST" -P "$DB4_PORT" -u "$DB4_USER" -p"$DB4_PASSWORD" "$DB4_DATABASE" -e "<SQL>"
 ```
 
 ## Multi-DB routing
