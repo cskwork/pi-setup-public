@@ -20,7 +20,8 @@
     "npm:@narumitw/pi-goal",
     "npm:@narumitw/pi-usage",
     "npm:pi-lens",
-    "npm:pi-memory"
+    "npm:pi-memory",
+    "npm:pi-oracle"
   ],
   "enableInstallTelemetry": false,
   "theme": "dark/dark",

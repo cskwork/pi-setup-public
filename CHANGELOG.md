@@ -13,6 +13,11 @@
 - **Normal work no longer prompts** — external directories and ordinary file removal
   are allowed; recursive deletion, privilege escalation, disk writes, and destructive
   Git operations still ask, while root deletion and disk formatting remain denied.
+- **Over-engineering is explicitly rejected** — `AGENTS.md` now forbids speculative
+  abstractions, compatibility layers, dependencies, and configurability without a
+  current requirement.
+- **`pi-oracle` is installed for ChatGPT Pro/Grok web jobs** — one-time browser auth
+  seeds isolated profiles under `~/.pi/oracle/`, outside the symlinked extension tree.
 
 ### Fixed
 

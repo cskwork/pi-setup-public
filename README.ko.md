@@ -2,7 +2,7 @@
 
 [pi 코딩 에이전트](https://github.com/badlogic/pi-mono) 설정 모음 — 스킬, 익스텐션, 서브에이전트, 그리고 과하지 않은 권한 정책. 새 머신에서 명령 한 줄로 복원한다.
 
-**랜딩 페이지:** https://cskwork.github.io/pi-setup-public/ (퍼블릭 레포) · **English:** [README.md](README.md)
+**랜딩 페이지:** <https://cskwork.github.io/pi-setup-public/> (퍼블릭 레포) · **English:** [README.md](README.md)
 
 ## 빠른 시작
 
@@ -24,7 +24,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 ### 스킬 (27)
 
 | 스킬 | 하는 일 | 출처 |
-|---|---|---|
+| --- | --- | --- |
 | `agent-browser` | 에이전트용 브라우저 자동화 CLI | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
 | `api-and-interface-design` | 안정적인 API·인터페이스 설계 — 계약 우선, Hyrum의 법칙, 멱등키 확보, 일관된 에러 형태 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임; Playwright E2E 패턴은 `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
@@ -58,7 +58,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 `pi install`로 설치된다 (`settings.json` 참고):
 
 | 패키지 | 용도 |
-|---|---|
+| --- | --- |
 | `npm:@gotgenes/pi-permission-system` | 패턴 기반 권한 관리 (아래 참고) |
 | `npm:@narumitw/pi-goal` | 세션 목표 — 완료까지 계속 작업 |
 | `npm:@narumitw/pi-usage` | 사용량/비용 추적 |
@@ -67,6 +67,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 | `npm:pi-background-tasks` | 이름 붙인 백그라운드 셸 작업 |
 | `npm:context-mode` | 큰 도구 출력이 컨텍스트를 먹지 않게 함 |
 | `npm:pi-memory` (`@samfp/`) | 학습된 선호를 영구 저장 |
+| `npm:pi-oracle` | 한 번의 격리 브라우저 인증으로 ChatGPT Pro/Grok 웹 작업을 비동기 실행 |
 | `npm:pi-mcp-adapter` | 컨텍스트 낭비 없는 MCP 서버 연결 |
 | `npm:pi-web-access` | 웹 검색/페치 |
 | `npm:pi-simplify` | 코드 단순화 |
@@ -85,7 +86,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`
 
 | 게이트 | `codex-only` | `claude-only` | `mix` | `glm-max` |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | luna · max | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |

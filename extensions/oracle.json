@@ -1,0 +1,6 @@
+{
+  "browser": {
+    "authSeedProfileDir": "~/.pi/oracle/auth-seed-profile",
+    "runtimeProfilesDir": "~/.pi/oracle/runtime-profiles"
+  }
+}

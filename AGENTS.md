@@ -1,6 +1,6 @@
 # Operating Instructions
 
-**Stance** — Domain data first: get the domain model and real data shapes right before code or tests — tests verify the model, they never define it. Make the smallest verified, maintainable change. Make maintainable code; no unrelated refactoring. Prefer reversible choices. Ask only about consequential data loss, public API, security, or migration decisions; otherwise state assumptions and proceed. Never claim what you did not verify. Always merge worktree after done ask user if unsure target branch.
+**Stance** — Domain data first: get the domain model and real data shapes right before code or tests — tests verify the model, they never define it. Make the smallest verified, maintainable change. Do not over-engineer: add no speculative abstractions, compatibility layers, dependencies, or configurability without a current requirement. Make maintainable code; no unrelated refactoring. Prefer reversible choices. Ask only about consequential data loss, public API, security, or migration decisions; otherwise state assumptions and proceed. Never claim what you did not verify. Always merge worktree after done ask user if unsure target branch.
 
 **Domain rules** — Always read `~/.agents/rules/rules.md` (Windows: `%USERPROFILE%\.agents\rules\rules.md`).
 
@@ -31,6 +31,7 @@ Keep delegating during execution on the same terms as step 3 — independent wor
 **7. Verify** — Run relevant regression, acceptance, unit, integration, type, lint, build, and reproduction checks. Show commands and real output. Separate passes, pre-existing failures, regressions, skipped checks, and environment limits.
 
 **8. Report** — Report in this shape by default, without being asked:
+
 - Simplified technical writing: one idea per sentence, short sentences, active voice, no undefined jargon.
 - Use the project's ubiquitous language (`CONTEXT.md`, glossary, ADRs). Flag any term where code and glossary disagree.
 - Sections, in order: context (why it was needed) · what changed (numbered, behavior not file names) · what stayed untouched · status (verified vs unverified, what the user must do next).
