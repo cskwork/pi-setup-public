@@ -37,12 +37,48 @@ def fail(msg):
 
 
 def rel(*p):
-    return os.path.join(ROOT, *p)
+    path = os.path.abspath(os.path.join(ROOT, *p))
+    if os.path.commonpath((ROOT, path)) != ROOT:
+        raise ValueError(f"path escapes repository root: {path}")
+    return path
+
+
+def list_dir(*p):
+    try:
+        return os.listdir(rel(*p))
+    except OSError:
+        raise
+
+
+def read_file(*p):
+    try:
+        # pi-lens-ignore: python-path-traversal — rel() constrains paths to ROOT.
+        with open(rel(*p), encoding="utf-8") as file:
+            return file.read()
+    except (OSError, UnicodeError):
+        raise
+
+
+def load_json(*p):
+    try:
+        return json.loads(read_file(*p))
+    except json.JSONDecodeError:
+        raise
+
+
+def parse_int(value):
+    try:
+        return int(value)
+    except ValueError:
+        raise
 
 
 def profiles():
-    d = rel("profiles", "pi-subagents")
-    return {f[:-5]: json.load(open(os.path.join(d, f))) for f in sorted(os.listdir(d)) if f.endswith(".json")}
+    return {
+        f[:-5]: load_json("profiles", "pi-subagents", f)
+        for f in sorted(list_dir("profiles", "pi-subagents"))
+        if f.endswith(".json")
+    }
 
 
 def overrides(doc):
@@ -51,14 +87,14 @@ def overrides(doc):
 
 def check_skill_tables():
     """README skill header count and table rows match skills/ exactly."""
-    actual = sorted(os.listdir(rel("skills")))
+    actual = sorted(list_dir("skills"))
     for readme in ["README.md", "README.ko.md"]:
-        s = open(rel(readme)).read()
+        s = read_file(readme)
         m = re.search(r"### (?:Skills|스킬) \((\d+)\)(.*?)\n### ", s, re.S)
         if not m:
             fail(f"{readme}: no '### Skills (N)' section found")
             continue
-        header = int(m.group(1))
+        header = parse_int(m.group(1))
         rows = sorted(re.findall(r"^\|\s+`([^`]+)`", m.group(2), re.M))
         if header != len(actual):
             fail(f"{readme}: header says {header} skills, skills/ has {len(actual)}")
@@ -70,24 +106,28 @@ def check_skill_tables():
 
 def check_layout_skill_count():
     """The Layout block repeats the skill count in prose; it drifts independently."""
-    actual = len(os.listdir(rel("skills")))
-    for readme, pat in [("README.md", r"^skills/\s+(\d+) curated skills$"),
-                        ("README.ko.md", r"^skills/\s+선별한 스킬 (\d+)개$")]:
-        s = open(rel(readme)).read()
-        m = re.search(pat, s, re.M)
+    actual = len(list_dir("skills"))
+    patterns = [
+        ("README.md", re.compile(r"^skills/\s+(\d+) curated skills$", re.M)),
+        ("README.ko.md", re.compile(r"^skills/\s+선별한 스킬 (\d+)개$", re.M)),
+    ]
+    for readme, pattern in patterns:
+        s = read_file(readme)
+        m = pattern.search(s)
         if not m:
             fail(f"{readme}: Layout block has no skills/ count line")
-        elif int(m.group(1)) != actual:
+        elif parse_int(m.group(1)) != actual:
             fail(f"{readme}: Layout block says {m.group(1)} skills, skills/ has {actual}")
 
 
 def check_no_frontmatter_model():
     """A `model:` in agent frontmatter outranks agentOverrides and mutes every profile."""
     pinned = []
-    for f in sorted(os.listdir(rel("agents"))):
+    for f in sorted(list_dir("agents")):
         if not f.endswith(".md"):
             continue
-        head = open(rel("agents", f)).read().split("---")[1] if "---" in open(rel("agents", f)).read() else ""
+        text = read_file("agents", f)
+        head = text.split("---")[1] if "---" in text else ""
         if re.search(r"^model:", head, re.M):
             pinned.append(f)
     if pinned:
@@ -96,10 +136,10 @@ def check_no_frontmatter_model():
 
 def check_referenced_skills_exist():
     """Every skill named in a profile resolves — in skills/ or an installed package."""
-    have = set(os.listdir(rel("skills")))
-    packages = set(json.load(open(rel("settings.json")))["packages"])
+    have = set(list_dir("skills"))
+    packages = set(load_json("settings.json")["packages"])
     docs = dict(profiles())
-    docs["settings.json"] = json.load(open(rel("settings.json")))
+    docs["settings.json"] = load_json("settings.json")
     for name, doc in docs.items():
         for agent, cfg in overrides(doc).items():
             for skill in cfg.get("skills", []):
@@ -113,8 +153,8 @@ def check_referenced_skills_exist():
 
 def check_agents_have_overrides():
     """Every agent is routed by settings.json, so no agent launches without a fallback chain."""
-    agents = {f[:-3] for f in os.listdir(rel("agents")) if f.endswith(".md")}
-    ov = overrides(json.load(open(rel("settings.json"))))
+    agents = {f[:-3] for f in list_dir("agents") if f.endswith(".md")}
+    ov = overrides(load_json("settings.json"))
     missing = sorted(agents - set(ov))
     if missing:
         fail(f"settings.json: agents with no override (no model, no fallback chain): {missing}")
@@ -124,7 +164,7 @@ def check_profile_tables():
     """README profile tables match the profile JSON cell for cell."""
     docs = profiles()
     for readme in ["README.md", "README.ko.md"]:
-        s = open(rel(readme)).read()
+        s = read_file(readme)
         for gate in GATES:
             m = re.search(rf"^\| {re.escape(gate)} \|(.+)$", s, re.M)
             if not m:
