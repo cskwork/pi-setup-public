@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 """Assert the hand-maintained docs still match the config they describe.
 
-Every count and table in the READMEs is written by hand, so they drift silently.
-These are the four drifts that actually shipped:
-  1. README skill header/table out of sync with skills/          (v0.5.0)
-  2. agents/*.md pinning `model:`, which mutes every profile      (v0.5.0)
-  3. profiles referencing a skill that exists nowhere             (v0.5.0)
-  4. a profile table cell disagreeing with the profile JSON       (v0.5.0)
+Hand-maintained docs and safety policy can drift silently from active config.
+These checks cover shipped regressions:
+  1. README skill counts/tables out of sync with tracked skills
+  2. agents/*.md pinning `model:`, which mutes every profile
+  3. profiles referencing a skill that exists nowhere
+  4. profile-table or default-model text disagreeing with settings
+  5. agent files missing settings-owned model/fallback routes
+  6. recursive rm spellings bypassing ask/deny rules
 
 Run from the repo root: python3 scripts/check-docs.py
 """
+from fnmatch import fnmatchcase
 import json
 import os
 import re
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,13 +85,25 @@ def profiles():
     }
 
 
+def tracked_skills():
+    """List public skill directories; private gitignored packs stay undocumented."""
+    output = subprocess.check_output(
+        ["git", "-C", ROOT, "ls-files", "-z", "skills/*/SKILL.md"]
+    )
+    return sorted({
+        path.decode().split("/")[1]
+        for path in output.split(b"\0")
+        if path
+    })
+
+
 def overrides(doc):
     return doc["subagents"]["agentOverrides"]
 
 
 def check_skill_tables():
-    """README skill header count and table rows match skills/ exactly."""
-    actual = sorted(list_dir("skills"))
+    """README skill header count and table rows match tracked skills exactly."""
+    actual = tracked_skills()
     for readme in ["README.md", "README.ko.md"]:
         s = read_file(readme)
         m = re.search(r"### (?:Skills|스킬) \((\d+)\)(.*?)\n### ", s, re.S)
@@ -106,7 +122,7 @@ def check_skill_tables():
 
 def check_layout_skill_count():
     """The Layout block repeats the skill count in prose; it drifts independently."""
-    actual = len(list_dir("skills"))
+    actual = len(tracked_skills())
     patterns = [
         ("README.md", re.compile(r"^skills/\s+(\d+) curated skills$", re.M)),
         ("README.ko.md", re.compile(r"^skills/\s+선별한 스킬 (\d+)개$", re.M)),
@@ -160,6 +176,74 @@ def check_agents_have_overrides():
         fail(f"settings.json: agents with no override (no model, no fallback chain): {missing}")
 
 
+def check_default_model_docs():
+    """README default-model statements match the active settings."""
+    settings = load_json("settings.json")
+    expected_model = f"{settings['defaultProvider']}/{settings['defaultModel']}"
+    expected_thinking = settings["defaultThinkingLevel"]
+    patterns = [
+        (
+            "README.md",
+            re.compile(r"The default model is `([^`]+)` at thinking `([^`]+)`"),
+            (expected_model, expected_thinking),
+        ),
+        (
+            "README.ko.md",
+            re.compile(r"기본 모델은 사고 수준 `([^`]+)`의 `([^`]+)`(?:이)?다"),
+            (expected_thinking, expected_model),
+        ),
+    ]
+    for readme, pattern, expected in patterns:
+        match = pattern.search(read_file(readme))
+        if not match:
+            fail(f"{readme}: no default-model statement found")
+        elif match.groups() != expected:
+            fail(
+                f"{readme}: default model says {match.groups()}, "
+                f"settings.json says {expected}"
+            )
+
+
+def check_recursive_rm_guards():
+    """Common recursive rm forms ask, and filesystem-root targets are denied."""
+    rules = load_json("configs", "permissions.json")["permission"]["bash"]
+
+    def action(command):
+        result = None
+        for pattern, rule in rules.items():
+            if fnmatchcase(command, pattern):
+                result = rule["action"] if isinstance(rule, dict) else rule
+        return result
+
+    expectations = {
+        "ask": [
+            "rm -r build",
+            "rm -R build",
+            "rm -rf build",
+            "rm -fr build",
+            "rm -f -r build",
+            "rm -r -f build",
+            "rm --recursive build",
+            "rm --force --recursive build",
+        ],
+        "deny": [
+            "rm -rf /",
+            "rm -R /",
+            "rm -f -r /",
+            "rm -Rf /",
+            "rm --force --recursive /",
+            "rm -rf --no-preserve-root /",
+        ],
+    }
+    for expected, commands in expectations.items():
+        wrong = [command for command in commands if action(command) != expected]
+        if wrong:
+            fail(
+                f"configs/permissions.json: recursive rm commands must be "
+                f"{expected}: {wrong}"
+            )
+
+
 def check_profile_tables():
     """README profile tables match the profile JSON cell for cell."""
     docs = profiles()
@@ -192,13 +276,15 @@ def main():
     check_no_frontmatter_model()
     check_referenced_skills_exist()
     check_agents_have_overrides()
+    check_default_model_docs()
+    check_recursive_rm_guards()
     check_profile_tables()
     if failures:
         print(f"✗ {len(failures)} doc/config mismatch(es):\n")
         for f in failures:
             print(f"  - {f}")
         return 1
-    print("✓ docs match config — skill tables, profile tables, skill refs, agent routing")
+    print("✓ docs/config match — skills, model routes, profiles, and permission guards")
     return 0
 
 

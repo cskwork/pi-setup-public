@@ -32,7 +32,7 @@ The installers link `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, 
 
 They also add a managed shell-profile block that gives only Pi an 8 GiB V8 heap. Other Node processes keep their defaults, existing `NODE_OPTIONS` values are preserved, and the active NVM/npm Pi executable is resolved on every call. Re-run the installer after moving the checkout. Remove the block between the `pi-setup Pi-only Node heap` markers to uninstall it. If you use both Windows PowerShell 5.1 and PowerShell 7, run `install.ps1` once in each. Organization-enforced policies can still block PowerShell profiles; those require an administrator policy change.
 
-The default model is `zai/glm-5.3-flash` at thinking `max`; `models.json` declares native text and image input with a 1M context window.
+The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`; subagents use role-specific Sol/Luna routes with Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash.
 
 Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 

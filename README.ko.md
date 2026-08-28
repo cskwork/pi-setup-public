@@ -32,7 +32,7 @@ pi auth   # 사용하는 프로바이더에 로그인
 
 또한 셸 프로필에 관리 블록을 추가해 Pi에만 V8 힙 8 GiB를 준다. 다른 Node 프로세스는 기본값을 유지하고, 기존 `NODE_OPTIONS`도 보존하며, 호출할 때마다 현재 NVM/npm의 Pi 실행 파일을 찾는다. 저장소를 옮겼다면 설치 스크립트를 다시 실행한다. 제거하려면 `pi-setup Pi-only Node heap` 표식 사이의 블록을 지운다. Windows PowerShell 5.1과 PowerShell 7을 모두 사용하면 각 셸에서 `install.ps1`을 한 번씩 실행한다. 조직 정책이 PowerShell 프로필 실행을 강제로 막는 환경에서는 관리자 정책 변경이 필요하다.
 
-기본 모델은 사고 수준 `max`의 `zai/glm-5.3-flash`다. `models.json`은 컨텍스트 100만과 텍스트·이미지 입력을 선언한다.
+기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. 서브에이전트는 역할별 Sol/Luna 경로와 Anthropic·Z.ai 폴백을 사용한다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다.
 
 이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
 

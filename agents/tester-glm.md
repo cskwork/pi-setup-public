@@ -1,7 +1,6 @@
 ---
 name: tester-glm
 description: GLM 5.3 Flash/max test and verification agent. Use when the GLM lane is selected; OpenAI uses qa/verify and Claude uses qa-tester/qa-auditor.
-model: zai/glm-5.3-flash
 thinking: max
 tools: read, grep, find, ls, bash
 systemPromptMode: replace
