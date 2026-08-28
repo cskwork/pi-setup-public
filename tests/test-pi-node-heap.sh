@@ -63,14 +63,27 @@ assert_eq "$NODE_OPTIONS" "--max-old-space-size=128"
 
 fake_tools="$TMP/tools"
 mkdir -p "$fake_tools" "$TMP/home/dotfiles"
-printf '# existing profile\n' > "$TMP/home/dotfiles/zshrc"
 profile_symlink=0
-if ln -s "dotfiles/zshrc" "$TMP/home/.zshrc" 2>/dev/null && [ -L "$TMP/home/.zshrc" ]; then
-  profile_symlink=1
-else
-  rm -f "$TMP/home/.zshrc"
-  cp "$TMP/home/dotfiles/zshrc" "$TMP/home/.zshrc"
-fi
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*)
+    login_shell=/bin/bash
+    profile="$TMP/home/.bashrc"
+    expected_wrapper="$(cygpath -m "$ROOT/scripts/pi-node-heap.sh")"
+    printf '# existing profile\n' > "$profile"
+    ;;
+  *)
+    login_shell=/bin/zsh
+    profile="$TMP/home/.zshrc"
+    expected_wrapper="$ROOT/scripts/pi-node-heap.sh"
+    printf '# existing profile\n' > "$TMP/home/dotfiles/zshrc"
+    if ln -s "dotfiles/zshrc" "$profile" 2>/dev/null && [ -L "$profile" ]; then
+      profile_symlink=1
+    else
+      rm -f "$profile"
+      cp "$TMP/home/dotfiles/zshrc" "$profile"
+    fi
+    ;;
+esac
 cat > "$fake_tools/pi" <<'EOF'
 #!/usr/bin/env bash
 printf '%s|%s\n' "${NODE_OPTIONS-}" "$*" >> "$PI_FAKE_LOG"
@@ -93,19 +106,18 @@ export PI_FAKE_LOG="$TMP/pi.log"
 for run in 1 2; do
   HOME="$TMP/home" \
   PI_DIR="$TMP/home/.pi/agent" \
-  SHELL=/bin/zsh \
+  SHELL="$login_shell" \
   NODE_OPTIONS="--trace-warnings" \
   PATH="$fake_tools:$ORIGINAL_PATH" \
     bash "$ROOT/install.sh" >/dev/null
 
 done
-profile="$TMP/home/.zshrc"
 if [ "$profile_symlink" -eq 1 ]; then
   [ -L "$profile" ] || fail "installer replaced the profile symlink"
 fi
 assert_eq "$(grep -c '^# >>> pi-setup Pi-only Node heap >>>$' "$profile")" "1"
 assert_eq "$(grep -c '^# <<< pi-setup Pi-only Node heap <<<$' "$profile")" "1"
-assert_contains "$(cat "$profile")" "$ROOT/scripts/pi-node-heap.sh"
+assert_contains "$(cat "$profile")" "$expected_wrapper"
 [ "$(grep -c -- '--max-old-space-size=8192' "$PI_FAKE_LOG")" -gt 0 ] ||
   fail "installer did not run Pi with the 8 GiB wrapper"
 
