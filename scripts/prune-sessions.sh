@@ -34,10 +34,10 @@ done
 [ -d "$SESSIONS" ] || { echo "no sessions directory at $SESSIONS"; exit 0; }
 
 mb() {
-  if stat -f%z "$SESSIONS" >/dev/null 2>&1; then
-    xargs -0 stat -f%z 2>/dev/null || true
-  else
+  if stat -c%s "$SESSIONS" >/dev/null 2>&1; then
     xargs -0 stat -c%s 2>/dev/null || true
+  else
+    xargs -0 stat -f%z 2>/dev/null || true
   fi | awk '{s+=$1} END{printf "%.1f", s/1048576}'
 }
 
