@@ -14,11 +14,8 @@
       },
       "coder": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra",
-          "openai-codex/gpt-5.5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "tdd",
           "ponytail"
@@ -28,9 +25,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
         "skills": [
           "ponytail-review"
         ]
@@ -63,9 +57,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
         "skills": [
           "browser-qa",
           "verification-before-completion",
@@ -192,9 +183,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
         "skills": [
           "ponytail-review"
         ]
@@ -202,26 +190,17 @@
       "doc-writer": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ]
+        "fast": true
       },
       "git-ops": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ]
+        "fast": true
       },
       "javascript-pro": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
         "skills": [
           "tdd"
         ]
@@ -230,9 +209,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-terra"
-        ],
         "skills": [
           "tdd"
         ]

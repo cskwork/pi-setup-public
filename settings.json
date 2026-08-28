@@ -30,7 +30,7 @@
   "tuiMode": "fullscreen",
   "subagents": {
     "defaultModel": "openai-codex/gpt-5.6-luna",
-    "defaultThinking": "max",
+    "defaultThinking": "xhigh",
     "agentOverrides": {
       "specifier": {
         "model": "openai-codex/gpt-5.6-sol",
@@ -46,11 +46,8 @@
       },
       "coder": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "tdd",
           "ponytail"
@@ -58,12 +55,8 @@
       },
       "cleaner": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-haiku-4-5",
-          "anthropic/claude-sonnet-5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "ponytail-review"
         ]
@@ -97,18 +90,14 @@
       },
       "qa": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5",
-          "anthropic/claude-haiku-4-5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "browser-qa",
           "verification-before-completion",
           "db-intelligence"
         ],
-        "description": "OpenAI Luna/max verification and QA role. Claude lane: qa-tester or qa-auditor. GLM lane: tester-glm."
+        "description": "OpenAI Luna/xhigh fast verification and QA role. Claude lane: qa-tester or qa-auditor. GLM lane: tester-glm."
       },
       "qa-tester": {
         "skills": [
@@ -141,11 +130,8 @@
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "customer-agent": {
         "skills": [
@@ -153,11 +139,8 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "persona-product-tester": {
         "skills": [
@@ -165,11 +148,8 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "verify": {
         "skills": [
@@ -177,12 +157,9 @@
           "verification-before-completion"
         ],
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ],
-        "description": "OpenAI Luna/max evidence-driven verification role. Claude lane: qa-tester. GLM lane: tester-glm."
+        "thinking": "xhigh",
+        "fast": true,
+        "description": "OpenAI Luna/xhigh fast evidence-driven verification role. Claude lane: qa-tester. GLM lane: tester-glm."
       },
       "tester": {
         "skills": [
@@ -190,54 +167,36 @@
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "scout": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-haiku-4-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "researcher": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-haiku-4-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "reviewer": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-haiku-4-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "worker": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-haiku-4-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "planner": {
         "model": "openai-codex/gpt-5.6-sol",
@@ -257,13 +216,13 @@
         ]
       },
       "analyst": {
-        "model": "anthropic/claude-opus-5",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high",
         "fallbackModels": [
-          "openai-codex/gpt-5.6-sol",
+          "anthropic/claude-opus-5",
           "zai/glm-5.3-flash"
         ],
-        "description": "Claude Opus/xhigh pre-planning analyst with evidence-backed acceptance criteria."
+        "description": "OpenAI Sol/high pre-planning analyst with evidence-backed acceptance criteria."
       },
       "security": {
         "model": "openai-codex/gpt-5.6-sol",
@@ -279,60 +238,42 @@
       },
       "refactorer": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "ponytail-review"
         ]
       },
       "doc-writer": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "git-ops": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "javascript-pro": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "tdd"
         ]
       },
       "typescript-pro": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ],
+        "thinking": "xhigh",
+        "fast": true,
         "skills": [
           "tdd"
         ]
       },
       "delegate": {
         "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "max",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "anthropic/claude-sonnet-5"
-        ]
+        "thinking": "xhigh",
+        "fast": true
       },
       "architect-glm": {
         "model": "zai/glm-5.3-flash",
