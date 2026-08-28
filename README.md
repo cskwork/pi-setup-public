@@ -57,7 +57,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
 ## What's inside
 
-### Skills (28)
+### Skills (29)
 
 | Skill | What it does | Source |
 | --- | --- | --- |
@@ -89,6 +89,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
 | `pi-sixpack` | SwarmForge-style 6-role gated pipeline (Wave 0 parallel explore → specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
+| `sdlc-kit` | Six-stage SDLC with human approvals, fresh-context review, tamper-evident gates, and bounded memory | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
 
 ### Extensions
 
@@ -193,7 +194,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              28 curated skills
+skills/              29 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
