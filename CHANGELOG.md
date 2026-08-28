@@ -2,7 +2,13 @@
 
 ## Unreleased
 
+## v0.6.0 — 2026-08-29
+
 ### Added
+
+- **sdlc-kit is included by default.** Fresh installs now ship the complete
+  runtime subset: the router, six stage skills, agent contract, roles, gates,
+  templates, and project initializer. No second clone is required.
 
 - **Portable provider-credential setup** — the installers now create
   `~/.pi-setup.env` (mode `600`) from the tracked `.env.example` and add a

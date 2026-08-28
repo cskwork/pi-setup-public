@@ -57,7 +57,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 ## 구성
 
-### 스킬 (28)
+### 스킬 (29)
 
 | 스킬 | 하는 일 | 출처 |
 | --- | --- | --- |
@@ -89,6 +89,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | 로그인 상태를 공유하는 에이전트 친화 브라우저 | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
 | `pi-sixpack` | SwarmForge 방식 6역할 게이트 파이프라인 (Wave 0 병렬 탐색 → specifier→coder→cleaner→architect∥hardender→QA, 팩 2/4/6) | [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) 이식 |
+| `sdlc-kit` | 사람 승인, 새 컨텍스트 검토, 변조 감지 게이트, 제한된 메모리를 갖춘 6단계 SDLC 루프 | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
 
 ### 익스텐션
 
@@ -188,7 +189,7 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              선별한 스킬 28개
+skills/              선별한 스킬 29개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py — 문서/설정 불일치 CI 가드
