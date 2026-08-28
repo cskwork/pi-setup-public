@@ -6,14 +6,31 @@ My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skil
 
 ## Quick start
 
+### macOS, Linux, or Git Bash
+
 ```bash
 git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
 ~/pi-setup-public/install.sh
 pi auth   # log in to your providers
-# restart pi
+# restart your shell, then restart pi
 ```
 
-`install.sh` symlinks `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, installs every package below, and deploys the default permission config. Existing files are backed up, never overwritten.
+### Windows PowerShell
+
+```powershell
+git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
+Set-Location "$HOME\pi-setup-public"
+if ((Get-ExecutionPolicy) -eq 'Restricted') {
+  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+}
+.\install.ps1
+pi auth   # log in to your providers
+# reopen PowerShell, then restart pi
+```
+
+The installers link `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, install every package below, and deploy the default permission config. Existing files are backed up, never overwritten.
+
+They also add a managed shell-profile block that gives only Pi an 8 GiB V8 heap. Other Node processes keep their defaults, existing `NODE_OPTIONS` values are preserved, and the active NVM/npm Pi executable is resolved on every call. Re-run the installer after moving the checkout. Remove the block between the `pi-setup Pi-only Node heap` markers to uninstall it. If you use both Windows PowerShell 5.1 and PowerShell 7, run `install.ps1` once in each. Organization-enforced policies can still block PowerShell profiles; those require an administrator policy change.
 
 The default model is `zai/glm-5.3-flash` at thinking `max`; `models.json` declares native text and image input with a 1M context window.
 
@@ -154,8 +171,11 @@ skills/              27 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
+                     pi-node-heap.sh/.ps1 — Pi-only 8 GiB launchers
                      prune-sessions.sh — session transcript retention
-install.sh           fresh-machine bootstrap
+tests/               shell and PowerShell launcher regression checks
+install.sh           macOS/Linux/Git Bash bootstrap
+install.ps1          native Windows PowerShell bootstrap
 sync.sh              save drift back to GitHub
 ```
 

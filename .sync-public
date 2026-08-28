@@ -24,11 +24,14 @@ never  skills/db-intelligence/reference/domain/**
 
 # ---- keep-public: deliberately sanitized, public version is authoritative ----
 # .gitignore      - public says "PUBLIC replica"; private lists work-IP skills
+# README*.md      - public quick start clones pi-setup-public; private clones pi-setup
 # sync.sh         - public uses YOUR-COMPANY placeholders; private uses real
 #                   employer/project keywords. Publishing private would leak
 #                   the exact identifiers the tripwire exists to hide.
 # pi-settings     - public documents the public repo; private documents memory
 keep-public  .gitignore
+keep-public  README.md
+keep-public  README.ko.md
 keep-public  sync.sh
 keep-public  skills/pi-settings/SKILL.md
 

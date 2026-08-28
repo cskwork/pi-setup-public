@@ -52,6 +52,8 @@ ALLOW_RE=${ALLOW_RE:-$'\0no-allowlist-sentinel'}
 [ -d "$PUBLIC/.git" ] || die "public checkout not found at $PUBLIC
    clone it first:  git clone https://github.com/cskwork/pi-setup-public.git $PUBLIC
    or set PI_SETUP_PUBLIC to its path."
+[ -z "$(git -C "$PUBLIC" status --porcelain)" ] || die "public repo has uncommitted changes.
+   Commit, stash, or discard them before syncing; refusing to overwrite or stage them."
 
 cd "$REPO"
 [ -z "$(git status --porcelain)" ] || die "private repo has uncommitted changes.

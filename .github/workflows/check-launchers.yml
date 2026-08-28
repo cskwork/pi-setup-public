@@ -1,0 +1,49 @@
+name: check-launchers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'install.sh'
+      - 'install.ps1'
+      - 'scripts/pi-node-heap.*'
+      - 'tests/*PiNodeHeap*'
+      - 'tests/test-pi-node-heap.sh'
+      - '.github/workflows/check-launchers.yml'
+  pull_request:
+    paths:
+      - 'install.sh'
+      - 'install.ps1'
+      - 'scripts/pi-node-heap.*'
+      - 'tests/*PiNodeHeap*'
+      - 'tests/test-pi-node-heap.sh'
+      - '.github/workflows/check-launchers.yml'
+  workflow_dispatch:
+
+jobs:
+  posix:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n install.sh scripts/pi-node-heap.sh tests/test-pi-node-heap.sh
+      - run: bash tests/test-pi-node-heap.sh
+
+  windows-powershell:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows PowerShell 5.1
+        shell: powershell
+        run: .\tests\Test-PiNodeHeap.ps1
+      - name: PowerShell 7
+        shell: pwsh
+        run: .\tests\Test-PiNodeHeap.ps1
+
+  windows-git-bash:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: bash -n install.sh scripts/pi-node-heap.sh tests/test-pi-node-heap.sh
+      - shell: bash
+        run: bash tests/test-pi-node-heap.sh

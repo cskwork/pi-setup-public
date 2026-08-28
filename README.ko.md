@@ -6,14 +6,31 @@
 
 ## 빠른 시작
 
+### macOS, Linux, Git Bash
+
 ```bash
 git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
 ~/pi-setup-public/install.sh
 pi auth   # 사용하는 프로바이더에 로그인
-# pi 재시작
+# 셸을 다시 연 뒤 pi 재시작
 ```
 
-`install.sh`는 `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`를 이 저장소로 심볼릭 링크하고, 아래 패키지를 전부 설치하고, 기본 권한 설정을 배치한다. 기존 파일은 백업되며 덮어쓰지 않는다.
+### Windows PowerShell
+
+```powershell
+git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
+Set-Location "$HOME\pi-setup-public"
+if ((Get-ExecutionPolicy) -eq 'Restricted') {
+  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+}
+.\install.ps1
+pi auth   # 사용하는 프로바이더에 로그인
+# PowerShell을 다시 연 뒤 pi 재시작
+```
+
+설치 스크립트는 `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`를 이 저장소로 심볼릭 링크하고, 아래 패키지를 전부 설치하고, 기본 권한 설정을 배치한다. 기존 파일은 백업되며 덮어쓰지 않는다.
+
+또한 셸 프로필에 관리 블록을 추가해 Pi에만 V8 힙 8 GiB를 준다. 다른 Node 프로세스는 기본값을 유지하고, 기존 `NODE_OPTIONS`도 보존하며, 호출할 때마다 현재 NVM/npm의 Pi 실행 파일을 찾는다. 저장소를 옮겼다면 설치 스크립트를 다시 실행한다. 제거하려면 `pi-setup Pi-only Node heap` 표식 사이의 블록을 지운다. Windows PowerShell 5.1과 PowerShell 7을 모두 사용하면 각 셸에서 `install.ps1`을 한 번씩 실행한다. 조직 정책이 PowerShell 프로필 실행을 강제로 막는 환경에서는 관리자 정책 변경이 필요하다.
 
 기본 모델은 사고 수준 `max`의 `zai/glm-5.3-flash`다. `models.json`은 컨텍스트 100만과 텍스트·이미지 입력을 선언한다.
 
@@ -150,8 +167,11 @@ skills/              선별한 스킬 27개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py — 문서/설정 불일치 CI 가드
+                     pi-node-heap.sh/.ps1 — Pi 전용 8 GiB 런처
                      prune-sessions.sh — 세션 기록 보존 기간 정리
-install.sh           새 머신 부트스트랩
+tests/               셸·PowerShell 런처 회귀 검사
+install.sh           macOS/Linux/Git Bash 부트스트랩
+install.ps1          Windows PowerShell 네이티브 부트스트랩
 sync.sh              로컬 변경을 GitHub로 저장
 ```
 
