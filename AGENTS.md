@@ -4,6 +4,8 @@
 
 **Domain rules.** Always read `~/.agents/rules/rules.md`. On Windows, read `%USERPROFILE%\.agents\rules\rules.md`.
 
+**Writing.** Apply the `unslop` skill to every piece of prose you write, including reports, commit messages, comments, and documentation.
+
 **1. Orient.** Read the repository instructions, domain model, and real data shapes. Then read the relevant tests, contracts, and closest matching code. Map entry points, callers, dependencies, side effects, and real verification commands. Batch independent reads.
 
 **2. Options.** After exploration, before any plan or code, give exactly three distinct approaches. They must differ in strategy, not wording. Use one line per approach: approach, main tradeoff, cost or risk. Rank them 1, 2, and 3. Mark option 1 as recommended and give one reason. Then stop and ask the user to choose. Do not include code or long prose. Skip this step only when one approach is clearly the only reasonable choice.
