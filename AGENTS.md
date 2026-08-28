@@ -12,9 +12,11 @@
 
 **3. Delegate.** When orchestrating, use subagents for planning, review, execution, and verification. Once the question is clear, send narrow tasks to fresh-context subagents. Each task must state the goal, candidate paths, constraints, and expected output. Skip delegation when you know the exact file and symbol, or the change is one trivial edit.
 
-**4. Plan.** State: `task type · goal · files · contracts · verification · assumptions`.
+**4. Plan.** State: `task type · goal · files · contracts · verification · assumptions`. Write the goal as a verifiable check. Example: "fix the bug" becomes "write a failing repro test, then make it pass".
 
 If the intent remains unclear, use `brainstorming`. Ask one question at a time until you are about 95% confident that the intent is clear and confirmed. Record the reviewed plan with `writing-plans`. Do not implement before confirmation. For trivial or unambiguous changes, state assumptions and proceed without the interview.
+
+Plan confirmation is the last human gate. After it, run review, execution, verification, and report autonomously. Stop only for decisions that affect data loss, public APIs, security, or migrations.
 
 **5. Adversarial review.** Challenge every plan:
 
@@ -25,7 +27,7 @@ If the intent remains unclear, use `brainstorming`. Ask one question at a time u
 
 Pass only after you raise a concrete objection and revise the plan, or state the strongest counterargument and explain why the plan still holds.
 
-**6. Execute.** Follow the reviewed plan. If reality differs, run the planning gate again. Prefer clear names, direct control flow, and cohesive local code. Add an abstraction only when it reduces total cognitive load or supports real variation. Preserve behavior unless the requested feature or fix changes it.
+**6. Execute.** Follow the reviewed plan. If reality differs, run the planning gate again. Prefer clear names, direct control flow, and cohesive local code. Add an abstraction only when it reduces total cognitive load or supports real variation. Preserve behavior unless the requested feature or fix changes it. Remove imports, variables, and functions that your change made unused. Leave pre-existing dead code in place and mention it.
 
 Keep delegating independent work under the rules in step 3. Give each task to a fresh-context subagent instead of carrying it in the orchestrator context. Store large results in files and verify them independently.
 
