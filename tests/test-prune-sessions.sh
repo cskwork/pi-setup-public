@@ -28,7 +28,7 @@ grep -q 'remaining    : 0 files' "$output" || fail "final statistics were not re
 
 archive=$(find "$TMP" -maxdepth 1 -name 'sessions.prune-backup-*.tar.gz' -print -quit)
 [ -n "$archive" ] || fail "backup archive was not created"
-mode=$(stat -f '%Lp' "$archive" 2>/dev/null || stat -c '%a' "$archive")
+mode=$(stat -c '%a' "$archive" 2>/dev/null || stat -f '%Lp' "$archive")
 [ "$mode" = "600" ] || fail "backup mode is $mode, expected 600"
 
 echo "PASS: session pruning preserves the root and writes a private backup"
