@@ -146,6 +146,12 @@ silently ignores every profile. All `agents/*.md` here ship without a `model:`
 line on purpose; profiles are the single source of truth for routing. Add one
 back only when an agent must never follow the profile.
 
+This also applies to agents registered by external skills or extensions. If a
+startup fails with `Unknown subagent model 'opus'` (or `sonnet`), fix the
+external agent prompt: remove its `model:` line or use an exact provider/model
+ID. A settings override cannot rescue a frontmatter pin because frontmatter
+wins first.
+
 **Pack profiles** — `two-pack` and `four-pack` pin the `glm-max` models to only the
 gates that pack runs (two-pack: coder → qa; four-pack: specifier → coder →
 refactorer → sw-architect → qa). Role orders mirror the upstream SwarmForge
