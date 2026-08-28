@@ -14,6 +14,7 @@
 # need maintaining and could disagree with the disk. Revisit if pi ever grows
 # a session index worth respecting.
 set -euo pipefail
+umask 077
 
 DAYS="${DAYS:-90}"
 SESSIONS="${PI_SESSIONS_DIR:-${PI_CONFIG_DIR:-$HOME/.pi}/agent/sessions}"
@@ -32,7 +33,13 @@ done
 
 [ -d "$SESSIONS" ] || { echo "no sessions directory at $SESSIONS"; exit 0; }
 
-mb() { xargs -0 stat -f%z 2>/dev/null | awk '{s+=$1} END{printf "%.1f", s/1048576}'; }
+mb() {
+  if stat -f%z "$SESSIONS" >/dev/null 2>&1; then
+    xargs -0 stat -f%z 2>/dev/null || true
+  else
+    xargs -0 stat -c%s 2>/dev/null || true
+  fi | awk '{s+=$1} END{printf "%.1f", s/1048576}'
+}
 
 count=$(find "$SESSIONS" -type f -mtime +"$DAYS" | wc -l | tr -d ' ')
 size=$(find "$SESSIONS" -type f -mtime +"$DAYS" -print0 | mb)
@@ -64,7 +71,7 @@ if [ "$BACKUP" -eq 1 ]; then
 fi
 
 find "$SESSIONS" -type f -mtime +"$DAYS" -delete
-find "$SESSIONS" -type d -empty -delete 2>/dev/null || true
+find "$SESSIONS" -mindepth 1 -type d -empty -delete 2>/dev/null || true
 
 echo "pruned       : $count files"
 echo "remaining    : $(find "$SESSIONS" -type f | wc -l | tr -d ' ') files ($(du -sh "$SESSIONS" | cut -f1))"

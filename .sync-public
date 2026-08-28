@@ -34,6 +34,8 @@ keep-public  README.md
 keep-public  README.ko.md
 keep-public  sync.sh
 keep-public  skills/pi-settings/SKILL.md
+keep-public  .github/workflows/check-docs.yml
 
-# ---- public-only: landing page, private has no copy ----
+# ---- public-only: landing page and link check, private has no copy ----
 public-only  docs/**
+public-only  scripts/check-public-links.sh

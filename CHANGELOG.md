@@ -2,61 +2,61 @@
 
 ## Unreleased
 
-### Changed
+## v0.5.1 — 2026-08-28
 
-- **GLM-5.3-Flash is now the session default** — `settings.json` starts on
-  `zai/glm-5.3-flash` at thinking `max`, matching the subagent routes.
-- **Native multimodal input enabled** — the custom `models.json` declaration now
-  advertises both `text` and `image` input for GLM-5.3-Flash.
-- **One Bash permission authority** — removed the local `permission-gate.ts` that
-  independently prompted on top of `@gotgenes/pi-permission-system`.
-- **Normal work no longer prompts** — external directories and ordinary file removal
-  are allowed; recursive deletion, privilege escalation, disk writes, and destructive
-  Git operations still ask, while root deletion and disk formatting remain denied.
-- **Over-engineering is explicitly rejected** — `AGENTS.md` now forbids speculative
-  abstractions, compatibility layers, dependencies, and configurability without a
-  current requirement.
-- **`pi-oracle` is installed for ChatGPT Pro/Grok web jobs** — one-time browser auth
-  seeds isolated profiles under `~/.pi/oracle/`, outside the symlinked extension tree.
-
-### Fixed
-
-- **Pi gets a process-scoped 8 GiB V8 heap on every supported shell** —
-  `install.sh` manages bash/zsh/Git Bash profiles and the new `install.ps1`
-  manages Windows PowerShell 5.1 or PowerShell 7. Both wrappers preserve
-  existing `NODE_OPTIONS`, resolve the active NVM/npm Pi on every call, and
-  leave all other Node processes unchanged. Cross-platform regression checks
-  cover argument forwarding, exit codes, profile idempotence, and heap size.
-- **README skill tables were stale** — header said 16, table had 25 rows,
-  `skills/` has 26 (the `pi-settings` row was missing). The Layout block
-  repeated the wrong 16 too. Both READMEs, both languages.
-- **`api-and-interface-design` was referenced but never installed** — wired into
-  `sw-architect` in 5 profiles plus `settings.json` since 2026-08-25, but present
-  in neither `skills/` nor `~/.agents/skills`. Traced to
-  [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) (MIT) and
-  installed for real rather than dropped: vendored into `skills/` (real copy, so
-  a fresh clone works) and symlinked into `~/.agents/skills` from
-  `sources/addyosmani/agent-skills` for Claude Code and Codex. pi excludes the
-  hub, so both roots are required. `ponytail`/`ponytail-review` need no copy —
-  they ship inside the `pi-ponytail` package and resolve at runtime.
+Hardens setup and publishing while keeping Pi's model routing, shell launchers,
+and public documentation reproducible across supported platforms.
 
 ### Added
 
-- **`scripts/prune-sessions.sh` — session transcript retention.** `~/.pi/agent/sessions/`
-  keeps every user prompt verbatim in JSONL and nothing prunes it; it had reached
-  72 MB across 385 files. The script defaults to a 90-day retention, dry-runs
-  unless given `--apply`, and tars what it deletes to
-  `sessions.prune-backup-<timestamp>.tar.gz` so a prune is reversible. Retention
-  is tunable with `DAYS=` or `--days=`. First run removed 26 files / 2.1 MB
-  (everything from before 2026-06-14).
+- **Pi-only 8 GiB V8 launchers** for bash, zsh, Git Bash, Windows PowerShell
+  5.1, and PowerShell 7. They preserve existing `NODE_OPTIONS`, resolve the
+  active NVM/npm Pi executable on every call, and leave other Node processes
+  unchanged.
+- **Native Windows PowerShell installation** plus cross-platform launcher CI for
+  argument forwarding, exit codes, profile idempotence, and heap size.
+- **Provider-specific low-cost roles** — `architect-glm` and `tester-glm` keep
+  GLM-5.3-Flash as their primary route while using settings-owned fallback
+  chains. `pi-oracle` adds isolated ChatGPT Pro/Grok web jobs.
+- **Guarded private-to-public sync** with an explicit file policy, domain leak
+  checks, staged review, and public-link CI.
+- **Maintenance tools and skills** — 90-day session transcript pruning with a
+  reversible backup, and the vendored `api-and-interface-design` skill.
 
-- **`scripts/check-docs.py` + `check-docs` workflow** — CI guard for the drift
-  class above. Six assertions: README skill header/rows match `skills/`, the
-  Layout block count matches, no `agents/*.md` pins `model:` in frontmatter,
-  every profile-referenced skill resolves (in `skills/` or an installed
-  package), every agent has a `settings.json` override, and every README
-  profile-table cell matches the profile JSON. Each assertion was verified to
-  fail on its own bug before being kept.
+### Changed
+
+- **GPT-first routing** — the session default is
+  `openai-codex/gpt-5.6-sol` at `xhigh`; subagents use role-specific Sol/Luna
+  tiers with Anthropic and Z.ai fallbacks. GLM-5.3-Flash remains registered for
+  native text and image input.
+- **One Bash permission authority** — `@gotgenes/pi-permission-system` now owns
+  command approval without a second local prompt layer.
+- **Normal work prompts less often** while recursive deletion, privilege
+  escalation, disk writes, and destructive Git commands remain guarded.
+- **Over-engineering is explicitly rejected** in `AGENTS.md` unless a current
+  requirement justifies the abstraction, dependency, or configurability.
+
+### Fixed
+
+- **Recursive deletion guard bypasses** — uppercase and reordered recursive
+  `rm` flags now ask for approval; commands targeting filesystem root are
+  denied after the broader rule is evaluated.
+- **Subagent routing CI** — GLM role files no longer pin frontmatter models, and
+  both roles now have explicit `settings.json` routes and fallback chains.
+- **Session backup privacy and empty-prune behavior** — transcript archives are
+  mode `0600`, the sessions root survives when every old file is removed, and
+  size calculation works on macOS and Linux.
+- **Stale configuration documentation** — README default-model text, skill
+  tables, layout counts, profile tables, and public setup links now match the
+  files users actually install.
+- **Git Bash launcher edge cases** — path conversion, symbolic-link emulation,
+  and platform-specific profile selection are covered by regression tests.
+
+### Verification
+
+`check-docs`, public-link checks, recursive-permission cases, session-pruning
+regressions, POSIX launchers, Git Bash, Windows PowerShell 5.1, and PowerShell 7
+are release gates.
 
 ## v0.5.0 — 2026-08-27
 
@@ -188,7 +188,7 @@ skill on every turn, and puts the memory backup on a daily schedule.
 - **Skill routing is no longer mandatory.** `AGENTS.md` dropped the
   "route through `using-superpowers`" directive from the routing line and from
   step 1, and the step 4 interview is now conditional on intent still being
-  unclear. The router skill stays installed and model-invocable; it is simply
+  unclear. The router skill stays installed and model-invokable; it is simply
   not commanded every turn.
 - **`sync-memory.sh` backs up the markdown store** instead of the retired
   SQLite database, and refuses to push when the remote is not private.

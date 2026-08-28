@@ -20,4 +20,5 @@ jobs:
         with:
           python-version: '3.12'
       - run: python3 scripts/check-docs.py
+      - run: bash tests/test-prune-sessions.sh
       - run: bash scripts/check-public-links.sh

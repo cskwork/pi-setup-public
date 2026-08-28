@@ -80,29 +80,29 @@ def find_env_file() -> Optional[Path]:
 def load_env_file():
     """Load .env file if it exists."""
     env_path = find_env_file()
-    
+
     if env_path is None:
         return
-    
+
     with open(env_path, 'r') as f:
         for line in f:
             line = line.strip()
             # Skip comments and empty lines
             if not line or line.startswith('#'):
                 continue
-            
+
             # Parse KEY=VALUE
             if '=' in line:
                 key, value = line.split('=', 1)
                 key = key.strip()
                 value = value.strip()
-                
+
                 # Remove quotes if present
                 if value.startswith('"') and value.endswith('"'):
                     value = value[1:-1]
                 elif value.startswith("'") and value.endswith("'"):
                     value = value[1:-1]
-                
+
                 os.environ[key] = value
 
 # Load .env at import time
@@ -110,16 +110,17 @@ load_env_file()
 
 class DatabaseConfig:
     """Database connection configuration."""
-    
-    def __init__(self, host: str, user: str, password: str, 
-                 database: str = None, port: int = 3306, name: str = "default"):
+
+    def __init__(self, host: str, user: str, password: str,
+                 database: Optional[str] = None, port: int = 3306,
+                 name: str = "default"):
         self.host = host
         self.user = user
         self.password = password
         self.database = database
         self.port = port
         self.name = name
-    
+
     def to_dict(self) -> Dict:
         """Convert to dictionary for mysql-connector."""
         config = {
@@ -131,7 +132,7 @@ class DatabaseConfig:
         if self.database:
             config["database"] = self.database
         return config
-    
+
     def __repr__(self):
         # Don't show password in repr
         return f"DatabaseConfig(name={self.name}, host={self.host}, user={self.user}, database={self.database})"
@@ -146,17 +147,17 @@ def load_database_configs() -> List[DatabaseConfig]:
     # Try to load DB1..DB10
     for i in range(1, 11):
         prefix = f"DB{i}_"
-        
+
         host = os.environ.get(f"{prefix}HOST")
         user = os.environ.get(f"{prefix}USER")
         password = os.environ.get(f"{prefix}PASSWORD")
-        
+
         # If host, user, password are all present, create config
         if host and user and password:
             database = os.environ.get(f"{prefix}DATABASE", None)
             port = int(os.environ.get(f"{prefix}PORT", 3306))
             name = os.environ.get(f"{prefix}NAME", f"db{i}")
-            
+
             config = DatabaseConfig(
                 host=host,
                 user=user,
@@ -166,13 +167,13 @@ def load_database_configs() -> List[DatabaseConfig]:
                 name=name
             )
             configs.append(config)
-    
+
     if not configs:
         raise ValueError(
             "No database configurations found in .env file. "
             "Please create a .env file based on .env.example"
         )
-    
+
     return configs
 
 def get_primary_config() -> DatabaseConfig:
@@ -198,21 +199,21 @@ except ValueError:
 if __name__ == "__main__":
     # Test configuration loading
     print("=== MySQL Intelligence Configuration ===\n")
-    
+
     try:
         configs = load_database_configs()
         print(f"✅ Found {len(configs)} database configuration(s):\n")
-        
+
         for i, config in enumerate(configs, 1):
             print(f"{i}. {config.name}")
             print(f"   Host: {config.host}:{config.port}")
             print(f"   User: {config.user}")
             print(f"   Database: {config.database or '(no default database)'}")
             print()
-        
+
         print("✅ Configuration loaded successfully!")
         print("\nNote: Passwords are loaded but not displayed for security.")
-        
+
     except ValueError as e:
         print(f"❌ Error: {e}")
         print("\nPlease create a .env file based on .env.example")

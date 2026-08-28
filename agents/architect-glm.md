@@ -1,7 +1,6 @@
 ---
 name: architect-glm
 description: GLM 5.3 Flash/max design and architecture advisor. Use when the GLM lane is selected; OpenAI uses sw-architect and Claude uses architect.
-model: zai/glm-5.3-flash
 thinking: max
 tools: read, grep, find, ls, bash
 systemPromptMode: replace

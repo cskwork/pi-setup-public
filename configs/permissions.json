@@ -37,9 +37,8 @@
     "bash": {
       "*": "allow",
 
-      "rm -r*": "ask",
-      "rm -fr*": "ask",
-      "rm --recursive *": "ask",
+      "rm -*r*": "ask",
+      "rm -*R*": "ask",
       "shred *": "ask",
       "truncate *": "ask",
       "dd *": "ask",
@@ -65,23 +64,7 @@
       "git push *--force*": "ask",
       "git push *--delete*": "ask",
 
-      "rm -rf /": {
-        "action": "deny",
-        "reason": "Refusing to recursively delete the filesystem root"
-      },
-      "rm -fr /": {
-        "action": "deny",
-        "reason": "Refusing to recursively delete the filesystem root"
-      },
-      "rm -rf --no-preserve-root /": {
-        "action": "deny",
-        "reason": "Refusing to recursively delete the filesystem root"
-      },
-      "rm -R /": {
-        "action": "deny",
-        "reason": "Refusing to recursively delete the filesystem root"
-      },
-      "rm --recursive /": {
+      "rm * /": {
         "action": "deny",
         "reason": "Refusing to recursively delete the filesystem root"
       },
