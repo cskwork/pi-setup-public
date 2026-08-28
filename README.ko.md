@@ -11,7 +11,8 @@
 ```bash
 git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
 ~/pi-setup-public/install.sh
-pi auth   # 사용하는 프로바이더에 로그인
+pi auth                      # OAuth 프로바이더 (anthropic, openai-codex, amazon-bedrock)
+$EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 # 셸을 다시 연 뒤 pi 재시작
 ```
 
@@ -24,13 +25,31 @@ if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
 .\install.ps1
-pi auth   # 사용하는 프로바이더에 로그인
+pi auth                      # OAuth 프로바이더 (anthropic, openai-codex, amazon-bedrock)
+notepad $HOME\.pi-setup.env  # API 키 프로바이더, 예: ZAI_API_KEY=...
 # PowerShell을 다시 연 뒤 pi 재시작
 ```
 
 설치 스크립트는 `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`를 이 저장소로 심볼릭 링크하고, 아래 패키지를 전부 설치하고, 기본 권한 설정을 배치한다. 기존 파일은 백업되며 덮어쓰지 않는다.
 
 또한 셸 프로필에 관리 블록을 추가해 Pi에만 V8 힙 8 GiB를 준다. 다른 Node 프로세스는 기본값을 유지하고, 기존 `NODE_OPTIONS`도 보존하며, 호출할 때마다 현재 NVM/npm의 Pi 실행 파일을 찾는다. 저장소를 옮겼다면 설치 스크립트를 다시 실행한다. 제거하려면 `pi-setup Pi-only Node heap` 표식 사이의 블록을 지운다. Windows PowerShell 5.1과 PowerShell 7을 모두 사용하면 각 셸에서 `install.ps1`을 한 번씩 실행한다. 조직 정책이 PowerShell 프로필 실행을 강제로 막는 환경에서는 관리자 정책 변경이 필요하다.
+
+### 프로바이더 자격증명
+
+Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때만 그 프로바이더를 등록한다. `settings.json`이 참조하는 모델의 프로바이더가 등록되지 않으면 서브에이전트 실행마다 `[pi-subagents] Skipping fallback model '<id>' because it is unavailable in this environment.` 경고가 찍힐다.
+
+그래서 설치 스크립트는 추적되는 `.env.example`을 복사해 `~/.pi-setup.env`를 권한 `600`으로 만들고, Pi 실행 전에 `scripts/pi-env.sh`를 읽는 두 번째 관리 블록을 셸 프로필에 추가한다. 이 로더는:
+
+- `~/.pi-setup.env`를 **기본값으로만** 읽는다. 이미 export된 변수가 항상 이기므로 `ZAI_API_KEY=... pi ...` 같은 일회성 지정과 CI 시크릿이 그대로 유지된다.
+- `ZAI_API_KEY`와 `Z_AI_API_KEY`를 양방향으로 미러링한다. Pi는 앞의 이름을, Z.ai Vision MCP 서버는 뒤의 이름을 읽기 때문이다. 키는 둘 중 아무 이름으로나 한 번만 저장하면 된다.
+
+실제 비밀 파일은 저장소 **밖에** 있으므로 커밋될 수 없다. 경로는 `PI_SETUP_ENV_FILE`로 바꿀 수 있다.
+
+**키가 없는 것은 오류가 아니다.** pi-subagents는 등록되지 않은 프로바이더의 모델마다 실행당 한 번씩 경고를 찍고, 이를 끄는 설정은 없다. 그래서 `settings.json`이 경로로 쓰지만 키가 없는 프로바이더에는 로더가 `unset-placeholder` 값을 넣는다. 그러면 프로바이더가 등록되어 경고가 사라진다. 자격증명은 틀리지만 그 경로는 이미 조용하다 — Pi가 모델을 호출하고, 실패하면 폴백 체인의 다음 후보로 넘어간다. 진짜 키는 항상 placeholder를 이기며, 같은 셸에서 프로필을 다시 source 해도 마찬가지다. 경고를 보고 싶으면 `PI_SETUP_NO_PLACEHOLDER=1`로 끄면 된다.
+
+설치 마지막에는 `settings.json`이 경로로 쓰지만 자격증명이 없는 프로바이더를 문제가 아닌 안내로 알려준다. 로더를 제거하려면 `pi-setup provider env` 표식 사이의 블록을 지우면 된다.
+
+**API 키 프로바이더는 모두 선택 사항이다.** 키가 아예 없으면 각 역할은 그냥 폴백 체인의 다음 모델을 조용히 쓴다. 키가 틀렸을 때도 호출이 실패하면 다음 후보로 내려가므로 동작은 같다.
 
 기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. 서브에이전트는 역할별 Sol/Luna 경로와 Anthropic·Z.ai 폴백을 사용한다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다.
 
@@ -168,6 +187,7 @@ agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py — 문서/설정 불일치 CI 가드
                      pi-node-heap.sh/.ps1 — Pi 전용 8 GiB 런처
+                     pi-env.sh/.ps1 — 프로바이더 자격증명 로더 + 키 이름 미러링
                      prune-sessions.sh — 세션 기록 보존 기간 정리
 tests/               셸·PowerShell 런처 회귀 검사
 install.sh           macOS/Linux/Git Bash 부트스트랩
