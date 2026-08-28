@@ -2,6 +2,52 @@
 
 ## Unreleased
 
+### Added
+
+- **Portable provider-credential setup** — the installers now create
+  `~/.pi-setup.env` (mode `600`) from the tracked `.env.example` and add a
+  managed `pi-setup provider env` profile block that sources
+  `scripts/pi-env.{sh,ps1}` before Pi starts. The live secret file lives
+  outside the repository, so it cannot be committed or reach the public
+  mirror. `PI_SETUP_ENV_FILE` overrides the path.
+- **Install-time credential check** — the installers name every provider
+  routed in `settings.json` that has no credential and print the exact
+  variable to set, instead of leaving the failure to appear later as a
+  per-subagent runtime warning.
+
+### Fixed
+
+- **No key now means no warning.** pi-subagents warns once per launch for every
+  model whose provider is unregistered, and offers no setting to mute it. The
+  loader now exports a placeholder value for a routed provider that has no key,
+  which registers the provider and silences the warning. The wrong-credential
+  path was already quiet: Pi tries the model, the call fails, and it moves to
+  the next candidate. A real key always overrides the placeholder, including on
+  re-source in the same shell; `PI_SETUP_NO_PLACEHOLDER=1` opts out.
+- **`zai/glm-5.3-flash` fallback warning on every subagent launch** — Pi reads
+  `ZAI_API_KEY`, but the key was exported as `Z_AI_API_KEY` (the name the Z.ai
+  Vision MCP server uses). The `zai` provider therefore never registered, and
+  all 29 `zai` routes in `settings.json` printed
+  `[pi-subagents] Skipping fallback model 'zai/glm-5.3-flash' because it is
+  unavailable in this environment.` The loader now mirrors the two names in
+  both directions from one stored secret, so a fresh machine does not
+  reproduce the warning.
+
+### Verification
+
+`tests/test-pi-env.sh` covers the loader, alias normalization in both
+directions, exported-environment precedence, secret-file creation and
+non-clobbering, both managed profile blocks, and the routed-provider warning.
+It is a gate in `check-launchers` on macOS and Git Bash. Two mutations
+(removing alias normalization; removing env precedence) were confirmed to fail
+it.
+
+Measured end to end in a fresh login shell with no key anywhere: `coder`, `qa`,
+and `architect-glm` each exited 0 with zero stderr. With the real key present,
+`architect-glm` still ran on GLM with zero stderr. Each run used an isolated
+`PI_SUBAGENTS_TEMP_ROOT`, because model exclusions are per-process and leak
+between back-to-back runs otherwise.
+
 ## v0.5.1 — 2026-08-28
 
 Hardens setup and publishing while keeping Pi's model routing, shell launchers,

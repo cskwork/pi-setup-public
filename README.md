@@ -11,7 +11,8 @@ My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skil
 ```bash
 git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
 ~/pi-setup-public/install.sh
-pi auth   # log in to your providers
+pi auth                      # OAuth providers (anthropic, openai-codex, amazon-bedrock)
+$EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 # restart your shell, then restart pi
 ```
 
@@ -24,13 +25,31 @@ if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
 .\install.ps1
-pi auth   # log in to your providers
+pi auth                      # OAuth providers (anthropic, openai-codex, amazon-bedrock)
+notepad $HOME\.pi-setup.env  # API-key providers, e.g. ZAI_API_KEY=...
 # reopen PowerShell, then restart pi
 ```
 
 The installers link `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, install every package below, and deploy the default permission config. Existing files are backed up, never overwritten.
 
 They also add a managed shell-profile block that gives only Pi an 8 GiB V8 heap. Other Node processes keep their defaults, existing `NODE_OPTIONS` values are preserved, and the active NVM/npm Pi executable is resolved on every call. Re-run the installer after moving the checkout. Remove the block between the `pi-setup Pi-only Node heap` markers to uninstall it. If you use both Windows PowerShell 5.1 and PowerShell 7, run `install.ps1` once in each. Organization-enforced policies can still block PowerShell profiles; those require an administrator policy change.
+
+### Provider credentials
+
+Pi registers a provider only when that provider's documented environment variable is set. A model routed in `settings.json` whose provider never registers makes every subagent launch print `[pi-subagents] Skipping fallback model '<id>' because it is unavailable in this environment.`
+
+So the installers create `~/.pi-setup.env` (mode `600`) from the tracked `.env.example`, and add a second managed profile block that sources `scripts/pi-env.sh` before Pi runs. That loader:
+
+- reads `~/.pi-setup.env` as **defaults only** — an already-exported variable always wins, so `ZAI_API_KEY=... pi ...` and CI secrets still override it;
+- mirrors `ZAI_API_KEY` and `Z_AI_API_KEY` in both directions, because Pi reads the first name and the Z.ai Vision MCP server reads the second. Store the key once under either name.
+
+The live secret file sits **outside** the repository, so it cannot be committed. Override its path with `PI_SETUP_ENV_FILE`.
+
+**A missing key is not an error.** pi-subagents warns once per launch for every model whose provider is not registered, and it has no setting to mute that. So for a provider routed in `settings.json` with no key, the loader exports a `unset-placeholder` value. That registers the provider and silences the warning; the credential is then wrong, but that path is already quiet — Pi tries the model, the call fails, and it moves to the next candidate in the fallback chain. A real key always overrides the placeholder, including when you re-source the profile in the same shell. Set `PI_SETUP_NO_PLACEHOLDER=1` to opt out and see the warnings.
+
+At the end of a run the installer names every provider routed in `settings.json` that has no credential, as information rather than a problem. Remove the block between the `pi-setup provider env` markers to uninstall the loader.
+
+**Every API-key provider is optional.** With no key at all, each affected role simply uses the next model in its fallback chain, silently. An invalid key behaves the same way, because the failed call moves down the chain.
 
 The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`; subagents use role-specific Sol/Luna routes with Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash.
 
@@ -171,6 +190,7 @@ skills/              27 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
+                     pi-env.sh/.ps1 — provider credential loader + key aliasing
                      pi-node-heap.sh/.ps1 — Pi-only 8 GiB launchers
                      prune-sessions.sh — session transcript retention
 tests/               shell and PowerShell launcher regression checks

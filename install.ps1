@@ -50,11 +50,13 @@ function Install-Link {
 function Set-ManagedProfileBlock {
     param(
         [Parameter(Mandatory = $true)][string]$ProfilePath,
-        [Parameter(Mandatory = $true)][string]$WrapperPath
+        [Parameter(Mandatory = $true)][string]$WrapperPath,
+        [Parameter(Mandatory = $true)][string]$StartMarker,
+        [Parameter(Mandatory = $true)][string]$EndMarker
     )
 
-    $start = "# >>> pi-setup Pi-only Node heap >>>"
-    $end = "# <<< pi-setup Pi-only Node heap <<<"
+    $start = $StartMarker
+    $end = $EndMarker
     $quotedWrapper = $WrapperPath.Replace("'", "''")
     $block = "$start`r`n. '$quotedWrapper'`r`n$end"
     $content = if (Test-Path -LiteralPath $ProfilePath) {
@@ -121,10 +123,79 @@ New-Item -ItemType Directory -Path $permissionDirectory -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $Repo "configs\permissions.json") `
     -Destination (Join-Path $permissionDirectory "config.json") -Force
 
-Write-Host "==> Installing Pi-only 8 GiB Node heap wrapper"
+Write-Host "==> Creating machine-local secret file"
+$envFile = if ($env:PI_SETUP_ENV_FILE) { $env:PI_SETUP_ENV_FILE }
+           else { Join-Path $HOME ".pi-setup.env" }
+if (Test-Path -LiteralPath $envFile) {
+    Write-Host "  OK $envFile (already present, left untouched)"
+}
+else {
+    Copy-Item -LiteralPath (Join-Path $Repo ".env.example") -Destination $envFile
+    Write-Host "  NEW $envFile created from .env.example - add your provider keys"
+}
+
+Write-Host "==> Installing shell profile wrappers"
 $wrapper = Join-Path $Repo "scripts\pi-node-heap.ps1"
-Set-ManagedProfileBlock -ProfilePath $PROFILE.CurrentUserAllHosts -WrapperPath $wrapper
+Set-ManagedProfileBlock -ProfilePath $PROFILE.CurrentUserAllHosts -WrapperPath $wrapper `
+    -StartMarker "# >>> pi-setup Pi-only Node heap >>>" `
+    -EndMarker "# <<< pi-setup Pi-only Node heap <<<"
+$envWrapper = Join-Path $Repo "scripts\pi-env.ps1"
+Set-ManagedProfileBlock -ProfilePath $PROFILE.CurrentUserAllHosts -WrapperPath $envWrapper `
+    -StartMarker "# >>> pi-setup provider env >>>" `
+    -EndMarker "# <<< pi-setup provider env <<<"
 . $wrapper
+. $envWrapper
+
+Write-Host "==> Checking provider credentials"
+# provider id -> environment variable documented in Pi's docs/providers.md
+$envByProvider = @{
+    "zai"           = "ZAI_API_KEY"
+    "zai-coding-cn" = "ZAI_CODING_CN_API_KEY"
+    "google"        = "GEMINI_API_KEY"
+    "openai"        = "OPENAI_API_KEY"
+    "xai"           = "XAI_API_KEY"
+    "openrouter"    = "OPENROUTER_API_KEY"
+    "deepseek"      = "DEEPSEEK_API_KEY"
+    "groq"          = "GROQ_API_KEY"
+    "mistral"       = "MISTRAL_API_KEY"
+    "kimi-coding"   = "KIMI_API_KEY"
+}
+# These authenticate through `pi auth` (auth.json), not an env var.
+$oauthProviders = @("anthropic", "openai-codex", "amazon-bedrock")
+$settingsJson = Get-Content -LiteralPath (Join-Path $Repo "settings.json") -Raw | ConvertFrom-Json
+$referenced = New-Object System.Collections.Generic.HashSet[string]
+foreach ($override in $settingsJson.subagents.agentOverrides.PSObject.Properties.Value) {
+    $models = @($override.model) + @($override.fallbackModels)
+    foreach ($model in $models) {
+        if ($model -is [string] -and $model.Contains("/")) {
+            [void]$referenced.Add($model.Split("/")[0])
+        }
+    }
+}
+# scripts/pi-env.ps1 sets this for providers with no key. It silences the
+# per-launch warning but is not a credential, so report it as missing.
+$placeholder = "unset-placeholder"
+$clean = $true
+foreach ($provider in ($referenced | Sort-Object)) {
+    if ($oauthProviders -contains $provider) { continue }
+    if (-not $envByProvider.ContainsKey($provider)) {
+        Write-Warning "provider '$provider' is routed in settings.json but this installer does not know its credential variable - verify manually."
+        $clean = $false
+        continue
+    }
+    $variable = $envByProvider[$provider]
+    $value = [System.Environment]::GetEnvironmentVariable($variable)
+    if (-not $value -or $value -eq $placeholder) {
+        Write-Host "  INFO provider '$provider' is routed in settings.json but $variable is unset."
+        Write-Host "    That is fine: those roles fall through to the next model in their fallback chain,"
+        Write-Host "    and the startup warning stays suppressed."
+        Write-Host "    To actually use it, add $variable to $envFile."
+        $clean = $false
+    }
+}
+if ($clean) {
+    Write-Host "  OK every provider routed in settings.json has a credential"
+}
 
 Write-Host "==> Installing Pi packages (list comes from settings.json)"
 $settings = Get-Content -LiteralPath (Join-Path $Repo "settings.json") -Raw | ConvertFrom-Json
@@ -168,7 +239,8 @@ if (-not (Get-Command superqa -CommandType Application -ErrorAction SilentlyCont
 
 Write-Host ""
 Write-Host "Done. Next steps:"
-Write-Host "  1. pi auth        # log in to your providers"
-Write-Host "  2. reopen PowerShell, then restart Pi"
+Write-Host "  1. pi auth        # OAuth providers (anthropic, openai-codex, amazon-bedrock)"
+Write-Host "  2. add API-key providers to $envFile  # e.g. ZAI_API_KEY=..."
+Write-Host "  3. reopen PowerShell, then restart Pi"
 Write-Host "     If profiles are blocked: Set-ExecutionPolicy -Scope CurrentUser RemoteSigned"
-Write-Host "  3. optional: verify browser tooling - npx pi-agent-browser-doctor"
+Write-Host "  4. optional: verify browser tooling - npx pi-agent-browser-doctor"
