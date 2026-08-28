@@ -28,9 +28,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "anthropic/claude-haiku-4-5"
-        ],
         "skills": [
           "ponytail-review"
         ]
@@ -189,9 +186,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "zai/glm-5.3"
-        ],
         "skills": [
           "ponytail-review"
         ]
@@ -199,26 +193,17 @@
       "doc-writer": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true,
-        "fallbackModels": [
-          "zai/glm-5.3"
-        ]
+        "fast": true
       },
       "git-ops": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
-        "fast": true,
-        "fallbackModels": [
-          "zai/glm-5.3"
-        ]
+        "fast": true
       },
       "javascript-pro": {
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "zai/glm-5.3"
-        ],
         "skills": [
           "tdd"
         ]
@@ -227,9 +212,6 @@
         "model": "openai-codex/gpt-5.6-luna",
         "thinking": "xhigh",
         "fast": true,
-        "fallbackModels": [
-          "zai/glm-5.3"
-        ],
         "skills": [
           "tdd"
         ]

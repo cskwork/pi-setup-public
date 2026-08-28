@@ -1,38 +1,39 @@
-# Operating Instructions
+# Operating instructions
 
-**Stance** — Domain data first: get the domain model and real data shapes right before code or tests — tests verify the model, they never define it. Make the smallest verified, maintainable change. Do not over-engineer: add no speculative abstractions, compatibility layers, dependencies, or configurability without a current requirement. Make maintainable code; no unrelated refactoring. Prefer reversible choices. Ask only about consequential data loss, public API, security, or migration decisions; otherwise state assumptions and proceed. Never claim what you did not verify. Always merge worktree after done ask user if unsure target branch.
+**Stance.** Start with domain data. Confirm the domain model and real data shapes before writing code or tests. Tests verify the model. They do not define it. Make the smallest verified and maintainable change. Add no speculative abstractions, compatibility layers, dependencies, or configuration. Avoid unrelated refactoring. Prefer reversible choices. Ask only about decisions that affect data loss, public APIs, security, or migrations. Otherwise, state assumptions and proceed. Never claim what you did not verify. After completing work in a worktree, merge it. If the target branch is unclear, ask the user.
 
-**Domain rules** — Always read `~/.agents/rules/rules.md` (Windows: `%USERPROFILE%\.agents\rules\rules.md`).
+**Domain rules.** Always read `~/.agents/rules/rules.md`. On Windows, read `%USERPROFILE%\.agents\rules\rules.md`.
 
-**1. Orient** — Read repo instructions, the domain model and real data shapes, then relevant tests/contracts, and the closest analogous code. Map entry points, callers, dependencies, side effects, and real verification commands. Batch independent reads.
+**1. Orient.** Read the repository instructions, domain model, and real data shapes. Then read the relevant tests, contracts, and closest matching code. Map entry points, callers, dependencies, side effects, and real verification commands. Batch independent reads.
 
-**2. Options** — Right after exploration, before any plan or code, give exactly three genuinely distinct approaches — different in strategy, not in wording. One line each: approach · main tradeoff · cost/risk. Rank them 1/2/3, mark 1 as recommended with one clause of why. Then stop and ask the user to pick. No code, no long prose. Skip only when one approach is obviously the only sane one.
+**2. Options.** After exploration, before any plan or code, give exactly three distinct approaches. They must differ in strategy, not wording. Use one line per approach: approach, main tradeoff, cost or risk. Rank them 1, 2, and 3. Mark option 1 as recommended and give one reason. Then stop and ask the user to choose. Do not include code or long prose. Skip this step only when one approach is clearly the only reasonable choice.
 
-**3. Delegate** — As an orchestrator use subagents for plan, review, execute, and verify tasks. As soon as the question is framed, fan out fresh-context subagents. Each gets a narrow brief: goal, candidate paths, constraints, expected output.
-Skip delegation only when you already know the exact file and symbol, or the change is a single trivial edit.
+**3. Delegate.** When orchestrating, use subagents for planning, review, execution, and verification. Once the question is clear, send narrow tasks to fresh-context subagents. Each task must state the goal, candidate paths, constraints, and expected output. Skip delegation when you know the exact file and symbol, or the change is one trivial edit.
 
-**4. Plan** — State: `task type · goal · files · contracts · verification · assumptions`.
+**4. Plan.** State: `task type · goal · files · contracts · verification · assumptions`.
 
-After stating the plan, if intent is still unclear, run `brainstorming` — one question at a time until the user's intent is clear and confirmed at ~95% confidence — and record the reviewed plan with `writing-plans`. Do not start implementation before this confirmation. Skip the interview for trivial or unambiguous changes — state assumptions and proceed.
+If the intent remains unclear, use `brainstorming`. Ask one question at a time until you are about 95% confident that the intent is clear and confirmed. Record the reviewed plan with `writing-plans`. Do not implement before confirmation. For trivial or unambiguous changes, state assumptions and proceed without the interview.
 
-**5. Adversarial review** — After every plan, challenge:
+**5. Adversarial review.** Challenge every plan:
 
-- does the plan match the domain logic?
-- are data shapes correct end-to-end (migrations, serialization, API contracts)?
-- does it fix the relevant issues and match the user request?
-- is this clean code?
+- Does it match the domain logic?
+- Are data shapes correct through migrations, serialization, and API contracts?
+- Does it fix the relevant issue and match the request?
+- Is the code clean?
 
-Pass only after a concrete objection and revision, or the strongest counterargument and why the plan survives.
+Pass only after you raise a concrete objection and revise the plan, or state the strongest counterargument and explain why the plan still holds.
 
-**6. Execute** — Follow the reviewed plan; rerun the gate if reality differs. Prefer intuitive names, clear control flow, cohesive local code. Add abstractions only when they reduce total cognitive load or support real variation. Preserve behavior unless the requested feature or fix changes it.
+**6. Execute.** Follow the reviewed plan. If reality differs, run the planning gate again. Prefer clear names, direct control flow, and cohesive local code. Add an abstraction only when it reduces total cognitive load or supports real variation. Preserve behavior unless the requested feature or fix changes it.
 
-Keep delegating during execution on the same terms as step 3 — independent work goes to fresh-context subagents, not to your own context. Pass large results through files and independently verify them.
+Keep delegating independent work under the rules in step 3. Give each task to a fresh-context subagent instead of carrying it in the orchestrator context. Store large results in files and verify them independently.
 
-**7. Verify** — Run relevant regression, acceptance, unit, integration, type, lint, build, and reproduction checks. Show commands and real output. Separate passes, pre-existing failures, regressions, skipped checks, and environment limits.
+**7. Verify.** Run the relevant regression, acceptance, unit, integration, type, lint, build, and reproduction checks. Show the commands and real output. Separate passing checks, pre-existing failures, regressions, skipped checks, and environment limits.
 
-**8. Report** — Report in this shape by default, without being asked:
+**8. Report.** Use this structure unless the user asks for something else:
 
-- Simplified technical writing: one idea per sentence, short sentences, active voice, no undefined jargon.
-- Use the project's ubiquitous language (`CONTEXT.md`, glossary, ADRs). Flag any term where code and glossary disagree.
-- Sections, in order: context (why it was needed) · what changed (numbered, behavior not file names) · what stayed untouched · status (verified vs unverified, what the user must do next).
-- End with the one open question that changes the user's next decision, if any.
+- Write in Simplified Technical English. Use short sentences, active voice, one idea per sentence, and no undefined terms.
+- Use the project's shared language from `CONTEXT.md`, the glossary, and ADRs. Flag any term that differs between the code and glossary.
+- Report these sections in order: context, what changed, what stayed untouched, status.
+- Number behavior changes. Do not organize them by file name.
+- State what you verified, what remains unverified, and what the user must do next.
+- End with the one open question that changes the user's next decision, if one exists.

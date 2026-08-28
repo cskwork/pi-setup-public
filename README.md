@@ -51,13 +51,13 @@ At the end of a run the installer names every provider routed in `settings.json`
 
 **Every API-key provider is optional.** With no key at all, each affected role simply uses the next model in its fallback chain, silently. An invalid key behaves the same way, because the failed call moves down the chain.
 
-The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`; subagents use role-specific Sol/Luna routes with Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash.
+The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Luna subagents use `xhigh` thinking with fast priority mode; Sol routes retain Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash.
 
 Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
 ## What's inside
 
-### Skills (27)
+### Skills (28)
 
 | Skill | What it does | Source |
 | --- | --- | --- |
@@ -72,6 +72,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `pi-settings` | Audit and configure pi's own settings.json — skill isolation, subagent routing, packages | local |
 | `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions — reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | Test-driven development — red-green-refactor, integration tests, mocking patterns | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `unslop` | Remove AI writing patterns and restore a human voice | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop) |
 | `code-review` | Review changes since a fixed point along Standards and Spec axes, in parallel sub-agents | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `implement` | Implement a piece of work based on a spec or tickets | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `research` | Investigate against high-trust primary sources, capture findings as Markdown | [mattpocock/skills](https://github.com/mattpocock/skills) |
@@ -124,7 +125,7 @@ Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-chang
 | Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
 | --- | --- | --- | --- | --- |
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
-| coder | luna · max | opus-5 · high | codex sol · high | glm-5.3 · max |
+| coder | luna · xhigh · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
@@ -192,7 +193,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              27 curated skills
+skills/              28 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
