@@ -50,16 +50,17 @@ install_pi_heap_wrapper() {
   esac
 
   for profile in "${profiles[@]}"; do
-    result="$(PROFILE_PATH="$profile" WRAPPER_PATH="$REPO/scripts/pi-node-heap.sh" "$PYTHON" <<'PY'
+    result="$("$PYTHON" - "$profile" "$REPO/scripts/pi-node-heap.sh" <<'PY'
 import os
 import shlex
+import sys
 from pathlib import Path
 
 start = "# >>> pi-setup Pi-only Node heap >>>"
 end = "# <<< pi-setup Pi-only Node heap <<<"
-path = Path(os.environ["PROFILE_PATH"]).expanduser()
+path = Path(sys.argv[1]).expanduser()
 write_path = path.resolve() if path.is_symlink() else path
-source_line = f". {shlex.quote(os.environ['WRAPPER_PATH'])}"
+source_line = f". {shlex.quote(sys.argv[2])}"
 block = f"{start}\n{source_line}\n{end}"
 write_path.parent.mkdir(parents=True, exist_ok=True)
 text = write_path.read_text(encoding="utf-8") if write_path.exists() else ""
@@ -110,7 +111,7 @@ install_pi_heap_wrapper
 . "$REPO/scripts/pi-node-heap.sh"
 
 echo "==> Installing pi packages (list comes from settings.json)"
-PACKAGES="$("$PYTHON" -c "import json;print('\n'.join(json.load(open('$REPO/settings.json'))['packages']))")"
+PACKAGES="$("$PYTHON" -c "import json,sys;print('\n'.join(json.load(sys.stdin)['packages']))" < "$REPO/settings.json")"
 while IFS= read -r pkg; do
   [ -z "$pkg" ] && continue
   case "$pkg" in
