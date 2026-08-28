@@ -144,6 +144,11 @@ frontmatter의 `model:`을 `agentOverrides`보다 **먼저** 해석한다. 따�
 `agents/*.md`에는 의도적으로 `model:` 줄이 없다 — 라우팅의 단일 진실 공급원은
 프로필이다. 특정 에이전트가 프로필을 절대 따르면 안 될 때만 다시 넣는다.
 
+외부 스킬이나 확장이 등록한 에이전트에도 같은 규칙이 적용된다. 시작할 때
+`Unknown subagent model 'opus'`(또는 `sonnet`) 오류가 나면 외부 에이전트
+프롬프트를 고친다. `model:` 줄을 제거하거나 정확한 provider/model ID를 쓴다.
+frontmatter가 먼저 이기므로 settings override만으로는 이 핀을 고칠 수 없다.
+
 **팩 프로필** — `two-pack`과 `four-pack`은 `glm-max` 모델을 해당 팩이 실제로
 돌리는 게이트에만 고정한다 (two-pack: coder → qa; four-pack: specifier →
 coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 SwarmForge

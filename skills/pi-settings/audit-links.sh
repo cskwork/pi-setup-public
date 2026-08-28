@@ -4,7 +4,8 @@
 set -euo pipefail
 
 REPO="${PI_SETUP_REPO:-$HOME/pi-setup}"
-HUB="${AGENTS_HUB:-$HOME/.agents/skills}"
+AGENTS_ROOT="${AGENTS_ROOT:-$HOME/.agents}"
+HUB="${AGENTS_HUB:-$AGENTS_ROOT/skills}"
 FIX=0
 [ "${1:-}" = "--fix" ] && FIX=1
 
@@ -28,6 +29,24 @@ for link in "$HUB"/*; do
   esac
 done
 
+# Stale backup directories beside ~/.agents/skills can be discovered as agent
+# bundles. Their agents/*.md may shadow current agents and pin dead model aliases.
+shadow_bundles=0
+for dir in "$AGENTS_ROOT"/skills-*; do
+  [ -d "$dir" ] || continue
+  if find "$dir" -type f -path '*/agents/*.md' -print -quit 2>/dev/null | grep -q .; then
+    shadow_bundles=$((shadow_bundles + 1))
+    if [ "$FIX" = 1 ]; then
+      dest="$AGENTS_ROOT/.backups/skills/$(basename "$dir")-$(date +%Y%m%d-%H%M%S)"
+      mkdir -p "$(dirname "$dest")"
+      mv "$dir" "$dest"
+      echo "moved     $(basename "$dir") -> $dest (no longer discoverable)"
+    else
+      echo "shadow   $dir contains agents/*.md and may override current agents"
+    fi
+  fi
+done
+
 echo "---"
 if [ "$leaks" = 0 ]; then
   echo "clean: no hub skill links back into $REPO"
@@ -35,6 +54,13 @@ elif [ "$FIX" = 1 ]; then
   echo "severed $leaks link(s); pi-setup skills are now pi-only"
 else
   echo "$leaks leak(s); rerun with --fix to sever"
+fi
+if [ "$shadow_bundles" = 0 ]; then
+  echo "clean: no discoverable skills-* backup contains agent prompts"
+elif [ "$FIX" = 1 ]; then
+  echo "moved $shadow_bundles shadow bundle(s) under .agents/.backups/"
+else
+  echo "$shadow_bundles shadow bundle(s); rerun with --fix to move safely"
 fi
 
 # The exclusion is what actually keeps pi off the hub — verify it is still set.
