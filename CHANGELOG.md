@@ -21,6 +21,12 @@
 
 ### Fixed
 
+- **Pi gets a process-scoped 8 GiB V8 heap on every supported shell** —
+  `install.sh` manages bash/zsh/Git Bash profiles and the new `install.ps1`
+  manages Windows PowerShell 5.1 or PowerShell 7. Both wrappers preserve
+  existing `NODE_OPTIONS`, resolve the active NVM/npm Pi on every call, and
+  leave all other Node processes unchanged. Cross-platform regression checks
+  cover argument forwarding, exit codes, profile idempotence, and heap size.
 - **README skill tables were stale** — header said 16, table had 25 rows,
   `skills/` has 26 (the `pi-settings` row was missing). The Layout block
   repeated the wrong 16 too. Both READMEs, both languages.
