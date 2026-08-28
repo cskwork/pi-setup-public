@@ -169,4 +169,18 @@ if grep -q '"zai/' "$ROOT/settings.json"; then
   assert_contains "$warn_run" "That is fine"
 fi
 
+# 9. The installer must survive a legacy single-byte console. Windows Git Bash
+#    runs Python with the cp1252 codepage, where a non-ASCII status glyph raises
+#    UnicodeEncodeError and aborts the install. Forcing that encoding here
+#    reproduces the Windows-only failure on any machine.
+cp1252_run="$(env -u ZAI_API_KEY -u Z_AI_API_KEY PYTHONIOENCODING=cp1252 \
+  HOME="$TMP/inst-home" PI_DIR="$TMP/inst-home/.pi/agent" \
+  PI_SETUP_ENV_FILE="$TMP/does-not-exist.env" SHELL="$login_shell" \
+  PATH="$fake_tools:$ORIGINAL_PATH" bash "$ROOT/install.sh" 2>&1)" \
+  || fail "installer aborted under a cp1252 console: $(printf '%s' "$cp1252_run" | tail -3)"
+case "$cp1252_run" in
+  *UnicodeEncodeError*) fail "installer emitted non-ASCII text a cp1252 console cannot encode" ;;
+esac
+assert_contains "$cp1252_run" "Checking provider credentials"
+
 printf 'PASS: provider env loader, alias normalization, and installer secret file\n'

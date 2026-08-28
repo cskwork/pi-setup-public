@@ -168,8 +168,10 @@ missing = sorted(
     for provider in referenced - OAUTH_PROVIDERS
     if provider in ENV_BY_PROVIDER and not credential(provider)
 )
+# ASCII only: this block is encoded with the console codepage, and Windows
+# cp1252 cannot represent box-drawing or symbol characters.
 for provider in missing:
-    print(f"  \u2139 provider '{provider}' is routed in settings.json but "
+    print(f"  INFO provider '{provider}' is routed in settings.json but "
           f"{ENV_BY_PROVIDER[provider]} is unset.")
     print("    That is fine: those roles fall through to the next model in "
           "their fallback chain, and the startup warning stays suppressed.")
@@ -177,10 +179,10 @@ for provider in missing:
           f"{os.environ.get('PI_SETUP_ENV_FILE') or '~/.pi-setup.env'}.")
 unknown = sorted(referenced - OAUTH_PROVIDERS - set(ENV_BY_PROVIDER))
 for provider in unknown:
-    print(f"  \u26a0 provider '{provider}' is routed in settings.json but this "
-          "installer does not know its credential variable — verify manually.")
+    print(f"  WARN provider '{provider}' is routed in settings.json but this "
+          "installer does not know its credential variable - verify manually.")
 if not missing and not unknown:
-    print("  \u2713 every provider routed in settings.json has a credential")
+    print("  OK every provider routed in settings.json has a credential")
 PY
 }
 
