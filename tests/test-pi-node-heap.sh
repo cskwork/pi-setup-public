@@ -65,9 +65,10 @@ fake_tools="$TMP/tools"
 mkdir -p "$fake_tools" "$TMP/home/dotfiles"
 printf '# existing profile\n' > "$TMP/home/dotfiles/zshrc"
 profile_symlink=0
-if ln -s "dotfiles/zshrc" "$TMP/home/.zshrc" 2>/dev/null; then
+if ln -s "dotfiles/zshrc" "$TMP/home/.zshrc" 2>/dev/null && [ -L "$TMP/home/.zshrc" ]; then
   profile_symlink=1
 else
+  rm -f "$TMP/home/.zshrc"
   cp "$TMP/home/dotfiles/zshrc" "$TMP/home/.zshrc"
 fi
 cat > "$fake_tools/pi" <<'EOF'
