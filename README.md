@@ -9,8 +9,8 @@ My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skil
 ### macOS, Linux, or Git Bash
 
 ```bash
-git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
-~/pi-setup/install.sh
+git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
+~/pi-setup-public/install.sh
 pi auth                      # OAuth providers (anthropic, openai-codex, amazon-bedrock)
 $EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 # restart your shell, then restart pi
@@ -19,8 +19,8 @@ $EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/cskwork/pi-setup.git "$HOME\pi-setup"
-Set-Location "$HOME\pi-setup"
+git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
+Set-Location "$HOME\pi-setup-public"
 if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
@@ -51,7 +51,7 @@ At the end of a run the installer names every provider routed in `settings.json`
 
 The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Luna subagents use `xhigh` thinking with fast priority mode; Sol routes retain Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash. The Z.ai routes use `ZAI_API_KEY` when it is set; without it those roles fall through to the Anthropic and OpenAI tiers silently.
 
-Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
+Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
 ## What's inside
 
