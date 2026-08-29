@@ -55,7 +55,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 ## 구성
 
-### 스킬 (29)
+### 스킬 (30)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
@@ -188,7 +188,7 @@ coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 Swa
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              선별한 스킬 29개
+skills/              선별한 스킬 30개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py — 문서/설정 불일치 CI 가드
