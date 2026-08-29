@@ -9,8 +9,8 @@
 ### macOS, Linux, Git Bash
 
 ```bash
-git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
-~/pi-setup/install.sh
+git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
+~/pi-setup-public/install.sh
 pi auth                      # OAuth 프로바이더 (anthropic, openai-codex, amazon-bedrock)
 $EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 # 셸을 다시 연 뒤 pi 재시작
@@ -19,8 +19,8 @@ $EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/cskwork/pi-setup.git "$HOME\pi-setup"
-Set-Location "$HOME\pi-setup"
+git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
+Set-Location "$HOME\pi-setup-public"
 if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
@@ -51,7 +51,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. Luna 서브에이전트는 `xhigh` 사고와 fast 우선 모드를 사용하고, Sol 경로는 Anthropic·Z.ai 폴백을 유지한다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다. Z.ai 경로는 `ZAI_API_KEY`가 설정되어 있을 때 사용되고, 없으면 해당 역할은 조용히 Anthropic·OpenAI 단계로 내려간다.
 
-이후 로컬에서 바뀐 내용은 `~/pi-setup/sync.sh`로 저장소에 반영한다.
+이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
 
 ## 구성
 
