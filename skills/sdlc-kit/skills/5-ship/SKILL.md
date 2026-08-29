@@ -48,7 +48,9 @@ what would help the next agent. Add lessons using the skill 6 format. Add
 durable terms, verified facts, and constraints to `.sdlc/memory/DOMAIN.md`.
 Deduplicate entries and keep the file within its limit. Domain facts describe
 the system; lessons describe mistakes. If a stage skill should have prevented
-a mistake, add `promote: skills/<n>` to the lesson.
+a mistake, add `promote: skills/<n>` to the lesson. A tag that appears three
+or more times in INDEX.md must be promoted: propose the stage-skill change to
+the human (`close.sh` prints these).
 
 ## Gate
 
@@ -69,4 +71,5 @@ The ship approval and the commit check are two different human checks.
    commit message. Describe the behavior change, not file names. Wait for the
    human to approve the staged set. Evidence approval does not approve the
    staged files.
-4. Commit and push. Ask separately before pushing a protected or shared branch.
+4. Commit and push following the **Release procedure** line in spec.md. Ask
+   separately before pushing a protected or shared branch.
