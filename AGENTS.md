@@ -18,22 +18,13 @@ If the intent remains unclear, use `brainstorming`. Ask one question at a time u
 
 Plan confirmation is the last human gate. After it, run review, execution, verification, and report autonomously. Stop only for decisions that affect data loss, public APIs, security, or migrations.
 
-**5. Adversarial review.** Challenge every plan:
-
-- Does it match the domain logic?
-- Are data shapes correct through migrations, serialization, and API contracts?
-- Does it fix the relevant issue and match the request?
-- Is the code clean?
-
-Pass only after you raise a concrete objection and revise the plan, or state the strongest counterargument and explain why the plan still holds.
-
-**6. Execute.** Follow the reviewed plan. If reality differs, run the planning gate again. Prefer clear names, direct control flow, and cohesive local code. Add an abstraction only when it reduces total cognitive load or supports real variation. Preserve behavior unless the requested feature or fix changes it. Remove imports, variables, and functions that your change made unused. Leave pre-existing dead code in place and mention it.
+**5. Execute.** Follow the reviewed plan. If reality differs, run the planning gate again. Prefer clear names, direct control flow, and cohesive local code. Add an abstraction only when it reduces total cognitive load or supports real variation. Preserve behavior unless the requested feature or fix changes it. Remove imports, variables, and functions that your change made unused. Leave pre-existing dead code in place and mention it.
 
 Keep delegating independent work under the rules in step 3. Give each task to a fresh-context subagent instead of carrying it in the orchestrator context. Store large results in files and verify them independently.
 
-**7. Verify.** Run the relevant regression, acceptance, unit, integration, type, lint, build, and reproduction checks. Show the commands and real output. Separate passing checks, pre-existing failures, regressions, skipped checks, and environment limits.
+**6. Verify.** Run the relevant regression, acceptance, unit, integration, type, lint, build, and reproduction checks. Show the commands and real output. Separate passing checks, pre-existing failures, regressions, skipped checks, and environment limits.
 
-**8. Report.** Use this structure unless the user asks for something else:
+**7. Report.** Use this structure unless the user asks for something else:
 
 - Write in Simplified Technical English. Use short sentences, active voice, one idea per sentence, and no undefined terms.
 - Use the project's shared language from `CONTEXT.md`, the glossary, and ADRs. Flag any term that differs between the code and glossary.
