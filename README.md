@@ -88,7 +88,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
 | `pi-sixpack` | SwarmForge-style 6-role gated pipeline (Wave 0 parallel explore → specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
-| `sdlc-kit` | Six-stage SDLC with human approvals, fresh-context review, tamper-evident gates, and bounded memory | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
+| `sdlc-kit` | Six-stage SDLC with human approvals on the record, fresh-context review, and bounded memory | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
 
 ### Extensions
 

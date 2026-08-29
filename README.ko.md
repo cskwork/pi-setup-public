@@ -88,7 +88,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | 로그인 상태를 공유하는 에이전트 친화 브라우저 | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
 | `pi-sixpack` | SwarmForge 방식 6역할 게이트 파이프라인 (Wave 0 병렬 탐색 → specifier→coder→cleaner→architect∥hardender→QA, 팩 2/4/6) | [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) 이식 |
-| `sdlc-kit` | 사람 승인, 새 컨텍스트 검토, 변조 감지 게이트, 제한된 메모리를 갖춘 6단계 SDLC 루프 | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
+| `sdlc-kit` | 기록으로 남는 사람 승인, 새 컨텍스트 검토, 제한된 메모리를 갖춘 6단계 SDLC 루프 | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
 
 ### 익스텐션
 
