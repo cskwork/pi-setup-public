@@ -42,9 +42,10 @@ out=$("$kit/gates/check-gate.sh" intent "$a" 2>&1) && { echo "FAIL: gate open on
 case "$out" in (*"GATE CLOSED"*) echo "ok: corrupt record closed with message";;
   (*) echo "FAIL: corrupt record closed SILENTLY"; exit 1;; esac
 
-# 7. --delegated: works at any stage, always recorded
+# 7. --delegated: works at any stage, always recorded (with the agent runner)
 "$kit/gates/approve.sh" intent "$a" --delegated >/dev/null
 grep -q '^mode: delegated-chat' .sdlc/approvals/feat-a.intent.approval || { echo "FAIL: delegated mode not recorded"; exit 1; }
+grep -q '^runner: agent' .sdlc/approvals/feat-a.intent.approval || { echo "FAIL: agent runner not recorded for delegated"; exit 1; }
 "$kit/gates/approve.sh" spec "$a" --delegated >/dev/null
 grep -q '^mode: delegated-chat' .sdlc/approvals/feat-a.spec.approval || { echo "FAIL: delegated mode not recorded for spec"; exit 1; }
 echo "ok: delegated approval recorded at any stage"
@@ -113,5 +114,63 @@ PYEOF
 else
   echo "skip: no working python found, frontmatter check skipped"
 fi
+
+# 12. --agent-adversary: recorded for plan, rejected for every other stage
+mkdir -p .sdlc/work/feat-c
+p=.sdlc/work/feat-c/plan.md
+echo "plan: test" > "$p"
+"$kit/gates/approve.sh" plan "$p" --agent-adversary >/dev/null
+grep -q '^mode: agent-adversary' .sdlc/approvals/feat-c.plan.approval || { echo "FAIL: agent-adversary mode not recorded"; exit 1; }
+grep -q '^runner: agent' .sdlc/approvals/feat-c.plan.approval || { echo "FAIL: agent runner not recorded for agent-adversary"; exit 1; }
+"$kit/gates/check-gate.sh" plan "$p" >/dev/null
+if "$kit/gates/approve.sh" spec "$p" --agent-adversary >/dev/null 2>&1; then
+  echo "FAIL: agent-adversary accepted for a non-plan stage"; exit 1; fi
+echo "ok: agent-adversary approval is plan-only and recorded"
+
+# 13. status.sh renders every state without crashing
+mkdir -p .sdlc/work/feat-d
+out=$("$kit/gates/status.sh" feat-d) || { echo "FAIL: status.sh crashed on artifact-less feature"; exit 1; }
+case "$out" in (*"write intent.md"*) ;; (*) echo "FAIL: wrong next action for empty feature"; exit 1;; esac
+echo i > .sdlc/work/feat-d/intent.md; echo s > .sdlc/work/feat-d/spec.md; echo p > .sdlc/work/feat-d/plan.md
+"$kit/gates/approve.sh" intent .sdlc/work/feat-d/intent.md --delegated >/dev/null
+"$kit/gates/approve.sh" spec .sdlc/work/feat-d/spec.md --delegated >/dev/null
+out=$("$kit/gates/status.sh" feat-d) || { echo "FAIL: status.sh crashed mid-run"; exit 1; }
+case "$out" in (*"plan gate (tiered)"*) ;; (*) echo "FAIL: tiered plan hint missing"; exit 1;; esac
+"$kit/gates/approve.sh" plan .sdlc/work/feat-d/plan.md --agent-adversary >/dev/null
+out=$("$kit/gates/status.sh" feat-d) || { echo "FAIL: status.sh crashed after tier approval"; exit 1; }
+case "$out" in (*"agent-adversary"*) ;; (*) echo "FAIL: agent-adversary mode not shown"; exit 1;; esac
+out=$("$kit/gates/status.sh") || { echo "FAIL: status.sh crashed on full run"; exit 1; }
+case "$out" in (*"[CLOSED: dead-end]"*) ;; (*) echo "FAIL: closed feature not rendered"; exit 1;; esac
+echo "ok: status.sh renders empty, tiered, approved, and closed states"
+
+# 14. upstream chaining: editing intent after spec approval closes the spec gate
+"$kit/gates/check-gate.sh" spec .sdlc/work/feat-d/spec.md >/dev/null
+echo "tweak" >> .sdlc/work/feat-d/intent.md
+out=$("$kit/gates/check-gate.sh" spec .sdlc/work/feat-d/spec.md 2>&1) && { echo "FAIL: spec gate open though upstream intent changed"; exit 1; }
+case "$out" in (*"upstream"*) echo "ok: upstream edit closes the downstream gate";;
+  (*) echo "FAIL: gate closed without naming the upstream cause"; exit 1;; esac
+
+# 15. tripwire.sh: flags risky plans, stays quiet on clean ones
+tw=.sdlc/work/feat-d/tw.md
+printf 'step 1: run ALTER TABLE users\nstep 2: edit Dockerfile\n' > "$tw"
+out=$("$kit/tools/tripwire.sh" "$tw")
+case "$out" in (*"TRIP-WIRE?"*) ;; (*) echo "FAIL: tripwire missed a migration"; exit 1;; esac
+printf 'step 1: rename a local variable\n' > "$tw"
+out=$("$kit/tools/tripwire.sh" "$tw")
+case "$out" in (*"no trip-wire candidates"*) ;; (*) echo "FAIL: tripwire false positive on a clean plan"; exit 1;; esac
+echo "ok: tripwire flags risk and stays quiet on clean plans"
+
+# 16. close.sh prints a promotion reminder for lesson tags repeating 3+ times
+mkdir -p .sdlc/work/feat-e
+echo "goal" > .sdlc/work/feat-e/intent.md
+echo "lesson" > .sdlc/memory/lessons/2020-01-02-feat-e.md
+cat >> .sdlc/memory/INDEX.md <<'EOF'
+- [async, gate] one → lessons/a.md
+- [async] two → lessons/b.md
+- [async, test] three → lessons/c.md
+EOF
+out=$("$kit/gates/close.sh" feat-e dead-end "test promote" 2>&1)
+case "$out" in (*"PROMOTE:"*async*) echo "ok: repeated lesson tag triggers promotion reminder";;
+  (*) echo "FAIL: no promotion reminder for repeated tag"; exit 1;; esac
 
 echo "SELFTEST PASS"
