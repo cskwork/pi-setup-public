@@ -6,8 +6,8 @@ runtime hooks, no vendor-specific features.
 ## The loop
 
 Six stages, one artifact each. An approval recorded by `gates/approve.sh`
-opens the next stage. Intent, spec, and ship approvals are human decisions;
-the plan gate is tiered (rule 3). A production issue in stage 6 writes the
+opens the next stage. Intent, spec, and ship approvals are human decisions
+unless the project's lazymode waives them; the plan gate is tiered (rule 3). A production issue in stage 6 writes the
 next `intent.md` and restarts the loop.
 
 | # | Stage    | Read this skill first              | Artifact (in project `.sdlc/work/<feature>/`) | Gate to pass BEFORE starting |
@@ -37,8 +37,11 @@ when closing.
 2. **Check the gate first** for stages 2-4 (stages 1, 5, and 6 have none):
    `gates/check-gate.sh <prev-stage> <artifact>` from the project root.
    Anything but a printed `GATE OPEN` — including errors and silence — is
-   closed: STOP and tell the human exactly what to approve.
-3. **Intent, spec, and ship approvals are human decisions.** Run
+   closed: STOP and tell the human exactly what to approve. At a gate
+   lazymode waives (rule 3), the remedy is the stage's adversary pass plus
+   `--lazy`, not a human ask.
+3. **Intent, spec, and ship approvals are human decisions** (unless the
+   project's lazymode waives one — see the table below). Run
    `gates/approve.sh <stage> <artifact> --delegated` only after the human
    explicitly approves that artifact in chat ("approve", "looks right", or
    equivalent). Never approve on silence, a general "continue", or your own
@@ -56,6 +59,25 @@ when closing.
      --agent-adversary` (recorded as `mode: agent-adversary`), post the
      plan's Human summary as FYI, and continue to build.
    - Any trip-wire: a human gate, exactly like the others.
+
+   **lazymode moves the human/auto line.** `lazymode: 0-4` in
+   `.sdlc/config.md` names which gates stay HUMAN; init.sh seeds 1 and the
+   agent asks the human which level they want at init. Each level keeps
+   these gates human and auto-approves the rest with `gates/approve.sh
+   <stage> <artifact> --lazy`:
+   - 0 — intent, spec, ship human; plan tiered (exactly the rules above)
+   - 1 (default) — intent, spec, ship human; plan always auto,
+     trip-wires included
+   - 2 — intent and ship human; spec and plan auto
+   - 3 — intent human; spec, plan, and ship auto
+   - 4 — no human gates; the whole loop runs autonomously
+   lazymode waives the human decision, nothing else: the stage's adversary
+   review must still pass before `--lazy` (intent defines none — at level 4,
+   dispatch a fresh-context adversary over intent.md before approving),
+   approvals still record and chain hashes, and every auto-approved gate
+   still posts its Human summary (and any trip-wire list) to the human as
+   FYI. `approve.sh --lazy` refuses a stage the configured level keeps
+   human, and any `lazymode:` value outside 0-4 counts as 0.
 4. **Keep memory bounded.** At each stage start read `.sdlc/memory/INDEX.md`
    (lessons; 50 lines max) and `.sdlc/memory/DOMAIN.md` (terms, verified
    facts, constraints; 100 lines max), then open lesson files whose tags
@@ -101,7 +123,8 @@ baseline captured before changes, and a "what stays untouched" spec section.
 
 1. **Precedence.** Project rules control implementation (build commands,
    branch policy, style, commit format, tools); the kit controls stage
-   order, gates, and memory. Only the human at a gate can waive a gate. On a
+   order, gates, and memory. Only the human at a gate — or the lazymode
+   level the human set in `.sdlc/config.md` — can waive a gate. On a
    genuine conflict, show both texts to the human — never resolve it
    silently.
 2. **Existing knowledge wins.** DOMAIN.md points at existing glossaries,
