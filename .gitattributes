@@ -1,0 +1,7 @@
+# Scripts must reach the working tree with LF endings. Git for Windows defaults
+# to core.autocrlf=true, which rewrites them to CRLF on clone and leaves bash
+# failing with: /usr/bin/env bash^M: bad interpreter.
+*.sh   text eol=lf
+*.bash text eol=lf
+*.zsh  text eol=lf
+*.py   text eol=lf
