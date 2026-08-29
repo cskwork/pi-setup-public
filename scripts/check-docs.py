@@ -124,8 +124,8 @@ def check_layout_skill_count():
     """The Layout block repeats the skill count in prose; it drifts independently."""
     actual = len(tracked_skills())
     patterns = [
-        ("README.md", re.compile(r"^skills/\s+(\d+) curated skills$", re.M)),
-        ("README.ko.md", re.compile(r"^skills/\s+선별한 스킬 (\d+)개$", re.M)),
+        ("README.md", re.compile(r"^skills/\s+(\d+) agent skills$", re.M)),
+        ("README.ko.md", re.compile(r"^skills/\s+에이전트 스킬 (\d+)개$", re.M)),
     ]
     for readme, pattern in patterns:
         s = read_file(readme)
