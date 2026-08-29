@@ -129,7 +129,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | cleaner | sol · medium | haiku-4-5 · med | sol · medium | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | sol · medium | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
+| qa | sol · medium | sonnet-5 · med | glm-5.3-flash · max | glm-5.3-flash · max |
 
 hardender에는 항상 최상위 모델을 붙인다. 주어진 문서를 읽는 다른 게이트와 달리 검사 항목 자체를 스스로 만들어내야 하고, 실패했을 때 조용히 `PASS`를 내보내 이후 어떤 게이트도 이를 잡지 못하며, BLOCK 권한을 가지기 때문이다.
 

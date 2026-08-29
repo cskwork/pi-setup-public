@@ -129,7 +129,7 @@ Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-chang
 | cleaner | sol · medium | haiku-4-5 · med | sol · medium | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | sol · medium | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
+| qa | sol · medium | sonnet-5 · med | glm-5.3-flash · max | glm-5.3-flash · max |
 
 The hardender always gets a top model: it is the only gate that invents its own
 checks instead of reading a given artifact, its failure mode is a silent `PASS`
