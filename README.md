@@ -55,7 +55,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
-### Skills (29)
+### Skills (30)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -193,7 +193,7 @@ Your live config is **yours**: it's gitignored here, and edits via pi's permissi
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              29 curated skills
+skills/              30 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
