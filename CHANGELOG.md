@@ -4,6 +4,17 @@
 
 ### Changed
 
+- **README and landing-page copy rewritten.** Removed every em dash (51 on the
+  landing page alone), the colon-as-connector constructions, the promotional
+  words (curated, lean, friendly-by-default), and the feeling-words that named
+  no mechanism. `Rails only where it matters` now says which commands are
+  guarded. Bold inline-header lists end in a period and lead into new detail
+  instead of restating the label.
+- **Landing-page counts corrected.** The meta tag said 26 skills and 19
+  packages, the hero said 29 skills. `skills/` has 30 and `settings.json` lists
+  18 packages.
+- **`check-docs.py` Layout regexes follow the new wording**, `agent skills` and
+  `에이전트 스킬` in place of `curated skills` and `선별한 스킬`.
 - **Every GLM-routed QA gate runs on GLM-5.3-Flash at max thinking.**
   `mix`, `glm-max`, `two-pack` and `four-pack` all pointed `qa` at
   `zai/glm-5.3`; they now use `zai/glm-5.3-flash`, which `models.json` already
