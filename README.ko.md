@@ -65,6 +65,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `db-intelligence` | DB 스킬 하나로 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
 | `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
 | `call-agent` | 작업을 가장 적합한 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
+| `verify` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `create-verification-skill` | 실제 앱을 구동해 증거를 남기는 프로젝트 전용 검증 스킬을 생성한다 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저 — 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | pi 자체 settings.json 감사·구성 — 스킬 격리, 서브에이전트 라우팅, 패키지 | local |

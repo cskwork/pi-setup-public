@@ -65,6 +65,7 @@ Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 | `db-intelligence` | One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
 | `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
+| `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `create-verification-skill` | Generate a project-local skill that drives the real app and captures proof | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | Audit and configure pi's own settings.json — skill isolation, subagent routing, packages | local |
