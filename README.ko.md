@@ -2,15 +2,15 @@
 
 [pi 코딩 에이전트](https://github.com/badlogic/pi-mono) 설정 모음 — 스킬, 익스텐션, 서브에이전트, 그리고 과하지 않은 권한 정책. 새 머신에서 명령 한 줄로 복원한다.
 
-**랜딩 페이지:** <https://cskwork.github.io/pi-setup-public/> (퍼블릭 레포) · **English:** [README.md](README.md)
+**랜딩 페이지:** https://cskwork.github.io/pi-setup-public/ (퍼블릭 레포) · **English:** [README.md](README.md)
 
 ## 빠른 시작
 
 ### macOS, Linux, Git Bash
 
 ```bash
-git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
-~/pi-setup-public/install.sh
+git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+~/pi-setup/install.sh
 pi auth                      # OAuth 프로바이더 (anthropic, openai-codex, amazon-bedrock)
 $EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 # 셸을 다시 연 뒤 pi 재시작
@@ -19,8 +19,8 @@ $EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
-Set-Location "$HOME\pi-setup-public"
+git clone https://github.com/cskwork/pi-setup.git "$HOME\pi-setup"
+Set-Location "$HOME\pi-setup"
 if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
@@ -36,38 +36,36 @@ notepad $HOME\.pi-setup.env  # API 키 프로바이더, 예: ZAI_API_KEY=...
 
 ### 프로바이더 자격증명
 
-Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때만 그 프로바이더를 등록한다. `settings.json`이 참조하는 모델의 프로바이더가 등록되지 않으면 서브에이전트 실행마다 `[pi-subagents] Skipping fallback model '<id>' because it is unavailable in this environment.` 경고가 찍힐다.
+Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때만 그 프로바이더를 등록한다. `settings.json`이 참조하는 모델의 프로바이더가 등록되지 않으면 서브에이전트를 띄울 때마다 `[pi-subagents] Skipping fallback model '<id>' because it is unavailable in this environment.` 경고가 찍힐다.
 
 그래서 설치 스크립트는 추적되는 `.env.example`을 복사해 `~/.pi-setup.env`를 권한 `600`으로 만들고, Pi 실행 전에 `scripts/pi-env.sh`를 읽는 두 번째 관리 블록을 셸 프로필에 추가한다. 이 로더는:
 
 - `~/.pi-setup.env`를 **기본값으로만** 읽는다. 이미 export된 변수가 항상 이기므로 `ZAI_API_KEY=... pi ...` 같은 일회성 지정과 CI 시크릿이 그대로 유지된다.
 - `ZAI_API_KEY`와 `Z_AI_API_KEY`를 양방향으로 미러링한다. Pi는 앞의 이름을, Z.ai Vision MCP 서버는 뒤의 이름을 읽기 때문이다. 키는 둘 중 아무 이름으로나 한 번만 저장하면 된다.
 
-실제 비밀 파일은 저장소 **밖에** 있으므로 커밋될 수 없다. 경로는 `PI_SETUP_ENV_FILE`로 바꿀 수 있다.
+실제 비밀 파일은 저장소 **밖에** 있으므로 커밋되거나 공개 미러로 나갈 수 없다. 경로는 `PI_SETUP_ENV_FILE`로 바꿀 수 있다.
 
 **키가 없는 것은 오류가 아니다.** pi-subagents는 등록되지 않은 프로바이더의 모델마다 실행당 한 번씩 경고를 찍고, 이를 끄는 설정은 없다. 그래서 `settings.json`이 경로로 쓰지만 키가 없는 프로바이더에는 로더가 `unset-placeholder` 값을 넣는다. 그러면 프로바이더가 등록되어 경고가 사라진다. 자격증명은 틀리지만 그 경로는 이미 조용하다 — Pi가 모델을 호출하고, 실패하면 폴백 체인의 다음 후보로 넘어간다. 진짜 키는 항상 placeholder를 이기며, 같은 셸에서 프로필을 다시 source 해도 마찬가지다. 경고를 보고 싶으면 `PI_SETUP_NO_PLACEHOLDER=1`로 끄면 된다.
 
 설치 마지막에는 `settings.json`이 경로로 쓰지만 자격증명이 없는 프로바이더를 문제가 아닌 안내로 알려준다. 로더를 제거하려면 `pi-setup provider env` 표식 사이의 블록을 지우면 된다.
 
-**API 키 프로바이더는 모두 선택 사항이다.** 키가 아예 없으면 각 역할은 그냥 폴백 체인의 다음 모델을 조용히 쓴다. 키가 틀렸을 때도 호출이 실패하면 다음 후보로 내려가므로 동작은 같다.
+기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. Luna 서브에이전트는 `xhigh` 사고와 fast 우선 모드를 사용하고, Sol 경로는 Anthropic·Z.ai 폴백을 유지한다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다. Z.ai 경로는 `ZAI_API_KEY`가 설정되어 있을 때 사용되고, 없으면 해당 역할은 조용히 Anthropic·OpenAI 단계로 내려간다.
 
-기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. Luna 서브에이전트는 `xhigh` 사고와 fast 우선 모드를 사용하고, Sol 경로는 Anthropic·Z.ai 폴백을 유지한다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다.
-
-이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
+이후 로컬에서 바뀐 내용은 `~/pi-setup/sync.sh`로 저장소에 반영한다.
 
 ## 구성
 
 ### 스킬 (29)
 
 | 스킬 | 하는 일 | 출처 |
-| --- | --- | --- |
+|---|---|---|
 | `agent-browser` | 에이전트용 브라우저 자동화 CLI | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
 | `api-and-interface-design` | 안정적인 API·인터페이스 설계 — 계약 우선, Hyrum의 법칙, 멱등키 확보, 일관된 에러 형태 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | `browser-qa` | 어떤 사이트든 브라우저 QA — YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임; Playwright E2E 패턴은 `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | DB 스킬 하나로 4개 엔진 — PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
 | `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
 | `call-agent` | 작업을 가장 적합한 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
-| `verify` | 5단계 검증 — "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
+| `create-verification-skill` | 실제 앱을 구동해 증거를 남기는 프로젝트 전용 검증 스킬을 생성한다 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저 — 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | pi 자체 settings.json 감사·구성 — 스킬 격리, 서브에이전트 라우팅, 패키지 | local |
 | `diagnosing-bugs` | 버그·성능 회귀 진단 루프 — 재현 → 최소화 → 가설 → 계측 → 수정 → 회귀 테스트 | [mattpocock/skills](https://github.com/mattpocock/skills) |
@@ -96,7 +94,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 `pi install`로 설치된다 (`settings.json` 참고):
 
 | 패키지 | 용도 |
-| --- | --- |
+|---|---|
 | `npm:@gotgenes/pi-permission-system` | 패턴 기반 권한 관리 (아래 참고) |
 | `npm:@narumitw/pi-goal` | 세션 목표 — 완료까지 계속 작업 |
 | `npm:@narumitw/pi-usage` | 사용량/비용 추적 |
@@ -124,7 +122,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`
 
 | 게이트 | `codex-only` | `claude-only` | `mix` | `glm-max` |
-| --- | --- | --- | --- | --- |
+|---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | luna · xhigh · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
@@ -196,6 +194,8 @@ scripts/             check-docs.py — 문서/설정 불일치 CI 가드
                      pi-node-heap.sh/.ps1 — Pi 전용 8 GiB 런처
                      pi-env.sh/.ps1 — 프로바이더 자격증명 로더 + 키 이름 미러링
                      prune-sessions.sh — 세션 기록 보존 기간 정리
+.env.example         ~/.pi-setup.env 템플릿 (실제 비밀 파일은 이 저장소
+                     밖에 있고 절대 커밋되지 않는다)
 tests/               셸·PowerShell 런처 회귀 검사
 install.sh           macOS/Linux/Git Bash 부트스트랩
 install.ps1          Windows PowerShell 네이티브 부트스트랩

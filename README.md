@@ -2,15 +2,15 @@
 
 My [pi coding agent](https://github.com/badlogic/pi-mono) configuration — skills, extensions, agents, and a friendly permission policy. Restore on any machine in one command.
 
-**Landing page:** <https://cskwork.github.io/pi-setup-public/> (public repo) · **한국어:** [README.ko.md](README.ko.md)
+**Landing page:** https://cskwork.github.io/pi-setup-public/ (public repo) · **한국어:** [README.ko.md](README.ko.md)
 
 ## Quick start
 
 ### macOS, Linux, or Git Bash
 
 ```bash
-git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
-~/pi-setup-public/install.sh
+git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+~/pi-setup/install.sh
 pi auth                      # OAuth providers (anthropic, openai-codex, amazon-bedrock)
 $EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 # restart your shell, then restart pi
@@ -19,8 +19,8 @@ $EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
-Set-Location "$HOME\pi-setup-public"
+git clone https://github.com/cskwork/pi-setup.git "$HOME\pi-setup"
+Set-Location "$HOME\pi-setup"
 if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
@@ -43,31 +43,29 @@ So the installers create `~/.pi-setup.env` (mode `600`) from the tracked `.env.e
 - reads `~/.pi-setup.env` as **defaults only** — an already-exported variable always wins, so `ZAI_API_KEY=... pi ...` and CI secrets still override it;
 - mirrors `ZAI_API_KEY` and `Z_AI_API_KEY` in both directions, because Pi reads the first name and the Z.ai Vision MCP server reads the second. Store the key once under either name.
 
-The live secret file sits **outside** the repository, so it cannot be committed. Override its path with `PI_SETUP_ENV_FILE`.
+The live secret file sits **outside** the repository, so it cannot be committed or reach the public mirror. Override its path with `PI_SETUP_ENV_FILE`.
 
 **A missing key is not an error.** pi-subagents warns once per launch for every model whose provider is not registered, and it has no setting to mute that. So for a provider routed in `settings.json` with no key, the loader exports a `unset-placeholder` value. That registers the provider and silences the warning; the credential is then wrong, but that path is already quiet — Pi tries the model, the call fails, and it moves to the next candidate in the fallback chain. A real key always overrides the placeholder, including when you re-source the profile in the same shell. Set `PI_SETUP_NO_PLACEHOLDER=1` to opt out and see the warnings.
 
 At the end of a run the installer names every provider routed in `settings.json` that has no credential, as information rather than a problem. Remove the block between the `pi-setup provider env` markers to uninstall the loader.
 
-**Every API-key provider is optional.** With no key at all, each affected role simply uses the next model in its fallback chain, silently. An invalid key behaves the same way, because the failed call moves down the chain.
+The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Luna subagents use `xhigh` thinking with fast priority mode; Sol routes retain Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash. The Z.ai routes use `ZAI_API_KEY` when it is set; without it those roles fall through to the Anthropic and OpenAI tiers silently.
 
-The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Luna subagents use `xhigh` thinking with fast priority mode; Sol routes retain Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash.
-
-Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
+Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
 ### Skills (29)
 
 | Skill | What it does | Source |
-| --- | --- | --- |
+|---|---|---|
 | `agent-browser` | Browser automation CLI for agents | [vercel-labs/agent-browser](https://github.com/vercel-labs/agent-browser) |
 | `api-and-interface-design` | Stable API/interface design — contract-first, Hyrum's Law, idempotency-key claiming, consistent error shapes | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 | `browser-qa` | Browser QA on anything — YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime; Playwright E2E patterns in `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | One DB skill, four engines — PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
 | `call-agent` | Route a task to the best peer AI CLI | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
-| `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
+| `create-verification-skill` | Generate a project-local skill that drives the real app and captures proof | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | Evidence before assertions — never claim unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | Audit and configure pi's own settings.json — skill isolation, subagent routing, packages | local |
 | `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions — reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
@@ -96,7 +94,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 Installed via `pi install` (see `settings.json`):
 
 | Package | Purpose |
-| --- | --- |
+|---|---|
 | `npm:@gotgenes/pi-permission-system` | Pattern-based permissions (see below) |
 | `npm:@narumitw/pi-goal` | Session goals — pi keeps working to completion |
 | `npm:@narumitw/pi-usage` | Usage/cost tracking |
@@ -124,7 +122,7 @@ Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-chang
 `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
 
 | Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
-| --- | --- | --- | --- | --- |
+|---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | luna · xhigh · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
 | cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
@@ -198,9 +196,11 @@ skills/              29 curated skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py — CI guard for doc/config drift
-                     pi-env.sh/.ps1 — provider credential loader + key aliasing
                      pi-node-heap.sh/.ps1 — Pi-only 8 GiB launchers
+                     pi-env.sh/.ps1 — provider credential loader + key aliasing
                      prune-sessions.sh — session transcript retention
+.env.example         template for ~/.pi-setup.env (the live secret file
+                     lives outside this repo and is never committed)
 tests/               shell and PowerShell launcher regression checks
 install.sh           macOS/Linux/Git Bash bootstrap
 install.ps1          native Windows PowerShell bootstrap
