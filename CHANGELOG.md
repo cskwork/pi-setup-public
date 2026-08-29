@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Changed
+
+- **`mix` and `glm-max` run the QA gate on GLM-5.3-Flash at max thinking.**
+  Both profiles pointed `qa` at `zai/glm-5.3`; they now use `zai/glm-5.3-flash`,
+  which `models.json` already declares with reasoning and a `max` thinking
+  level. QA reads a given artifact and checks it, so the cheaper reasoning model
+  is enough. The README tables also said `glm-5.3 · med` for `mix`, which the
+  profile never matched.
+
 ## v0.6.0 — 2026-08-29
 
 ### Added
