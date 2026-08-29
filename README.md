@@ -155,7 +155,8 @@ wins first.
 
 **Pack profiles** — `two-pack` and `four-pack` pin the `glm-max` models to only the
 gates that pack runs (two-pack: coder → qa; four-pack: specifier → coder →
-refactorer → sw-architect → qa). Role orders mirror the upstream SwarmForge
+refactorer → sw-architect → qa), so every pack ends on the same
+`glm-5.3-flash · max` QA gate as `mix` and `glm-max`. Role orders mirror the upstream SwarmForge
 branches, with the pi pipeline's independent QA gate kept in every pack. Load one
 when the pack is already decided; they keep the utility agents' skill lists so a
 wholesale load strips nothing. Pack 6 uses any model profile directly.

@@ -152,7 +152,8 @@ frontmatter가 먼저 이기므로 settings override만으로는 이 핀을 고�
 
 **팩 프로필** — `two-pack`과 `four-pack`은 `glm-max` 모델을 해당 팩이 실제로
 돌리는 게이트에만 고정한다 (two-pack: coder → qa; four-pack: specifier →
-coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 SwarmForge
+coder → refactorer → sw-architect → qa). 따라서 모든 팩은 `mix`·`glm-max`와
+동일하게 `glm-5.3-flash · max` QA 게이트로 끝난다. 역할 순서는 업스트림 SwarmForge
 브랜치를 따르며, pi 파이프라인의 독립 QA 게이트는 모든 팩에 유지된다.
 팩이 이미 정해져 있다면 로드하면 된다. 유틸리티 에이전트의 스킬 목록은
 그대로 남아 통째 로드해도 아무것도 벗겨지지 않는다. 팩 6은 모델 프로필을
