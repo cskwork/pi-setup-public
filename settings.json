@@ -153,6 +153,7 @@
       },
       "verify": {
         "skills": [
+          "verify",
           "create-verification-skill",
           "verification-before-completion"
         ],
