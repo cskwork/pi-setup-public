@@ -47,7 +47,6 @@
       "coder": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "tdd",
           "ponytail"
@@ -56,7 +55,6 @@
       "cleaner": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "ponytail-review"
         ]
@@ -91,7 +89,6 @@
       "qa": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "browser-qa",
           "verification-before-completion",
@@ -130,8 +127,7 @@
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "customer-agent": {
         "skills": [
@@ -139,8 +135,7 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "persona-product-tester": {
         "skills": [
@@ -148,8 +143,7 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "verify": {
         "skills": [
@@ -159,7 +153,6 @@
         ],
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "description": "OpenAI Luna/xhigh fast evidence-driven verification role. Claude lane: qa-tester. GLM lane: tester-glm."
       },
       "tester": {
@@ -168,36 +161,30 @@
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "scout": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "researcher": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "reviewer": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "worker": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "planner": {
         "model": "openai-codex/gpt-5.6-sol",
@@ -241,25 +228,21 @@
       "refactorer": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "ponytail-review"
         ]
       },
       "doc-writer": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "git-ops": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "javascript-pro": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "tdd"
         ]
@@ -267,15 +250,13 @@
       "typescript-pro": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "tdd"
         ]
       },
       "delegate": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "architect-glm": {
         "model": "zai/glm-5.3-flash",

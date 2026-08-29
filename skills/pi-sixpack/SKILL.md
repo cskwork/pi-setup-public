@@ -366,11 +366,11 @@ Loading replaces `settings.subagents` wholesale.
 | Gate | codex-only | claude-only | mix | glm-max |
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
-| coder | sol · medium · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
-| cleaner | sol · medium · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
+| coder | sol · medium | opus-5 · high | codex sol · high | glm-5.3 · max |
+| cleaner | sol · medium | haiku-4-5 · med | sol · medium | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | sol · medium · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
+| qa | sol · medium | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
 
 The hardener always gets a top model. It is the only gate that invents its own
 checks rather than reading a given artifact, its failure mode is a silent

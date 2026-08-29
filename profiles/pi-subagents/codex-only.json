@@ -15,7 +15,6 @@
       "coder": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "tdd",
           "ponytail"
@@ -24,7 +23,6 @@
       "cleaner": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "ponytail-review"
         ]
@@ -56,7 +54,6 @@
       "qa": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "browser-qa",
           "verification-before-completion",
@@ -69,8 +66,7 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "qa-auditor": {
         "skills": [
@@ -78,8 +74,7 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "agent-browser": {
         "skills": [
@@ -88,8 +83,7 @@
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "customer-agent": {
         "skills": [
@@ -97,8 +91,7 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "persona-product-tester": {
         "skills": [
@@ -106,8 +99,7 @@
           "agent-browser"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "verify": {
         "skills": [
@@ -115,8 +107,7 @@
           "verification-before-completion"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "tester": {
         "skills": [
@@ -124,41 +115,34 @@
           "playwright-cli"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "delegate": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "scout": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "researcher": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "reviewer": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "worker": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "planner": {
         "model": "openai-codex/gpt-5.6-sol",
@@ -182,25 +166,21 @@
       "refactorer": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "ponytail-review"
         ]
       },
       "doc-writer": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "git-ops": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fast": true
+        "thinking": "medium"
       },
       "javascript-pro": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "tdd"
         ]
@@ -208,7 +188,6 @@
       "typescript-pro": {
         "model": "openai-codex/gpt-5.6-sol",
         "thinking": "medium",
-        "fast": true,
         "skills": [
           "tdd"
         ]
