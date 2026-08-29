@@ -13,8 +13,8 @@
         ]
       },
       "coder": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "tdd",
@@ -22,8 +22,8 @@
         ]
       },
       "cleaner": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "ponytail-review"
@@ -54,8 +54,8 @@
         ]
       },
       "qa": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "browser-qa",
@@ -68,8 +68,8 @@
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "qa-auditor": {
@@ -77,8 +77,8 @@
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "agent-browser": {
@@ -87,8 +87,8 @@
           "agent-browser",
           "playwright-cli"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "customer-agent": {
@@ -96,8 +96,8 @@
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "persona-product-tester": {
@@ -105,8 +105,8 @@
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "verify": {
@@ -114,8 +114,8 @@
           "verify",
           "verification-before-completion"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "tester": {
@@ -123,46 +123,46 @@
           "tdd",
           "playwright-cli"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "delegate": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "scout": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "researcher": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "reviewer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "worker": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "planner": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
+        "thinking": "medium",
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
@@ -170,7 +170,7 @@
       },
       "security": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
+        "thinking": "medium",
         "fallbackModels": [
           "openai-codex/gpt-5.6-terra",
           "openai-codex/gpt-5.5"
@@ -180,34 +180,34 @@
         ]
       },
       "refactorer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "ponytail-review"
         ]
       },
       "doc-writer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "git-ops": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "javascript-pro": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "tdd"
         ]
       },
       "typescript-pro": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "tdd"

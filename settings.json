@@ -29,8 +29,8 @@
   "collapseChangelog": true,
   "tuiMode": "fullscreen",
   "subagents": {
-    "defaultModel": "openai-codex/gpt-5.6-luna",
-    "defaultThinking": "xhigh",
+    "defaultModel": "openai-codex/gpt-5.6-sol",
+    "defaultThinking": "medium",
     "agentOverrides": {
       "specifier": {
         "model": "openai-codex/gpt-5.6-sol",
@@ -45,8 +45,8 @@
         ]
       },
       "coder": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "tdd",
@@ -54,8 +54,8 @@
         ]
       },
       "cleaner": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "ponytail-review"
@@ -89,8 +89,8 @@
         ]
       },
       "qa": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "browser-qa",
@@ -104,7 +104,7 @@
           "browser-qa",
           "agent-browser"
         ],
-        "thinking": "max",
+        "thinking": "medium",
         "fallbackModels": [
           "zai/glm-5.3-flash",
           "openai-codex/gpt-5.6-luna"
@@ -116,7 +116,7 @@
           "browser-qa",
           "agent-browser"
         ],
-        "thinking": "max",
+        "thinking": "medium",
         "fallbackModels": [
           "zai/glm-5.3-flash",
           "openai-codex/gpt-5.6-luna"
@@ -129,8 +129,8 @@
           "agent-browser",
           "playwright-cli"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "customer-agent": {
@@ -138,8 +138,8 @@
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "persona-product-tester": {
@@ -147,8 +147,8 @@
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "verify": {
@@ -157,8 +157,8 @@
           "create-verification-skill",
           "verification-before-completion"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "description": "OpenAI Luna/xhigh fast evidence-driven verification role. Claude lane: qa-tester. GLM lane: tester-glm."
       },
@@ -167,41 +167,41 @@
           "tdd",
           "playwright-cli"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "scout": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "researcher": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "reviewer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "worker": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "planner": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
+        "thinking": "medium",
         "fallbackModels": [
           "anthropic/claude-opus-5",
           "anthropic/claude-sonnet-5",
@@ -209,16 +209,17 @@
         ]
       },
       "architect": {
-        "model": "zai/glm-5.3-flash",
-        "thinking": "max",
+        "model": "anthropic/claude-opus-5",
+        "thinking": "high",
         "fallbackModels": [
-          "anthropic/claude-opus-5",
-          "anthropic/claude-sonnet-5"
-        ]
+          "openai-codex/gpt-5.6-sol",
+          "zai/glm-5.3-flash"
+        ],
+        "description": "Claude Opus/xhigh design architect. OpenAI lane: sw-architect. GLM lane: architect-glm."
       },
       "analyst": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
+        "thinking": "medium",
         "fallbackModels": [
           "anthropic/claude-opus-5",
           "zai/glm-5.3-flash"
@@ -227,7 +228,7 @@
       },
       "security": {
         "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
+        "thinking": "medium",
         "fallbackModels": [
           "anthropic/claude-opus-5",
           "anthropic/claude-sonnet-5",
@@ -238,42 +239,42 @@
         ]
       },
       "refactorer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "ponytail-review"
         ]
       },
       "doc-writer": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "git-ops": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "javascript-pro": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "tdd"
         ]
       },
       "typescript-pro": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true,
         "skills": [
           "tdd"
         ]
       },
       "delegate": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "thinking": "xhigh",
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "medium",
         "fast": true
       },
       "architect-glm": {
@@ -294,18 +295,9 @@
           "anthropic/claude-haiku-4-5"
         ]
       },
-      "architect": {
-        "model": "anthropic/claude-opus-5",
-        "thinking": "xhigh",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol",
-          "zai/glm-5.3-flash"
-        ],
-        "description": "Claude Opus/xhigh design architect. OpenAI lane: sw-architect. GLM lane: architect-glm."
-      },
       "oracle": {
         "model": "anthropic/claude-opus-5",
-        "thinking": "xhigh",
+        "thinking": "medium",
         "fallbackModels": [
           "openai-codex/gpt-5.6-sol"
         ]
