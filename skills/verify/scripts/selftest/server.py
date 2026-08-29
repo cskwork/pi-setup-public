@@ -13,6 +13,7 @@ import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
 
+# Joined at runtime so secret scanners do not read the literal as a real JWT.
 TOKEN = ".".join(("eyJhbGciOiJIUzI1NiJ9", "eyJzdWIiOiJzZWxmdGVzdCJ9", "s3lft3st-signature-value"))
 USER = "dev@example.com"
 PASSWORD = "changeme"
