@@ -49,7 +49,7 @@ The live secret file sits **outside** the repository, so it cannot be committed 
 
 At the end of a run the installer names every provider routed in `settings.json` that has no credential, as information rather than a problem. Remove the block between the `pi-setup provider env` markers to uninstall the loader.
 
-The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Luna subagents use `xhigh` thinking with fast priority mode; Sol routes retain Anthropic and Z.ai fallbacks. `models.json` keeps native text and image input available for GLM-5.3-Flash. The Z.ai routes use `ZAI_API_KEY` when it is set; without it those roles fall through to the Anthropic and OpenAI tiers silently.
+The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Subagents run `openai-codex/gpt-5.6-sol`: `high` thinking for the design roles (specifier, sw-architect, hardender, architect), `medium` with fast priority mode everywhere else. Sol routes retain Anthropic and Z.ai fallbacks, and Z.ai lanes run at `max`. `models.json` keeps native text and image input available for GLM-5.3-Flash. The Z.ai routes use `ZAI_API_KEY` when it is set; without it those roles fall through to the Anthropic and OpenAI tiers silently.
 
 Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
@@ -125,11 +125,11 @@ Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-chang
 | Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
-| coder | luna · xhigh · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
-| cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
+| coder | sol · medium · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
+| cleaner | sol · medium · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
+| qa | sol · medium · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
 
 The hardender always gets a top model: it is the only gate that invents its own
 checks instead of reading a given artifact, its failure mode is a silent `PASS`

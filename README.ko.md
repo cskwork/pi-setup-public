@@ -49,7 +49,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 설치 마지막에는 `settings.json`이 경로로 쓰지만 자격증명이 없는 프로바이더를 문제가 아닌 안내로 알려준다. 로더를 제거하려면 `pi-setup provider env` 표식 사이의 블록을 지우면 된다.
 
-기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. Luna 서브에이전트는 `xhigh` 사고와 fast 우선 모드를 사용하고, Sol 경로는 Anthropic·Z.ai 폴백을 유지한다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다. Z.ai 경로는 `ZAI_API_KEY`가 설정되어 있을 때 사용되고, 없으면 해당 역할은 조용히 Anthropic·OpenAI 단계로 내려간다.
+기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. 서브에이전트는 `openai-codex/gpt-5.6-sol`을 쓴다. 설계 역할(specifier, sw-architect, hardender, architect)은 `high` 사고, 나머지는 `medium` 사고에 fast 우선 모드를 쓴다. Sol 경로는 Anthropic·Z.ai 폴백을 유지하고, Z.ai 경로는 `max` 사고로 돈다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다. Z.ai 경로는 `ZAI_API_KEY`가 설정되어 있을 때 사용되고, 없으면 해당 역할은 조용히 Anthropic·OpenAI 단계로 내려간다.
 
 이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
 
@@ -125,11 +125,11 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | 게이트 | `codex-only` | `claude-only` | `mix` | `glm-max` |
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
-| coder | luna · xhigh · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
-| cleaner | luna · xhigh · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
+| coder | sol · medium · fast | opus-5 · high | codex sol · high | glm-5.3 · max |
+| cleaner | sol · medium · fast | haiku-4-5 · med | luna · xhigh · fast | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | luna · xhigh · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
+| qa | sol · medium · fast | sonnet-5 · med | glm-5.3 · med | glm-5.3 · max |
 
 hardender에는 항상 최상위 모델을 붙인다. 주어진 문서를 읽는 다른 게이트와 달리 검사 항목 자체를 스스로 만들어내야 하고, 실패했을 때 조용히 `PASS`를 내보내 이후 어떤 게이트도 이를 잡지 못하며, BLOCK 권한을 가지기 때문이다.
 
