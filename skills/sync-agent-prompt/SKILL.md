@@ -11,16 +11,19 @@ the as-is → to-be plan. Silence and "continue" are not approval.**
 
 ## Topology (verified 2026-08-29; re-verify paths that fail)
 
+(`<private>` is the private pi-setup mirror checkout; this public copy never
+names its path.)
+
 **Operating contract — four copies, one content:**
 
 | copy | path | role |
 |---|---|---|
 | live | `~/.agents/AGENTS.md` | what local agents load; `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` symlink to it |
-| private | `~/pi-setup/AGENTS.md` | canonical edit point, repo `cskwork/pi-setup` |
+| private | `<private>/AGENTS.md` | canonical edit point, repo `cskwork/pi-setup` |
 | public | `~/pi-setup-public/AGENTS.md` | repo `cskwork/pi-setup-public` — **the default install source**: fresh machines clone this and symlink their CLAUDE.md/AGENTS.md to it |
 | mirror | `agents/AGENTS.md` in `cskwork/prime-agent-sync` | no local checkout — read/write via `gh api repos/cskwork/prime-agent-sync/contents/agents/AGENTS.md` |
 
-**Essential skills:** `~/pi-setup/skills/*` → `~/pi-setup-public/skills/*`.
+**Essential skills:** `<private>/skills/*` → `~/pi-setup-public/skills/*`.
 The public set is a subset; paths only in private are work-IP and must NEVER
 go public. Two skills have external canonicals:
 
@@ -63,9 +66,9 @@ txt with `?raw` and holds no body.
 ## Public-leg safety
 
 `pi-setup-public` is public and permanent. Prefer
-`~/pi-setup/scripts/sync-public.sh` (stages only; the human reviews
+`<private>/scripts/sync-public.sh` (stages only; the human reviews
 `git diff --cached` and pushes). It refuses to run without the gitignored
-`~/pi-setup/.sync-keywords` leak filter; while that file is missing, copy only
+`<private>/.sync-keywords` leak filter; while that file is missing, copy only
 individually reviewed framework files, never `git add -A`, and never move a
 private-only path into the public tree.
 
@@ -75,5 +78,5 @@ private-only path into the public tree.
   `git rm` and sneak into the next blanket `git add`.
 - Keep shell scripts LF-only; a CRLF copy breaks Git Bash consumers.
 - `~/.agents/skills/<name>` entries are per-skill symlinks into
-  `~/pi-setup/skills/<name>` — a new shared skill needs its symlink created
-  once (`ln -sfn ~/pi-setup/skills/<name> ~/.agents/skills/<name>`).
+  `<private>/skills/<name>` — a new shared skill needs its symlink created
+  once (`ln -sfn <private>/skills/<name> ~/.agents/skills/<name>`).

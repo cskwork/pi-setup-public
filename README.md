@@ -55,7 +55,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
 ## What's inside
 
-### Skills (30)
+### Skills (31)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -69,6 +69,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `create-verification-skill` | Generate a project-local skill that drives the real app and captures proof | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | Evidence before assertions. Never call unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | Audit and configure pi's own settings.json: skill isolation, subagent routing, packages | local |
+| `sync-agent-prompt` | Sync the AGENTS.md operating contract and essential skills across pi-setup, pi-setup-public, and the promptbox onboarding prompt; shows as-is → to-be and asks before writing | local |
 | `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions: reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | Test-driven development: red-green-refactor, integration tests, mocking patterns | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `unslop` | Remove AI writing patterns and restore a human voice | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop) |
@@ -126,10 +127,10 @@ the six-pack pipeline with `/subagents-load-profile <codex-only|claude-only|mix|
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | sol · medium | opus-5 · high | codex sol · high | glm-5.3 · max |
-| cleaner | sol · medium | haiku-4-5 · med | sol · medium | glm-5.3 · max |
+| cleaner | sol · medium | haiku-4-5 · high | sol · medium | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | sol · medium | sonnet-5 · med | glm-5.3-flash · max | glm-5.3-flash · max |
+| qa | sol · medium | sonnet-5 · high | glm-5.3-flash · max | glm-5.3-flash · max |
 
 The hardender always gets a top model. It is the only gate that invents its own
 checks instead of reading a given artifact, it holds BLOCK authority, and when it
@@ -195,7 +196,7 @@ Your live config is **yours**. It is gitignored here, and edits through pi's per
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              30 agent skills
+skills/              31 agent skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py: CI guard for doc/config drift

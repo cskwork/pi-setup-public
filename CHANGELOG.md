@@ -1,9 +1,24 @@
 # Changelog
 
-## Unreleased
+## v0.7.0 — 2026-08-30
+
+### Added
+
+- **`sync-agent-prompt` skill (the 31st).** Keeps every copy of the operating
+  contract identical: live `~/.agents/AGENTS.md`, the private and public
+  repos, the `prime-agent-sync` mirror, and the promptbox onboarding prompt.
+  One status command, per-file newest-wins direction proven by `git log`, and
+  a hard ask-before-write gate. The public copy is sanitized: private
+  checkout paths become `<private>/`, pinned `keep-public` in `.sync-public`
+  so sync-public.sh never overwrites it.
 
 ### Changed
 
+- **Every Claude route now defaults to `high` thinking.** `settings.json`
+  left `oracle` at `medium` and `claude-only` left 20 roles at `medium`;
+  all `anthropic` routes now run `high`. `openai-codex/gpt-5.6-sol` is the
+  only model allowed `medium`. The README and landing-page profile tables
+  show `high` in the claude-only cleaner and qa cells.
 - **README and landing-page copy rewritten.** Removed every em dash (51 on the
   landing page alone), the colon-as-connector constructions, the promotional
   words (curated, lean, friendly-by-default), and the feeling-words that named
@@ -22,6 +37,23 @@
   and checks it, so the cheaper reasoning model covers the gate. The README and
   landing-page tables also said `glm-5.3 · med` for `mix`, which the profile
   never matched.
+
+### Fixed
+
+- **`check-docs` failing on both repos.** The skill headers and Layout
+  blocks said 30 while `skills/` had 31, and the skills tables had no
+  `sync-agent-prompt` row. Headers, tables, and the landing-page counts now
+  say 31.
+- **`check-public-links` failing in the public repo.** The published
+  `sync-agent-prompt/SKILL.md` named the private checkout paths. The public
+  variant now uses the `<private>/` placeholder and a `keep-public` rule.
+
+### Verification
+
+All gates green on both repos before tagging: `check-docs.py`,
+`check-public-links.sh` (public), `test-pi-env.sh`, `test-pi-node-heap.sh`,
+`test-prune-sessions.sh`. A policy check confirms no `anthropic` route sits
+below `high` in any of the seven JSON routing files.
 
 ## v0.6.0 — 2026-08-29
 

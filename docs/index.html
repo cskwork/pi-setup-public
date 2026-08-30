@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pi-setup: my pi coding agent config, restored in one command</title>
-<meta name="description" content="My pi coding agent config: 30 skills, 18 packages, 6 subagent model profiles, per-agent skill defaults, and a permission policy that only stops the commands that can destroy something. One command restores it on a new machine.">
+<meta name="description" content="My pi coding agent config: 31 skills, 18 packages, 6 subagent model profiles, per-agent skill defaults, and a permission policy that only stops the commands that can destroy something. One command restores it on a new machine.">
 <style>
 :root{
   --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
@@ -70,8 +70,8 @@ footer a:hover{text-decoration:underline}
   <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
   <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
   <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
-  <p class="sub en">30 skills, 18 packages, 6 subagent model profiles, and every extension I actually use. The permission policy stops the commands that can destroy something and stays out of the way otherwise. One repo, one command, any machine.</p>
-  <p class="sub ko">스킬 30종, 패키지 18종, 서브에이전트 모델 프로필 6종, 그리고 실제로 쓰는 익스텐션 전부. 권한 정책은 무언가를 망가뜨릴 수 있는 명령만 막고 나머지는 비켜섭니다. 레포 하나, 명령 하나, 어느 머신에서든.</p>
+  <p class="sub en">31 skills, 18 packages, 6 subagent model profiles, and every extension I actually use. The permission policy stops the commands that can destroy something and stays out of the way otherwise. One repo, one command, any machine.</p>
+  <p class="sub ko">스킬 31종, 패키지 18종, 서브에이전트 모델 프로필 6종, 그리고 실제로 쓰는 익스텐션 전부. 권한 정책은 무언가를 망가뜨릴 수 있는 명령만 막고 나머지는 비켜섭니다. 레포 하나, 명령 하나, 어느 머신에서든.</p>
   <div class="install">
     <span class="cmt"># fresh machine</span>
     <code>git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public</code>
@@ -115,6 +115,7 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3><code>teach</code></h3><p class="en">Teach a skill or concept within the workspace.</p><p class="ko">워크스페이스 내 기술·개념 교육.</p><a class="src" href="https://github.com/mattpocock/skills">mattpocock/skills</a></div>
     <div class="card"><h3><code>db-intelligence</code></h3><p class="en">One DB skill, four engines: PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe and read-first.</p><p class="ko">DB 스킬 하나에 엔진 4개: PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 보호, 읽기 우선.</p></div>
     <div class="card"><h3><code>pi-settings</code></h3><p class="en">Audit and configure pi's own settings.json: skill isolation, routing, packages.</p><p class="ko">pi 자체 settings.json 감사·구성: 스킬 격리, 라우팅, 패키지.</p></div>
+    <div class="card"><h3><code>sync-agent-prompt</code></h3><p class="en">Sync the AGENTS.md operating contract and essential skills across the repos that hold copies; diffs before writing.</p><p class="ko">사본을 가진 저장소 사이에 AGENTS.md 운영 계약과 필수 스킬 동기화. 쓰기 전 diff.</p></div>
   </div>
   <p class="lead en" style="margin-top:18px">Agents load their domain skills by default. QA agents get <code>browser-qa</code>, coders get TDD, verifiers get the verify gate. Nothing to wire up per call.</p>
   <p class="lead ko" style="margin-top:4px">에이전트는 도메인 스킬을 기본으로 로드합니다. QA엔 browser-qa, 코더엔 TDD, 검증엔 verify 게이트. 호출마다 연결할 일이 없습니다.</p>
@@ -166,10 +167,10 @@ footer a:hover{text-decoration:underline}
       <tbody>
         <tr><td style="padding:8px 10px"><code>specifier</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">sonnet-5 · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
         <tr><td style="padding:8px 10px"><code>coder</code></td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
-        <tr><td style="padding:8px 10px"><code>cleaner</code></td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">haiku-4-5 · med</td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>cleaner</code></td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">haiku-4-5 · high</td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
         <tr><td style="padding:8px 10px"><code>sw-architect</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
         <tr><td style="padding:8px 10px"><code>hardender</code></td><td style="padding:8px 10px">sol · high</td><td style="padding:8px 10px">opus-5 · high</td><td style="padding:8px 10px">codex sol · high</td><td style="padding:8px 10px">glm-5.3 · max</td></tr>
-        <tr><td style="padding:8px 10px"><code>qa</code></td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">sonnet-5 · med</td><td style="padding:8px 10px">glm-5.3-flash · max</td><td style="padding:8px 10px">glm-5.3-flash · max</td></tr>
+        <tr><td style="padding:8px 10px"><code>qa</code></td><td style="padding:8px 10px">sol · medium</td><td style="padding:8px 10px">sonnet-5 · high</td><td style="padding:8px 10px">glm-5.3-flash · max</td><td style="padding:8px 10px">glm-5.3-flash · max</td></tr>
       </tbody>
     </table>
     <p class="en" style="color:var(--dim);margin-top:16px;font-size:13.5px">The hardender always gets a top model. It is the only gate that invents its own checks instead of reading a given artifact, and when it fails it emits a silent <code>PASS</code> that no later gate catches.</p>
