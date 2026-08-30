@@ -9,8 +9,8 @@ My [pi coding agent](https://github.com/badlogic/pi-mono) configuration: skills,
 ### macOS, Linux, or Git Bash
 
 ```bash
-git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
-~/pi-setup-public/install.sh
+git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+~/pi-setup/install.sh
 pi auth                      # OAuth providers (anthropic, openai-codex, amazon-bedrock)
 $EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 # restart your shell, then restart pi
@@ -19,8 +19,8 @@ $EDITOR ~/.pi-setup.env      # API-key providers, e.g. ZAI_API_KEY=...
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
-Set-Location "$HOME\pi-setup-public"
+git clone https://github.com/cskwork/pi-setup.git "$HOME\pi-setup"
+Set-Location "$HOME\pi-setup"
 if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
@@ -51,7 +51,7 @@ At the end of a run the installer lists every provider routed in `settings.json`
 
 The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Subagents run `openai-codex/gpt-5.6-sol`: `high` thinking for the design roles (specifier, sw-architect, hardender, architect), `medium` everywhere else. Sol routes retain Anthropic and Z.ai fallbacks, and Z.ai lanes run at `max`. `models.json` keeps native text and image input available for GLM-5.3-Flash. The Z.ai routes use `ZAI_API_KEY` when it is set; without it those roles fall through to the Anthropic and OpenAI tiers silently.
 
-Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
+Keep drift in sync afterwards with `~/pi-setup/sync.sh`.
 
 ## What's inside
 
@@ -64,7 +64,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `browser-qa` | Browser QA on anything: YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime; Playwright E2E patterns in `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | One DB skill, four engines: PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
-| `call-agent` | Routes a task to the peer AI CLI that fits it | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
+| `call-agent` | Routes a task to the peer AI CLI that fits it; claude wrappers honor `CLAUDE_MODEL` | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `create-verification-skill` | Generate a project-local skill that drives the real app and captures proof | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | Evidence before assertions. Never call unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
