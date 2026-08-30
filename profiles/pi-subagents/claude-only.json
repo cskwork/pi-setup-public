@@ -25,7 +25,7 @@
       },
       "cleaner": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-sonnet-5"
         ],
@@ -57,7 +57,7 @@
       },
       "qa": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-haiku-4-5"
         ],
@@ -73,7 +73,7 @@
           "agent-browser"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "qa-auditor": {
         "skills": [
@@ -81,7 +81,7 @@
           "agent-browser"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "agent-browser": {
         "skills": [
@@ -90,7 +90,7 @@
           "playwright-cli"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "customer-agent": {
         "skills": [
@@ -98,7 +98,7 @@
           "agent-browser"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "persona-product-tester": {
         "skills": [
@@ -106,7 +106,7 @@
           "agent-browser"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "verify": {
         "skills": [
@@ -114,7 +114,7 @@
           "verification-before-completion"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "tester": {
         "skills": [
@@ -122,34 +122,34 @@
           "playwright-cli"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "delegate": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "scout": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "researcher": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "reviewer": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "worker": {
         "model": "anthropic/claude-haiku-4-5",
-        "thinking": "medium"
+        "thinking": "high"
       },
       "planner": {
         "model": "anthropic/claude-opus-5",
@@ -170,7 +170,7 @@
       },
       "refactorer": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-haiku-4-5"
         ],
@@ -180,21 +180,21 @@
       },
       "doc-writer": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-haiku-4-5"
         ]
       },
       "git-ops": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-haiku-4-5"
         ]
       },
       "javascript-pro": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-haiku-4-5"
         ],
@@ -204,7 +204,7 @@
       },
       "typescript-pro": {
         "model": "anthropic/claude-sonnet-5",
-        "thinking": "medium",
+        "thinking": "high",
         "fallbackModels": [
           "anthropic/claude-haiku-4-5"
         ],
