@@ -55,7 +55,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 ## 구성
 
-### 스킬 (30)
+### 스킬 (31)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
@@ -69,6 +69,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `create-verification-skill` | 실제 앱을 구동해 증거를 남기는 프로젝트 전용 검증 스킬을 생성한다 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저. 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | pi 자체 settings.json 감사·구성: 스킬 격리, 서브에이전트 라우팅, 패키지 | local |
+| `sync-agent-prompt` | pi-setup, pi-setup-public, promptbox 온보딩 프롬프트 세 곳의 AGENTS.md 운영 계약과 필수 스킬 동기화; 쓰기 전 as-is → to-be 비교 후 확인 | local |
 | `diagnosing-bugs` | 버그·성능 회귀 진단 루프: 재현 → 최소화 → 가설 → 계측 → 수정 → 회귀 테스트 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | 테스트 주도 개발: red-green-refactor, 통합 테스트, mocking 패턴 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `unslop` | AI 문체 패턴을 걷어내고 사람다운 목소리로 다듬기 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop) |
@@ -126,10 +127,10 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 |---|---|---|---|---|
 | specifier | sol · high | sonnet-5 · high | opus-5 · high | glm-5.3 · max |
 | coder | sol · medium | opus-5 · high | codex sol · high | glm-5.3 · max |
-| cleaner | sol · medium | haiku-4-5 · med | sol · medium | glm-5.3 · max |
+| cleaner | sol · medium | haiku-4-5 · high | sol · medium | glm-5.3 · max |
 | sw-architect | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
 | hardender | sol · high | opus-5 · high | codex sol · high | glm-5.3 · max |
-| qa | sol · medium | sonnet-5 · med | glm-5.3-flash · max | glm-5.3-flash · max |
+| qa | sol · medium | sonnet-5 · high | glm-5.3-flash · max | glm-5.3-flash · max |
 
 hardender에는 항상 최상위 모델을 붙인다. 주어진 문서를 읽는 다른 게이트와 달리 검사 항목을 스스로 만들어야 하고, BLOCK 권한을 가지며, 실패하면 조용히 `PASS`를 내보내 이후 어떤 게이트도 이를 잡지 못한다.
 
@@ -190,7 +191,7 @@ coder → refactorer → sw-architect → qa). 따라서 모든 팩은 `mix`·`g
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              에이전트 스킬 30개
+skills/              에이전트 스킬 31개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py: 문서/설정 불일치 CI 가드
