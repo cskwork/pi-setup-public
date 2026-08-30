@@ -9,8 +9,8 @@
 ### macOS, Linux, Git Bash
 
 ```bash
-git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public
-~/pi-setup-public/install.sh
+git clone https://github.com/cskwork/pi-setup.git ~/pi-setup
+~/pi-setup/install.sh
 pi auth                      # OAuth 프로바이더 (anthropic, openai-codex, amazon-bedrock)
 $EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 # 셸을 다시 연 뒤 pi 재시작
@@ -19,8 +19,8 @@ $EDITOR ~/.pi-setup.env      # API 키 프로바이더, 예: ZAI_API_KEY=...
 ### Windows PowerShell
 
 ```powershell
-git clone https://github.com/cskwork/pi-setup-public.git "$HOME\pi-setup-public"
-Set-Location "$HOME\pi-setup-public"
+git clone https://github.com/cskwork/pi-setup.git "$HOME\pi-setup"
+Set-Location "$HOME\pi-setup"
 if ((Get-ExecutionPolicy) -eq 'Restricted') {
   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
@@ -51,7 +51,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. 서브에이전트는 `openai-codex/gpt-5.6-sol`을 쓴다. 설계 역할(specifier, sw-architect, hardender, architect)은 `high` 사고, 나머지는 `medium` 사고를 쓴다. Sol 경로는 Anthropic·Z.ai 폴백을 유지하고, Z.ai 경로는 `max` 사고로 돈다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다. Z.ai 경로는 `ZAI_API_KEY`가 설정되어 있을 때 사용되고, 없으면 해당 역할은 조용히 Anthropic·OpenAI 단계로 내려간다.
 
-이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
+이후 로컬에서 바뀐 내용은 `~/pi-setup/sync.sh`로 저장소에 반영한다.
 
 ## 구성
 
@@ -64,7 +64,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `browser-qa` | 어떤 사이트든 브라우저 QA: YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임; Playwright E2E 패턴은 `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | DB 스킬 하나로 4개 엔진: PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
 | `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
-| `call-agent` | 작업에 맞는 다른 AI CLI로 넘김 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
+| `call-agent` | 작업에 맞는 다른 AI CLI로 넘김; claude 래퍼는 `CLAUDE_MODEL`로 모델 교체 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5단계 검증. "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `create-verification-skill` | 실제 앱을 구동해 증거를 남기는 프로젝트 전용 검증 스킬을 생성한다 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저. 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
