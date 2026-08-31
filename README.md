@@ -55,7 +55,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 
 ## What's inside
 
-### Skills (31)
+### Skills (30)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -88,7 +88,6 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
 | `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `pi-sixpack` | SwarmForge-style 6-role gated pipeline (Wave 0 parallel explore → specifier→coder→cleaner→architect∥hardender→QA, packs 2/4/6) via pi subagents | port of [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) |
 | `sdlc-kit` | Six-stage SDLC with human approvals on the record, fresh-context review, and bounded memory | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
 
 ### Extensions
@@ -118,10 +117,10 @@ Installed via `pi install` (see `settings.json`):
 
 Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-change guard on session switch) and `herdr-agent-state.ts`. `@gotgenes/pi-permission-system` owns every Bash permission; nothing else writes them.
 
-### Subagent model profiles (6)
+### Subagent model profiles (4)
 
-The profiles live in `profiles/pi-subagents/*.json`. Swap every gate's model for
-the six-pack pipeline with `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
+The profiles live in `profiles/pi-subagents/*.json`. Swap model routing for the
+shared agent set with `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`:
 
 | Gate | `codex-only` | `claude-only` | `mix` | `glm-max` |
 |---|---|---|---|---|
@@ -154,14 +153,6 @@ external agent prompt: remove its `model:` line or use an exact provider/model
 ID. A settings override cannot rescue a frontmatter pin because frontmatter
 wins first.
 
-**Pack profiles.** `two-pack` and `four-pack` pin the `glm-max` models to only the
-gates that pack runs (two-pack: coder → qa; four-pack: specifier → coder →
-refactorer → sw-architect → qa), so every pack ends on the same
-`glm-5.3-flash · max` QA gate as `mix` and `glm-max`. Role orders mirror the upstream SwarmForge
-branches, with the pi pipeline's independent QA gate kept in every pack. Load one
-when the pack is already decided; they keep the utility agents' skill lists so a
-wholesale load strips nothing. Pack 6 uses any model profile directly.
-
 ### Skills by default
 
 Every profile sets `agentOverrides.<agent>.skills`, so domain skills load with the
@@ -173,11 +164,6 @@ agent instead of per-call wiring:
 - **Domain-data tier.** `specifier`, `hardender`, `qa` get `db-intelligence` (domain data before code, integrity probes, read-only DB evidence)
 - **Minimalism tier.** `coder` gets `ponytail`, `cleaner`/`refactorer` get `ponytail-review`
 - **Architecture tier.** `sw-architect` gets `api-and-interface-design` (vendored in `skills/`, so a fresh clone has it). The agent prompt says *what* to review; the skill supplies the reference material: Hyrum's Law, idempotency-key claiming and its TOCTOU trap, error-shape consistency, additive-change rules.
-
-The six-pack's **Wave 0** fans these out in parallel before specification: Jira
-requirements (atlassian-cli, when present) ∥ code graph ∥ DB evidence ∥ browser
-as-is. These are read-only nodes of a dependency DAG, and the spec must cite
-their artifacts.
 
 ### Permission policy (default)
 
@@ -196,7 +182,7 @@ Your live config is **yours**. It is gitignored here, and edits through pi's per
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
 configs/             permission default (public)
-skills/              31 agent skills
+skills/              30 agent skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py: CI guard for doc/config drift

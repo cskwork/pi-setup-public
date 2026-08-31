@@ -55,7 +55,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 ## 구성
 
-### 스킬 (31)
+### 스킬 (30)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
@@ -88,7 +88,6 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `gpt-image-2` | Codex CLI + ChatGPT 요금제로 이미지 생성 | local |
 | `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | 로그인 상태를 공유하는 에이전트 친화 브라우저 | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `pi-sixpack` | SwarmForge 방식 6역할 게이트 파이프라인 (Wave 0 병렬 탐색 → specifier→coder→cleaner→architect∥hardender→QA, 팩 2/4/6) | [cskwork/aidt-swarmforge-harness](https://github.com/cskwork/aidt-swarmforge-harness) 이식 |
 | `sdlc-kit` | 기록으로 남는 사람 승인, 새 컨텍스트 검토, 제한된 메모리를 갖춘 6단계 SDLC 루프 | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
 
 ### 익스텐션
@@ -118,9 +117,9 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 추가로 `extensions/`에 로컬 익스텐션이 있다: `dirty-repo-guard.ts`(세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`. Bash 권한은 `@gotgenes/pi-permission-system`만 쓴다. 다른 곳에서는 건드리지 않는다.
 
-### 서브에이전트 모델 프로필 (6)
+### 서브에이전트 모델 프로필 (4)
 
-프로필은 `profiles/pi-subagents/*.json`에 있다. 식스팩 파이프라인의 게이트별 모델을
+프로필은 `profiles/pi-subagents/*.json`에 있다. 공용 에이전트 세트의 모델 라우팅을
 통째로 교체한다. `/subagents-load-profile <codex-only|claude-only|mix|glm-max>`
 
 | 게이트 | `codex-only` | `claude-only` | `mix` | `glm-max` |
@@ -152,15 +151,6 @@ hardender에는 항상 최상위 모델을 붙인다. 주어진 문서를 읽는
 프롬프트를 고친다. `model:` 줄을 제거하거나 정확한 provider/model ID를 쓴다.
 frontmatter가 먼저 이기므로 settings override만으로는 이 핀을 고칠 수 없다.
 
-**팩 프로필.** `two-pack`과 `four-pack`은 `glm-max` 모델을 해당 팩이 실제로
-돌리는 게이트에만 고정한다 (two-pack: coder → qa; four-pack: specifier →
-coder → refactorer → sw-architect → qa). 따라서 모든 팩은 `mix`·`glm-max`와
-동일하게 `glm-5.3-flash · max` QA 게이트로 끝난다. 역할 순서는 업스트림 SwarmForge
-브랜치를 따르며, pi 파이프라인의 독립 QA 게이트는 모든 팩에 유지된다.
-팩이 이미 정해져 있다면 로드하면 된다. 유틸리티 에이전트의 스킬 목록은
-그대로 남아 통째 로드해도 아무것도 벗겨지지 않는다. 팩 6은 모델 프로필을
-그대로 쓴다.
-
 ### 기본 스킬 연결
 
 모든 프로필이 `agentOverrides.<agent>.skills`를 설정해 호출마다 연결할 필요 없이 에이전트와 함께 스킬이 로드된다:
@@ -171,8 +161,6 @@ coder → refactorer → sw-architect → qa). 따라서 모든 팩은 `mix`·`g
 - **도메인 데이터.** `specifier`, `hardender`, `qa`에 `db-intelligence` (코딩 전 도메인 데이터 확보, 무결성 프로브, 읽기 전용 DB 증거)
 - **미니멀리즘.** `coder`에 `ponytail`, `cleaner`/`refactorer`에 `ponytail-review`
 - **아키텍처.** `sw-architect`에 `api-and-interface-design` (`skills/`에 실물 복사본이 있어 새로 클론해도 동작한다). 에이전트 프롬프트는 *무엇을* 볼지 정하고, 스킬은 판단 근거를 제공한다: Hyrum의 법칙, 멱등키(idempotency key) 확보와 TOCTOU 함정, 에러 형태 일관성, 추가 전용 변경 규칙.
-
-식스팩의 **Wave 0**은 명세 전에 이 스킬들을 병렬로 퍼뜨린다: Jira 요구사항(atlassian-cli, 있을 때) ∥ 코드 그래프 ∥ DB 증거 ∥ 브라우저 현재 동작. 모두 읽기 전용 의존성 DAG 노드이며, 명세는 이 아티팩트를 반드시 인용해야 한다.
 
 ### 권한 정책 (기본값)
 
@@ -191,7 +179,7 @@ coder → refactorer → sw-architect → qa). 따라서 모든 팩은 `mix`·`g
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
 configs/             권한 기본값 (공개)
-skills/              에이전트 스킬 31개
+skills/              에이전트 스킬 30개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py: 문서/설정 불일치 CI 가드

@@ -116,19 +116,6 @@ Three formats when useful, at minimum the first: **data table** (≤20 rows show
 note total), **analysis** (direct answer + notable pattern/outlier), and
 optionally a **chart** via the legacy visualizer scripts.
 
-## Pipeline use (pi-sixpack)
-
-- **Explore / Wave 0 (parent or scout):** schema + entity graph + language →
-  `03-db-evidence.md`. Read-only.
-- **Specifier:** consumes/extends the evidence; every data claim in the spec
-  cites a query from it.
-- **Hardender:** adversarial data probes — orphan rows, constraint gaps,
-  before/after state of update/delete paths. Read-only.
-- **QA:** read-only DB evidence only when the public surface leaves material
-  uncertainty (per QA doctrine); cite statement + rows.
-- **Coder** does not query ad hoc: it works from the evidence artifact. If the
-  artifact is insufficient, that is a gate failure — escalate, don't guess.
-
 ## Reference map
 
 | File | When |
