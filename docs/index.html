@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pi-setup: my pi coding agent config, restored in one command</title>
-<meta name="description" content="My pi coding agent config: 31 skills, 18 packages, 6 subagent model profiles, per-agent skill defaults, and a permission policy that only stops the commands that can destroy something. One command restores it on a new machine.">
+<meta name="description" content="My pi coding agent config: 30 skills, 18 packages, 4 subagent model profiles, per-agent skill defaults, and a permission policy that only stops the commands that can destroy something. One command restores it on a new machine.">
 <style>
 :root{
   --bg:#0b0e14;--bg2:#111521;--card:rgba(255,255,255,.045);--card-brd:rgba(255,255,255,.09);
@@ -70,8 +70,8 @@ footer a:hover{text-decoration:underline}
   <span class="badge"><span class="dot"></span> pi coding agent · cskwork</span>
   <h1 class="en">Your <em>pi agent</em>, ready in one command</h1>
   <h1 class="ko">한 줄이면 <em>pi 에이전트</em> 세팅 완료</h1>
-  <p class="sub en">31 skills, 18 packages, 6 subagent model profiles, and every extension I actually use. The permission policy stops the commands that can destroy something and stays out of the way otherwise. One repo, one command, any machine.</p>
-  <p class="sub ko">스킬 31종, 패키지 18종, 서브에이전트 모델 프로필 6종, 그리고 실제로 쓰는 익스텐션 전부. 권한 정책은 무언가를 망가뜨릴 수 있는 명령만 막고 나머지는 비켜섭니다. 레포 하나, 명령 하나, 어느 머신에서든.</p>
+  <p class="sub en">30 skills, 18 packages, 4 subagent model profiles, and every extension I actually use. The permission policy stops the commands that can destroy something and stays out of the way otherwise. One repo, one command, any machine.</p>
+  <p class="sub ko">스킬 30종, 패키지 18종, 서브에이전트 모델 프로필 4종, 그리고 실제로 쓰는 익스텐션 전부. 권한 정책은 무언가를 망가뜨릴 수 있는 명령만 막고 나머지는 비켜섭니다. 레포 하나, 명령 하나, 어느 머신에서든.</p>
   <div class="install">
     <span class="cmt"># fresh machine</span>
     <code>git clone https://github.com/cskwork/pi-setup-public.git ~/pi-setup-public</code>
@@ -94,7 +94,6 @@ footer a:hover{text-decoration:underline}
     <div class="card"><h3><code>verify</code></h3><p class="en">5 verification gates. Never calls a green build "verified".</p><p class="ko">5단계 검증 게이트. 빌드 성공을 '검증됨'이라 부르지 않음.</p><a class="src" href="https://github.com/cskwork/verify-skill">cskwork/verify-skill</a></div>
     <div class="card"><h3><code>ego-browser</code></h3><p class="en">Agent-friendly browser that shares your logged-in state, zero config.</p><p class="ko">로그인 상태를 공유하는 에이전트 친화 브라우저, 설정 제로.</p><a class="src" href="https://github.com/citrolabs/ego-lite">citrolabs/ego-lite</a></div>
     <div class="card"><h3><code>call-agent</code></h3><p class="en">Routes a task to the peer AI CLI that fits it: Codex, agy, Kiro, Claude.</p><p class="ko">작업에 맞는 동료 AI CLI로 라우팅합니다. Codex, agy, Kiro, Claude.</p><a class="src" href="https://github.com/cskwork/call-agent">cskwork/call-agent</a></div>
-    <div class="card"><h3><code>pi-sixpack</code></h3><p class="en">Six-role gated pipeline in packs of 2, 4, or 6: spec → code → clean → architect ∥ harden → QA.</p><p class="ko">6역할 게이트 파이프라인, 2·4·6 팩: 명세→구현→정리→설계∥강화→QA.</p><a class="src" href="https://github.com/cskwork/aidt-swarmforge-harness">SwarmForge port</a></div>
     <div class="card"><h3><code>sdlc-kit</code></h3><p class="en">Six stages with human approvals, fresh-context review, evidence, and bounded memory.</p><p class="ko">사람 승인, 새 컨텍스트 검토, 증거, 제한된 메모리를 갖춘 6단계 SDLC.</p><a class="src" href="https://github.com/cskwork/sdlc-kit">cskwork/sdlc-kit</a></div>
     <div class="card"><h3><code>browser-qa</code></h3><p class="en">Browser QA on anything. YAML DAG scenarios, engine choice, real API evidence.</p><p class="ko">어떤 사이트든 브라우저 QA. YAML DAG 시나리오, 엔진 선택, 실제 API 증적.</p><a class="src" href="https://github.com/cskwork/browser-qa">cskwork/browser-qa</a></div>
     <div class="card"><h3><code>playwright-cli</code></h3><p class="en">Drive a browser directly; inspect or author Playwright tests.</p><p class="ko">브라우저를 직접 조작하고 Playwright 테스트를 검사·작성.</p></div>
@@ -175,8 +174,6 @@ footer a:hover{text-decoration:underline}
     </table>
     <p class="en" style="color:var(--dim);margin-top:16px;font-size:13.5px">The hardender always gets a top model. It is the only gate that invents its own checks instead of reading a given artifact, and when it fails it emits a silent <code>PASS</code> that no later gate catches.</p>
     <p class="ko" style="color:var(--dim);margin-top:16px;font-size:13.5px">hardender에는 항상 최상위 모델을 붙입니다. 주어진 문서를 읽는 다른 게이트와 달리 검사 항목을 스스로 만들어야 하고, 실패하면 조용히 <code>PASS</code>를 내보내 이후 어느 게이트도 이를 잡지 못합니다.</p>
-    <p class="en" style="color:var(--dim);margin-top:12px;font-size:13.5px"><strong>Pack profiles.</strong> <code>two-pack</code> and <code>four-pack</code> pin the glm-max models to only the gates that pack runs (coder → qa; specifier → coder → refactorer → sw-architect → qa). Role orders follow the upstream SwarmForge branches. The independent QA gate stays in every pack, on the same <code>glm-5.3-flash · max</code> as <code>mix</code> and <code>glm-max</code>.</p>
-    <p class="ko" style="color:var(--dim);margin-top:12px;font-size:13.5px"><strong>팩 프로필.</strong> <code>two-pack</code>과 <code>four-pack</code>은 glm-max 모델을 해당 팩이 돌리는 게이트에만 고정합니다 (coder → qa; specifier → coder → refactorer → sw-architect → qa). 역할 순서는 업스트림 SwarmForge 브랜치를 따릅니다. 독립 QA 게이트는 모든 팩에 남고, <code>mix</code>·<code>glm-max</code>와 같은 <code>glm-5.3-flash · max</code>를 씁니다.</p>
     <p class="en" style="color:var(--dim);margin-top:12px;font-size:13.5px"><strong>Utility agents.</strong> Every profile also routes the non-gate agents on two tiers. <code>planner</code> and <code>security</code> take the profile's deep model. The rest (<code>refactorer</code>, <code>doc-writer</code>, <code>git-ops</code>, <code>*-pro</code>, <code>scout</code>, <code>reviewer</code>, <code>worker</code>, …) take the cheap, fast one.</p>
     <p class="ko" style="color:var(--dim);margin-top:12px;font-size:13.5px"><strong>유틸리티 에이전트.</strong> 모든 프로필은 게이트가 아닌 에이전트도 2단 티어로 배정합니다. <code>planner</code>와 <code>security</code>는 상위 모델을 받고, 나머지(<code>refactorer</code>, <code>doc-writer</code>, <code>git-ops</code>, <code>*-pro</code>, <code>scout</code>, <code>reviewer</code>, <code>worker</code> …)는 저렴하고 빠른 쪽을 받습니다.</p>
     <p class="en" style="color:var(--acc2);margin-top:12px;font-size:13.5px"><strong>Gotcha.</strong> Never put <code>model:</code> in an agent's frontmatter. pi-subagents resolves it <em>before</em> <code>agentOverrides</code>, so that agent silently ignores every profile. All <code>agents/*.md</code> ship without it, and profiles are the one place routing gets decided.</p>
