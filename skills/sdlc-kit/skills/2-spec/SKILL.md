@@ -9,11 +9,16 @@ Goal: create `spec.md` from `intent.md` so engineering work has a clear
 contract. The agent writes the spec, and the human reviews it. Automate checks
 where possible. Keep human attention on gate decisions.
 
+Heartbeat: on entry and at every sub-task change, overwrite
+`.sdlc/work/<slug>/progress.md` with one line —
+`spec · <doing what> · <ISO timestamp>` (AGENTS.md rule 9).
+
 ## Before you start
 
 1. Run `gates/check-gate.sh intent .sdlc/work/<slug>/intent.md`. STOP if closed.
-2. Read intent.md fully. Read `.sdlc/memory/INDEX.md` and
-   `.sdlc/memory/DOMAIN.md`; open lesson files whose tags match the current
+2. Read intent.md fully. Read `.sdlc/memory/POLICY.md`,
+   `.sdlc/memory/INDEX.md`, `.sdlc/memory/DOMAIN.md`, and the feature's
+   `harvest.md` if present; open lesson files whose tags match the current
    task. Use DOMAIN.md terms so the spec uses the project's established
    vocabulary.
 3. Brownfield: read the researcher report from stage 1 (or dispatch one now).
@@ -22,11 +27,15 @@ where possible. Keep human attention on gate decisions.
 
 Fill `templates/spec.md`. Rules:
 
-- **Human summary first.** The spec body is an agent-facing contract. The gate
-  reviewer is a human. Write the top "Human summary" section in plain
-  speech (hard rule 8): what problem, what gets built, what stays unchanged,
-  and each flagged concern as a one-line decision with your recommendation.
-  Write it LAST (after the adversarial pass), place it FIRST.
+- **Human summary first.** The spec body is an agent-facing contract. The
+  gate reviewer is a human — possibly one with no technical background.
+  Write the top "Human summary" section so ANYONE can follow it (extends
+  hard rule 8): no code identifiers, no jargon (gloss an unavoidable term in the same
+  sentence), visible behavior rather than system internals — what problem,
+  what gets built, what stays unchanged, and each flagged concern as a
+  one-line decision with your recommendation. Test: would a non-developer
+  colleague understand every sentence? If not, rewrite. Write it LAST
+  (after the adversarial pass), place it FIRST.
 - Every requirement traces to a line in intent.md. Do not add features that
   intent.md does not request.
 - Every intent.md open question ends up in exactly one of two places: answered
@@ -55,16 +64,19 @@ Lazy shortcut: at lazymode ≥2 (AGENTS.md rule 3), run `tools/tripwire.sh`
 over the draft spec.md first — a clean scan skips this review; any hit runs
 it in full.
 
-Dispatch a fresh-context adversary (`roles/adversary.md`) with ONLY: intent.md,
-draft spec.md, and researcher report if any. It checks intent mismatch, wrong
-data shapes, missing edge cases, scope creep, and untestable requirements.
+Dispatch a fresh-context adversary (`roles/adversary.md`) with ONLY:
+intent.md, draft spec.md, `.sdlc/memory/POLICY.md` if present, and the
+researcher report if any. It checks intent mismatch, wrong data shapes,
+missing edge cases, scope creep, untestable requirements, and policy
+violations.
 
 - Fix what it catches; note each objection + resolution in spec.md's
   **Adversarial review** section (proof for the human that review happened).
 - If it finds an intent contradiction you cannot resolve from the artifacts:
   STOP, return the question to the user. Do not guess.
-- Repeat until the adversary has no blocking objections (max 2 rounds; then
-  escalate remaining objections to the human as flagged concerns).
+- Repeat until the adversary has no blocking objections (max 2 rounds).
+  Non-blocking leftovers become flagged concerns; a blocker surviving
+  round 2 blocks `--lazy` — human ask at any lazymode (rule 3).
 
 ## Gate
 
