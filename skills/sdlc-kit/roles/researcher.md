@@ -41,8 +41,11 @@ Report format (target: 60 lines or fewer):
   belong in .sdlc/memory/DOMAIN.md; one line each with [verified: how]>
 ```
 
-The dispatcher merges Domain candidates into `.sdlc/memory/DOMAIN.md`
-(dedup against existing entries; keep the cap).
+The dispatcher appends Domain candidates to the feature's
+`.sdlc/work/<slug>/harvest.md`; INDEX.md, DOMAIN.md, and lessons/ are
+written only at close (AGENTS.md rule 4). A candidate that contradicts an
+existing DOMAIN.md entry supersedes it — mark it `supersedes: <old entry>`
+so the close merge replaces the old line instead of keeping both.
 
 Cite file:line for every reported fact. Say "not found" rather than guess.
 Abbreviate code. Never paste whole files into the report.

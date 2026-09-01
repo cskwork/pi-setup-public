@@ -14,9 +14,45 @@ if [ $# -eq 4 ] && [ "$4" = "--delegated" ]; then delegated=1; set -- "$1" "$2" 
 slug="$1"; state="$2"; reason="$3"
 case "$state" in (shipped|abandoned|dead-end|handed-off) ;; (*) echo "FAIL: state must be shipped|abandoned|dead-end|handed-off"; usage;; esac
 dir=".sdlc/work/$slug"
+archive=".sdlc/archive/$slug"
+if [ -d "$archive" ]; then
+  # sweep approvals stranded by an interruption between the two archive mvs
+  if ls .sdlc/approvals/"$slug".* >/dev/null 2>&1; then
+    mkdir -p "$archive/approvals"
+    mv .sdlc/approvals/"$slug".* "$archive/approvals/"
+    echo "note: swept stranded approval records into $archive/approvals/"
+  fi
+  echo "FAIL: already closed and archived: $(head -1 "$archive/CLOSED" 2>/dev/null || echo "$archive")"
+  exit 1
+fi
 [ -d "$dir" ] || { echo "FAIL: no feature dir: $dir"; exit 1; }
-[ -f "$dir/CLOSED" ] && { echo "FAIL: already closed: $(head -1 "$dir/CLOSED")"; exit 1; }
 [ -n "$reason" ] || { echo "FAIL: reason must not be empty"; exit 1; }
+
+# A CLOSED record with no archive dir is an interrupted close (the mv or a
+# check between failed). Resume the archive step instead of failing forever —
+# but re-run every check below: CLOSED is an agent-writable file, so skipping
+# them on its mere presence would let a hand-written CLOSED bypass the lot.
+# A legitimate interrupted close passed them once and passes them again.
+resume=""
+if [ -f "$dir/CLOSED" ]; then
+  recorded=$(grep '^state: ' "$dir/CLOSED" | cut -d' ' -f2 || true)
+  if [ "$recorded" != "$state" ]; then
+    echo "FAIL: CLOSED records '$recorded' but you invoked '$state'."
+    echo "  Delete $dir/CLOSED and re-run if the record is wrong."
+    exit 1
+  fi
+  echo "note: $slug already has a CLOSED record — resuming the interrupted archive step"
+  resume=1
+fi
+
+# shipped is the state the gates exist for: it requires the ship approval.
+# Anything less closes as abandoned, dead-end, or handed-off.
+if [ "$state" = "shipped" ] && [ ! -f ".sdlc/approvals/${slug}.ship.approval" ]; then
+  echo "BLOCKED: 'shipped' requires a ship approval record."
+  echo "  Pass the ship gate (gates/approve.sh ship .sdlc/work/$slug/evidence.md),"
+  echo "  or close as abandoned|dead-end|handed-off."
+  exit 1
+fi
 
 # handed-off closes must name the external reference in the reason
 if [ "$state" = "handed-off" ]; then
@@ -25,6 +61,15 @@ if [ "$state" = "handed-off" ]; then
     echo "  (a key like A20-1240 or a URL), so the trail does not dead-end here."
     exit 1
   fi
+fi
+
+# shared memory has ONE writer — the close step (AGENTS.md rule 4). A leftover
+# harvest.md means lesson/domain candidates were never merged into memory/.
+if [ -f "$dir/harvest.md" ]; then
+  echo "BLOCKED: unmerged harvest: $dir/harvest.md"
+  echo "  Merge it into .sdlc/memory/ (lesson files + INDEX.md lines + DOMAIN.md"
+  echo "  facts), delete the file, then re-run. Close is the single-writer moment."
+  exit 1
 fi
 
 # knowledge check: non-shipped closes must leave a lesson behind.
@@ -43,14 +88,59 @@ if [ "$state" != "shipped" ] && [ "$state" != "handed-off" ]; then
   fi
 fi
 
-{
-  echo "state: $state"
-  echo "reason: $reason"
-  echo "closed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  [ -n "$delegated" ] && echo "mode: delegated-chat (agent-run on explicit human instruction)" || true
-  [ -n "$delegated" ] && echo "runner: agent" || true
-} > "$dir/CLOSED"
-echo "CLOSED: $slug ($state) — $reason"
+if [ -z "$resume" ]; then
+  {
+    echo "state: $state"
+    echo "reason: $reason"
+    echo "closed_at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    [ -n "$delegated" ] && echo "mode: delegated-chat (agent-run on explicit human instruction)" || true
+    [ -n "$delegated" ] && echo "runner: agent" || true
+  } > "$dir/CLOSED"
+  echo "CLOSED: $slug ($state) — $reason"
+fi
+
+# Archive: closed features leave .sdlc/work/ so status.sh stays scoped to open
+# work. Approval records move WITH the feature — the audit trail stays in one
+# place. Plain mv, not git mv: git detects the rename at commit time, and the
+# script must work in a dirty tree or before the first commit.
+mkdir -p .sdlc/archive
+in_git=""
+git rev-parse --git-dir >/dev/null 2>&1 && in_git=1
+# Everything ignored under work/ must be ignored under archive/ too: the mv
+# below moves the dir verbatim, so an unlisted pattern (a leftover scratch dir
+# from an abandoned close, or the evidence of a project seeded by an older
+# kit) would be committed with the archive. Read via tr -d '\r' (a CRLF
+# .gitignore would never match) and match with case, not grep -q (init.sh
+# ensure_line explains the pipefail/SIGPIPE trap).
+if [ -n "$in_git" ]; then
+  for line in '.sdlc/archive/*/scratch/' '.sdlc/archive/*/progress.md' \
+              '.sdlc/archive/*/approvals/' '.sdlc/archive/*/baseline.txt' \
+              '.sdlc/archive/*/deviations.md' '.sdlc/archive/*/evidence.md' \
+              '.sdlc/archive/*/harvest.md' '.sdlc/archive/*/spec.md'; do
+    have=""
+    if [ -f .gitignore ]; then have=$(tr -d '\r' < .gitignore); fi
+    case "
+$have
+" in
+      *"
+$line
+"*) ;;
+      *)
+        if [ -s .gitignore ] && [ -n "$(tail -c 1 .gitignore)" ]; then echo >> .gitignore; fi
+        printf '%s\n' "$line" >> .gitignore ;;
+    esac
+  done
+fi
+if [ -d "$dir/scratch" ] && [ -n "$(ls -A "$dir/scratch" 2>/dev/null)" ]; then
+  echo "note: scratch/ still has files — archived but gitignored; delete what the lesson does not cite"
+fi
+mv "$dir" "$archive"
+# "$slug".* also catches .approval.history files (re-gate trail, approve.sh)
+if ls .sdlc/approvals/"$slug".* >/dev/null 2>&1; then
+  mkdir -p "$archive/approvals"
+  mv .sdlc/approvals/"$slug".* "$archive/approvals/"
+fi
+echo "ARCHIVED: $dir → $archive (approvals included)"
 
 # promotion reminder: a lesson tag repeating 3+ times means the stage skill
 # should absorb the fix, not the memory (see skills/6-maintain lesson format)
@@ -65,5 +155,18 @@ if [ -f .sdlc/memory/INDEX.md ]; then
   fi
 fi
 
-echo "Reminder: harvest durable facts into .sdlc/memory/DOMAIN.md, then commit"
-echo "$dir, .sdlc/approvals/, and .sdlc/memory/ for the audit trail."
+echo "Reminder: harvest durable facts into .sdlc/memory/DOMAIN.md."
+if [ -n "$in_git" ]; then
+  # $dir must be staged too: `git add` on a deleted tracked path stages the
+  # deletion. Omitting it leaves the old work/ files in HEAD, and a fresh
+  # clone would resurrect the feature as OPEN (dir without its CLOSED).
+  paths=""
+  [ -n "$(git ls-files "$dir" 2>/dev/null)" ] && paths="\"$dir\" "
+  # approvals are gitignored now, but a project seeded by an older kit still
+  # tracks them and the mv above deleted those paths — stage the deletion or
+  # it lingers in HEAD forever
+  [ -n "$(git ls-files .sdlc/approvals 2>/dev/null)" ] && paths="$paths.sdlc/approvals "
+  echo "Then commit the close (decisions + lessons; evidence stays local):"
+  echo "  git add $paths\"$archive\" .sdlc/memory .sdlc/config.md .gitignore"
+  echo "(git records the work/→archive/ move as a rename; history follows it)."
+fi
