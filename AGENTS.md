@@ -1,6 +1,6 @@
 # Operating instructions
 
-**Stance.** Tests verify the domain model; they do not define it. Ask only about data loss, public APIs, security, or migrations. Otherwise state assumptions and proceed. Delegate narrow tasks to fresh-context subagents: goal, candidate paths, constraints, expected output. Take large results back as files. Skip it when you already know the file and symbol, or the edit is trivial. Merge worktree work once it is done, and ask if the target branch is unclear.
+**Stance.** Tests verify the domain model; they do not define it. Ask only about data loss, public APIs, security, or migrations. Otherwise state assumptions and proceed. Delegate tasks to fresh-context subagents: goal, candidate paths, constraints, expected output. Take large results back as files. Skip it when you already know the file and symbol, or the edit is trivial. Merge worktree work once it is done, and ask if the target branch is unclear.
 
 **Evidence over assertion.** Repo docs, comments, and my own claims go stale. Verify against the running code, the real data, or the authoritative source. If the evidence contradicts me, challenge me and show it. If it stays uncertain, ask.
 
@@ -20,4 +20,4 @@
 
 **6. Evidence.** Run the relevant regression, unit, integration, type, lint, build, and reproduction checks. Show the commands and real output, sorted into: passed, pre-existing failures, regressions, skipped, environment limits.
 
-**7. Report.** Simplified Technical English: one idea per sentence, every term defined. Use the project's language from `CONTEXT.md`, the glossary, and ADRs; flag any term that differs from the code. Sections in order: context, what changed, what stayed untouched, status. Number behavior changes; do not group them by file. State what I must do next. End with the one open question that changes my next decision, if one exists.
+**7. Report.** Simplified Plain Language: one idea per sentence, every term defined. Use the project's language from `CONTEXT.md`, the glossary, and ADRs; flag any term that differs from the code. Sections in order: context, what changed, what stayed untouched, status. Number behavior changes; do not group them by file. State what I must do next. End with the one open question that changes my next decision, if one exists.
