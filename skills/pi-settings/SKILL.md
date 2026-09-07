@@ -15,7 +15,7 @@ description: Configure pi's own settings.json and audit skill-link leakage - ski
 It lists every `~/.agents/skills` entry that symlinks back into `pi-setup` and
 confirms the hub exclusion is still in `settings.json`. Report before fixing;
 `--fix` replaces links with real copies, which makes Claude Code and Codex drift
-from pi-setup on every later edit. Ask before running it.
+from pi-setup on every later edit. Run it only when the user authorized this isolation change; reuse that authorization if already given.
 
 ## Layout
 

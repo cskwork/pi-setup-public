@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Verifies recent code changes and leaves receipts - recorded artifacts another person can re-run to reach the same verdict. Use when the user asks to verify recent work or 검증, wants proof beyond a green build, needs endpoints exercised with happy/boundary/negative payloads, asks whether a change is safe to merge or deploy, or asks for a verification report.
+description: Verify changed service behavior with replayable build, static-analysis, review, and HTTP scenario receipts. Use for endpoint verification or a merge-readiness report.
 ---
 
 # verify
@@ -35,15 +35,15 @@ Also separate **pre-existing** failures from **regressions**. A lint error that 
 
 A gate needs a subject. Establish it before running anything.
 
-1. **Find the diff base.** Ask the user if they named a base. Otherwise use the merge-base with the repo's main or release branch. State which base you used and why.
+1. **Find the diff base.** Use the base the user named. Otherwise use the merge-base with the repo's main or release branch. State which base you used and why.
 2. **Inventory the change.** `git diff --stat <base>..HEAD` plus uncommitted work. List every changed file.
-3. **Derive the API target list.** For each changed file, trace up to the HTTP endpoints that reach it. A changed query with no reachable endpoint is a finding in itself — say so.
+3. **Derive the API target list.** For each changed file, trace up to the HTTP endpoints that reach it. For jobs, events, or other non-HTTP entrypoints, name the actual boundary and the evidence needed; do not invent an endpoint.
 4. **Load the adapter.** The adapter is a shell file of `VERIFY_*` assignments — build command, static checks, run command, health URL, token acquisition, account creation. `scripts/lib.sh` resolves `$VERIFY_ADAPTER_FILE`, then `<target-repo>/.verify/adapter.env`, then `adapters/<name>.env` under `VERIFY_ADAPTER=<name>`. No adapter for this stack yet? Copy `adapters/_template.env`, fill it in by reading the repo with `adapters/_template.md` as the field guide and `adapters/spring-mybatis.md` as a worked example, and save it as `<target-repo>/.verify/adapter.env` — the next run finds it on its own.
 5. **Open the run directory.** Export `VERIFY_TARGET_DIR=<target-repo>` before any script runs; it defaults to the current directory, so an agent working from the skill folder writes receipts into the skill. The run is then `.verify/<YYYYMMDD-HHMM>-<slug>/` in the target repo, and all receipts land there.
 
 **Completion criterion:** a written target list where every changed file is either mapped to at least one endpoint or explicitly marked as having none, and an adapter loaded or authored.
 
-Present the scope and the planned scenario matrix to the user, then wait. Gate 4 makes live calls and may write data — the user approves the blast radius before it happens, not after.
+State the target environment and scenario matrix. Continue checks already authorized; ask only before a live action whose target or data mutation is not covered by the user’s instruction. Account creation is a write and follows the same boundary.
 
 ### The environment ladder
 
@@ -51,8 +51,8 @@ Gate 4 calls a real service, so name the target environment in the plan and hold
 
 | Environment | Reads | Writes |
 |-------------|-------|--------|
-| local, dev | default | allowed, after the user approves the endpoint list |
-| staging, audit, pre-production | only when the user says so | only with per-endpoint approval, in that same instruction |
+| local, dev | default | allowed within an explicitly authorized endpoint/data scope |
+| staging, audit, pre-production | when the user authorizes this target | only for explicitly authorized endpoints and data |
 | production | never from this skill | never |
 
 Production stays off the ladder. A read there still costs a token in a real session, a rate-limit slot, and an audit-log entry, and one mistyped variant writes. Set `VERIFY_FORBIDDEN_HOSTS` in the adapter to the production hostnames, and `scripts/lib.sh` refuses them before curl runs. When a change can only be proved in production, stop and hand the user the exact command instead of running it.
@@ -170,7 +170,7 @@ A 200 is not the whole answer. When the call writes, read the write back: query 
 
 ## Gate 5 — Report
 
-Write `.verify/<run>/report.md`, then say the same thing to the user in chat.
+Write `.verify/<run>/report.md`, then give the verdict, material limitations, and report path in chat.
 
 Write it in the **wait-what** style: assume the reader lost the thread, give back the context they are missing, one idea per sentence, and use this project's own vocabulary. Read `references/report-style.md` — this is the deliverable, and a correct verification described badly still leaves the reader guessing.
 
@@ -194,4 +194,4 @@ Each of these means a gate did not really run. Go back.
 
 A `FAIL` hands back a **delta**, not "it broke". Name the endpoint, the variant, the expected result, the observed result, and the most likely source line. Then fix the delta and re-run only the gates the fix could have changed.
 
-Cap the loop at three attempts. On the third failure, stop and escalate to the user with the receipts. A fourth attempt without new information repeats the third.
+Continue a scoped repair while new evidence supports a different next step and the user authorized fixing failures. Stop when the same blocker repeats without a new discriminator, or the next action needs new scope or access. Report the receipts and the specific missing input.
