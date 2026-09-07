@@ -1,6 +1,6 @@
 ---
 name: find-skills
-description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+description: Discover and assess installable skills when the user asks to find, compare, or add agent capabilities. Ordinary task requests do not require a skill search.
 ---
 
 # Find Skills
@@ -67,7 +67,7 @@ For example:
 
 **Do not recommend a skill based solely on search results.** Always verify:
 
-1. **Install count** — Prefer skills with 1K+ installs. Be cautious with anything under 100.
+1. **Task fit and provenance** — inspect the instructions, supported tools, maintenance, and source. Install counts are a discovery signal, not evidence of correctness.
 2. **Source reputation** — Official sources (`vercel-labs`, `anthropics`, `microsoft`) are more trustworthy than unknown authors.
 3. **GitHub stars** — Check the source repository. A skill from a repo with <100 stars should be treated with skepticism.
 
@@ -135,7 +135,7 @@ Example:
 
 ```
 I searched for skills related to "xyz" but didn't find any matches.
-I can still help you with this task directly! Would you like me to proceed?
+If the underlying task is already requested, continue directly within that scope and explain that no suitable skill was found.
 
 If this is something you do often, you could create your own skill:
 npx skills init my-xyz-skill
