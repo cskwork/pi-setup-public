@@ -69,7 +69,7 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `create-verification-skill` | Generate a project-local skill that drives the real app and captures proof | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | Evidence before assertions. Never call unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
 | `pi-settings` | Audit and configure pi's own settings.json: skill isolation, subagent routing, packages | local |
-| `sync-agent-prompt` | Sync the AGENTS.md operating contract and essential skills across pi-setup, pi-setup-public, and the promptbox onboarding prompt; shows as-is → to-be and asks before writing | local |
+| `sync-agent-prompt` | Sync the AGENTS.md operating contract and essential skills across pi-setup, pi-setup-public, and the promptbox onboarding prompt; compares per-file changes and preserves approved scope and private/public boundaries | local |
 | `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions: reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | Test-driven development: red-green-refactor, integration tests, mocking patterns | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `unslop` | Remove AI writing patterns and restore a human voice | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop) |
