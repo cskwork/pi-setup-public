@@ -1,13 +1,12 @@
 ---
 name: sync-agent-prompt
-description: "Sync the operating contract (AGENTS.md) and essential skills across pi-setup, pi-setup-public, and the promptbox onboarding prompt. Triggers: \"sync\", \"sync agent prompt\", \"프롬프트 동기화\", or after the human edits ~/.agents/AGENTS.md, a shared skill, or the onboarding prompt. ALWAYS shows as-is → to-be and asks before writing."
+description: Sync agreed operating-contract and skill changes across pi-setup, its public subset, and onboarding copies, preserving private-only content and existing authorization.
 ---
 
 # sync-agent-prompt
 
 Keep every copy of the agent operating contract and the essential skills
-identical. **Hard rule: never write, commit, or push before the human approves
-the as-is → to-be plan. Silence and "continue" are not approval.**
+consistent within their intended scope. Show the per-file direction and preserve private/public differences. Reuse approval already given for that exact change; publication or a newly exposed private path needs its own authorization.
 
 ## Topology (verified 2026-08-29; re-verify paths that fail)
 
@@ -31,8 +30,7 @@ go public. Two skills have external canonicals:
   the shared subset with rsync, excluding
   `.git .gitignore .gitattributes LICENSE README.md docs .pi .verify .impeccable`.
 - `verify` ← repo `cskwork/verify-skill` (no local checkout). Drift is
-  BIDIRECTIONAL: never wholesale-copy; diff per file, then pick the newer side
-  by `git log --format="%ad %s" --date=short -- <path>` on both repos.
+  BIDIRECTIONAL: never wholesale-copy; diff each file and review its relevant history and behavior on both sides. Timestamps alone do not establish which content should win.
 
 **Onboarding:** promptbox (`~/Documents/PARA/Resource/promptbox`, repo
 `cskwork/promptbox`). The 정본 is `src/data/pi-setup-prompt.txt`; its step-7
@@ -47,16 +45,13 @@ txt with `?raw` and holds no body.
 1. **Status (read-only).** Run `sync-status.sh` from this directory. It
    compares the four contract copies (local hashes + remote blob SHAs), diffs
    the skill trees, and checks the onboarding fence.
-2. **Direction per file.** Newest wins, proven by `git log` dates on both
-   sides — not by assuming canonical is ahead. A doc that describes a feature
-   the code already has is the newer side. Ambiguous → ask the human.
+2. **Direction per file.** Compare both contents, relevant history, and the behavior they describe. Timestamps alone do not resolve divergent edits. Preserve private/public adaptations; ask only when evidence leaves a material conflict unresolved.
 3. **Ask.** Present one line per file: `path · as-is → to-be · direction ·
-   why`. Then STOP for explicit approval. This step is never skipped, even in
-   an autonomous session.
+   why`. Continue when that scope is already approved; ask only for an unresolved direction, private/public exposure, or publication decision.
 4. **Apply.** Copy files; rsync `sdlc-kit` with the exclude list; regenerate
    the onboarding fence (replace the `/```text\n[\s\S]*?\n```/` block with the
    txt content); run `npm run check:prompt` in promptbox. Commit each repo
-   with a real message and push. Update `prime-agent-sync` via
+   with a real message and push only when delivery is authorized. When authorized, update `prime-agent-sync` via
    `gh api -X PUT` with the current blob `sha`.
 5. **Verify.** `git hash-object <local>` must equal
    `gh api repos/<repo>/contents/<path> --jq .sha` for every remote copy.
