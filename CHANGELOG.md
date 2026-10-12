@@ -1,17 +1,41 @@
 # Changelog
 
-## Unreleased
+## v0.8.0 — 2026-10-12
+
+### Added
 
 - Load [cskwork/skills](https://github.com/cskwork/skills) as a Pi git package instead of vendoring its skills. `call-agent`, `gpt-image-2`, `handoff`, `impeccable`, `improve-codebase-architecture`, `wait-what`, and `writing-for-agents` leave `skills/` (their copies here dated from August), and Pi now also gets `bughunt`, `image-first-ui`, `quality-loop`, `simless`, `swiftui-pro`, `diagram-design`, `mobile-ui-ux`, `motion-graphics`, `jk`, `prototype`, `retro`, `sql-walkthrough`, `verify-app`, and `ponytail`. `db-intelligence` and the `sdlc-kit` mirror still load from `skills/`; the package filter excludes the package's copies.
 - Connect Hindsight memory to Pi with the `git:github.com/cskwork/pi-hindsight-memory` package, which loads Hindsight's official Pi adapter (`~/.hindsight/coding-agents/dist/pi.js`): recall is injected before each turn, each turn is retained after it, and the `hindsight_*` tools are registered, in the same memory Claude Code and Codex use. The adapter installs its `hindsight-coding-agent` skill into `skills/`, which is now gitignored. This replaces the MCP-only registration from the first pass.
-- Refresh vendored skills to their upstream HEADs: Matt Pocock's `code-review`, `diagnosing-bugs`, `domain-modeling`, `grilling`, `implement`, `research`, `tdd`, and `teach` (`49dd158`), `api-and-interface-design` (`1be8e34`), `agent-browser` (`d957091`, drops the references and templates upstream removed in April), `ego-browser` 2.0.0 (`dca7003`), and Humanizer 3.1.0 (`225a6f3`, now only `SKILL.md` and `LICENSE`).
-- Installers read object package entries (`{"source": ..., "skills": [...]}`) and install `git:` packages. Before, `install.sh` crashed on the `pi-ponytail` object entry and both installers skipped `git:` sources; `check-docs.py` crashed on the same entry.
-- Keep live-only settings: `npm:@duarteocarmo/pi-jumper`, `powerline.welcome: false`, and the `pi-background-tasks` extension filter.
+- On macOS, `install.sh` loads a launchd watcher, `scripts/sync-live-config.sh`, that copies valid live `settings.json` and `~/.pi/acp.json` changes into the checkout and restores the symlinks Pi replaces during atomic writes.
+- Add `npm:billion-context-pi` for context compression. `acp.json` turns its delegate off, and pi-subagents agents receive the ACP tools.
+- `browser-qa` gains a collaborative mode (`reference/collaborative-qa.md`): the user drives the screen while the agent observes, compares, and keeps one Markdown report.
+- `scripts/sync-sdlc-kit-mirror.sh` pushes `skills/sdlc-kit` when the kit clone moves.
 - Add `scripts/check-removed-fields.sh`. The installers and check-docs CI run it against `settings.json` and the profiles and fail while any override still has `fallbackModels`; pass a project's `.pi/settings.json` to check that file before opening Pi there.
-- Default `PI_BG_FEATURES` to `process,delegate,fusion,attested` in both env loaders. pi-background-tasks 2.6.2's `attribution` feature replaces Pi's Anthropic provider and loops forever on transcript system messages under Pi 0.86+, so every Claude request hung at 100% CPU. Exported values still win.
-- Default model is now `auto/jev` from `git:github.com/cskwork/pi-jev-router`; the `jevRouter` block in `settings.json` routes each session to a Claude or Codex model, with Opus and Astra at `high` effort.
-- Remove `fallbackModels` from every subagent override and profile. pi-subagents 0.68.0 (2026-09-15) dropped the field, and 0.70.1 refuses to load while it is present (`Builtin override '<name>' ... uses removed field 'fallbackModels'`). check-docs now fails if the field returns. The installers no longer scan fallback lists for provider credentials.
+
+### Changed
+
+- The default model is `openai-codex/gpt-6.1-sol` at `high` with Fast mode, replacing `auto/jev`; `extensions/sol-fast.ts` is registered in `settings.json`. UI, frontend, documents, architecture, and hard debugging use Opus 5.5 at `medium`. The pi-jev-router package stays installed.
+- The sdlc-kit mirror moves from v0.6.1 to v2.1.0: four phases (intent → plan → build → evidence) with scored, routed evidence.
 - Humanizer is now the default prose-editing skill. The `unslop` skill is retired and archived under `archive/deprecated-packs/20260922/`; remove any `unslop` symlinks in `~/.agents/skills`, `~/.claude/skills`, and `~/.codex/skills`. The upstream Humanizer package and writing policy ship with the normal skills install.
+- Refresh vendored skills to their upstream HEADs: Matt Pocock's `code-review`, `diagnosing-bugs`, `domain-modeling`, `grilling`, `implement`, `research`, `tdd`, and `teach` (`49dd158`), `api-and-interface-design` (`1be8e34`), `agent-browser` (`d957091`, drops the references and templates upstream removed in April), `ego-browser` 2.0.0 (`dca7003`), and Humanizer 3.1.0 (`225a6f3`, now only `SKILL.md` and `LICENSE`).
+- `agent-browser` keeps only its upstream `SKILL.md`; its CLI serves the instructions that match the installed version.
+- Keep live-only settings: `npm:@duarteocarmo/pi-jumper`, `powerline.welcome: false`, and the `pi-background-tasks` extension filter.
+- `AGENTS.md` follows the THE-SYSTEM-PROMPT v0.11.2 operating contract.
+- A DRY/KISS pass trims wording in `browser-qa`, `find-skills`, `pi-settings`, `sync-agent-prompt`, and `verify`.
+- `.sync-public` keeps `models.json` public-owned: the private copy has providers that read keys from local token scripts, and the public copy omits them.
+
+### Fixed
+
+- Default `PI_BG_FEATURES` to `process,delegate,fusion,attested` in both env loaders. pi-background-tasks 2.6.2's `attribution` feature replaces Pi's Anthropic provider and loops forever on transcript system messages under Pi 0.86+, so every Claude request hung at 100% CPU. Exported values still win.
+- Remove `fallbackModels` from every subagent override and profile. pi-subagents 0.68.0 (2026-09-15) dropped the field, and 0.70.1 refuses to load while it is present (`Builtin override '<name>' ... uses removed field 'fallbackModels'`). check-docs now fails if the field returns. The installers no longer scan fallback lists for provider credentials.
+- Installers read object package entries (`{"source": ..., "skills": [...]}`) and install `git:` packages. Before, `install.sh` crashed on the `pi-ponytail` object entry and both installers skipped `git:` sources; `check-docs.py` crashed on the same entry.
+- Exclude pi-ponytail's bundled `ponytail` skill. The shared `~/.agents/skills/ponytail` copy is newer, and the two collided at Pi startup.
+- call-agent's Codex calls close stdin (`</dev/null`), which ended ~90-minute stalls, and run inside the sandbox (`--network`, `--add-dir`); `danger-full-access` needs `CODEX_ASYNC_ALLOW_FULL_ACCESS=1`. Both fixes ship in the cskwork/skills copy Pi now loads.
+
+### Verification
+
+- check-docs CI passed on 5ee3b80, the content of this release.
+- The public sync (pi-setup-public 315093d) passed check-docs, check-launchers, and the public link check.
 
 ## v0.7.0 — 2026-08-30
 
