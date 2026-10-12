@@ -1,42 +1,25 @@
-# Intent: <feature slug>
+# Intent: <slug>
 
-- Goal: <ONE plain-language sentence anyone can understand — who can do what
-  once this ships. Written to be copy-pasted into a status report verbatim.>
-- Date: YYYY-MM-DD
-- Type: greenfield | brownfield
-- Track: full (default) | micro — <only when ALL criteria hold; evidence per skills/1-intent>
+- Date: <YYYY-MM-DD>
 - Requested by: <who>
-- Refs: <external ticket/PR/incident key or URL, e.g. A20-1234 — omit if none>
+- Source: <ticket, issue or document link | chat>
 
-## Problem
-<What breaks or hurts today. Who encounters it, and how often. Do not describe the solution here.>
+## Request
+<the human's words, verbatim or a faithful excerpt>
 
-## Evidence
-<Every factual claim, labeled:>
-- <claim> [verified: <command output, file:line, reproduction steps, or metric>]
-- <claim> [assumed: <why it could not be verified>]
+## Understood as
+- Outcome: <one plain sentence: who can do what once this is done>
+- In scope: <…>
+- Out of scope: <…>
+- O1: <observable success criterion>
 
-<For incidents — track requested evidence explicitly; do not let it evaporate.
-One line per request, updated in place; max 2 requests, then waived-by-agent
-(skills/6-maintain):>
-- reproduction evidence: requested <date> (<what was asked for>)
-  <!-- update the line to: received <date> | waived-by-human <date, why> | waived-by-agent <date> — unreproduced, diagnosis stays [assumed] -->
-- verification debt: <what could not be run because config.md test/lint is empty, and what replaced it>
+## Risks in this intent
+- <an ambiguity, a claim the code or data contradicts (with evidence), a policy the request would change and its owner, work that needs the human's authority — or none>
 
-## Success criteria
-<Observable behavior that means done. Name a command or test where possible.>
-- [ ] <criterion>
+## Blocking questions
+- none
+<!-- a question here blocks approval until its line ends with "— resolved: <answer, source>" -->
 
-## Out of scope / must not change
-- <explicitly excluded>
-- <behavior that must survive unchanged>   <!-- brownfield: feeds spec's "stays untouched" -->
-
-## Constraints
-<deadlines, compatibility, security/compliance, data migration>
-
-## Open questions
-<Carry each question forward. The spec must answer it or flag it again.>
-- <question>
-
-## Researcher findings   <!-- brownfield: summary + pointer to full report -->
-<key facts; contradictions with user claims and how they were resolved>
+## Delivery
+- Target: <local | pr | deploy>
+- Authorized: <yes — "the human's words authorizing push, merge or deploy" | no>

@@ -29,11 +29,15 @@ never  skills/db-intelligence/reference/domain/**
 #                   employer/project keywords. Publishing private would leak
 #                   the exact identifiers the tripwire exists to hide.
 # pi-settings     - public documents the public repo; private documents memory
+# models.json     - private has providers whose apiKey runs a local token
+#                   script; public omits them. Port other changes by hand.
 keep-public  .gitignore
 keep-public  README.md
 keep-public  README.ko.md
 keep-public  sync.sh
+keep-public  models.json
 keep-public  skills/pi-settings/SKILL.md
+keep-public  skills/sync-agent-prompt/SKILL.md
 keep-public  .github/workflows/check-docs.yml
 
 # ---- public-only: landing page and link check, private has no copy ----

@@ -1,29 +1,26 @@
-# Evidence: <feature slug>
+# Evidence: <slug>
 
-- From: plan.md (approved YYYY-MM-DD)
-- Diff: <branch/commit range>
+- Commit: <sha> <repo path, omit for the project root>
+- QA: <agent or session id | unknown>
 
-## Proof per requirement
-- R1: `<command>` →
-  ```
-  <real output, verdict lines>
-  ```
+## Checks
+- build: `<command>` → <verdict line>
+- test: `<command>` → <verdict line>
+- lint: `<command>` → <verdict line>
+- e2e: `<command>` → <verdict line>
 
-## Regression   <!-- brownfield -->
-- Baseline vs after: <clean | diffs explained>
-- U1: <checked; result>
+## Results
+| ID | Result | Cause | Observed | Log |
+|---|---|---|---|---|
+| S1 | <PASS, FAIL or BLOCKED> | <code or plan, for a FAIL> | <what was seen, or what is missing> | logs/S1.txt |
 
-## Full checks
-- Build: `<command>` → <verdict>
-- Test:  `<command>` → <verdict>
-- Lint:  `<command>` → <verdict>
+## Bug proof
+<bug fixes only: before the fix at <base sha> → <failing line>; after → <passing line>; reported surface re-driven → <result>>
 
-## Adversarial code review   <!-- max 2 rounds; the round lines ARE the counter (AGENTS.md rule 5) -->
-- round 1/2: <finding> → <fixed | rejected because <reason>>
-- round 2/2: <re-review verdict; blockers surviving here go to Not verified and block --lazy>
-
-## Not verified
-<honest gaps: environment limits, skipped checks, and why>
-
-## Retro lessons   <!-- draft in harvest.md; the close merge writes memory/ -->
-- <lesson one-liner> → harvest.md  [promote: skills/<n> if applicable]
+## Delivery
+- Target: <local | pr | deploy>
+- Delivered: <sha> <repo path, omit for the project root>
+- Checked with: <command>
+- Output: <the deciding output line, verbatim>
+- Authorized: <yes — "the human's words", when intent.md has none for this target>
+- Policy: <updated <where> | follow-up <what, owner> | unchanged>

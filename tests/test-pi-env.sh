@@ -88,6 +88,10 @@ for CURRENT_SHELL in "${SHELLS[@]}"; do
     "$CURRENT_SHELL: placeholder when no key"
 
   # 6. PI_SETUP_NO_PLACEHOLDER=1 opts out and leaves the variable unset.
+  assert_eq "$(probe "$TMP/plain.env" PI_BG_FEATURES)" "process,delegate,fusion,attested" \
+    "$CURRENT_SHELL: pi-background-tasks attribution stays off by default"
+  assert_eq "$(probe "$TMP/plain.env" PI_BG_FEATURES PI_BG_FEATURES=process)" "process" \
+    "$CURRENT_SHELL: exported PI_BG_FEATURES wins"
   assert_eq "$(probe "$TMP/does-not-exist.env" ZAI_API_KEY PI_SETUP_NO_PLACEHOLDER=1)" "" \
     "$CURRENT_SHELL: placeholder opt-out"
 

@@ -1,6 +1,6 @@
 ---
 name: browser-qa
-description: Run browser QA with reviewable YAML scenarios, engine selection, and browser/API evidence. Use for URL checks, regression runs, recording, scheduling, or SuperQA dashboards.
+description: Run browser QA with reviewable YAML scenarios, engine selection, and browser/API evidence. Use for URL checks, regression runs, recording, scheduling, or SuperQA dashboards. Also use for human-in-the-loop QA, inspecting screens together, and comparing Figma or ticket requirements with UI and database evidence.
 ---
 
 # browser-qa - browser QA on anything, for anyone
@@ -12,6 +12,7 @@ browser evidence -> report in the user's language.
 
 | Signal in request | Mode | Route |
 |---|---|---|
+| "QA together", "human in the loop", "실제 화면 봐", "Figma와 대조", user-led screen inspection | COLLABORATIVE-QA | read `reference/collaborative-qa.md`; inspect together and maintain one Markdown report |
 | known domain / "QA <domain> <feature>" / repeat QA on something QA'd before | DOMAIN-QA | load the domain pack, QA per feature area, reuse archived scripts (`reference/domain-packs.md`) |
 | "QA this <url>", vague target, no scenarios yet | EXPLORE-QA | explore live site, generate scenario cases, run them (`reference/agent-qa.md`) |
 | scenarios exist / "run the cases" / feature finished, verify | REGRESSION | `superqa run --all --site <site>`; diff vs last run (`reference/agent-qa.md` step 5) |
@@ -20,6 +21,11 @@ browser evidence -> report in the user's language.
 | "every N minutes / daily / automate" | SCHEDULE | `superqa schedule add <scenario> --every <min>` + daemon (`reference/tui.md`) |
 | "open the QA app / dashboard" | TUI | web dashboard `superqa serve`; terminal `bash scripts/superqa.sh` (`reference/tui.md`) |
 | "test locally / without the dev server / offline", shared env down, destructive cases | LOCAL-OFFLINE | bring the stack up locally, run the same scenarios with `--var base_url=...` (`reference/local-offline.md`) |
+
+For COLLABORATIVE-QA, follow its reference for the report, evidence, and handoff contract.
+The automated run, DAG, replay, and HTML requirements below apply when running
+SuperQA scenarios, not to live collaborative inspection. Tool safety and explicit
+user browser preferences take precedence over automatic dialog/engine defaults.
 
 ## Hard rules
 
@@ -84,6 +90,7 @@ browser evidence -> report in the user's language.
 
 | File | When |
 |---|---|
+| `reference/collaborative-qa.md` | user-led screen QA, specification/data comparison, findings report |
 | `reference/domain-packs.md` | DOMAIN-QA: per-domain/feature packs, script archiving, pack location config |
 | `reference/engines.md` | capability gate + engine cascade; one-engine-per-page rule |
 | `reference/agent-browser.md` | agent-browser + chrome-devtools-mcp commands, shared-Chrome login, measured gotchas |
@@ -96,7 +103,9 @@ browser evidence -> report in the user's language.
 | `reference/tui.md` | TUI / record / schedule usage for humans |
 | `reference/local-offline.md` | LOCAL-OFFLINE: local stack + data subset, DB-derived fixtures, differential proof |
 
-**Done =** mode stated. QA runs: scenarios exist as checked YAML DAGs under
+**Done =** mode stated. COLLABORATIVE-QA: agreed coverage recorded, findings classified,
+superseded expectations corrected, Markdown report verified, and gaps/handoffs explicit.
+Automated QA runs: scenarios exist as checked YAML DAGs under
 `~/.superqa/scenarios/<site>/`; graph reviewed; run executed with the report path quoted;
 side effects triaged; site rules updated, plus the domain pack in DOMAIN-QA; site data
 still only in `~/.superqa/`. RECORD / SCHEDULE / TUI: the surface is up and the user knows

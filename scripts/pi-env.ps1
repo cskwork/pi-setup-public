@@ -84,7 +84,17 @@ function Set-PiSetupProviderPlaceholders {
     }
 }
 
+# Keep pi-background-tasks from replacing Pi's Anthropic provider. Its 2.6.2
+# attribution provider loops forever on transcript system messages (Pi 0.86+).
+# Omitting "attribution" keeps Pi's built-in provider. An exported value wins.
+function Set-PiSetupBackgroundTaskFeatures {
+    if (-not $env:PI_BG_FEATURES) {
+        $env:PI_BG_FEATURES = "process,delegate,fusion,attested"
+    }
+}
+
 Clear-PiSetupPlaceholder
 Import-PiSetupEnvFile
 Set-PiSetupEnvAlias
 Set-PiSetupProviderPlaceholders
+Set-PiSetupBackgroundTaskFeatures

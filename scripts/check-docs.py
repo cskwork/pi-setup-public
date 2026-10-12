@@ -153,7 +153,11 @@ def check_no_frontmatter_model():
 def check_referenced_skills_exist():
     """Every skill named in a profile resolves — in skills/ or an installed package."""
     have = set(list_dir("skills"))
-    packages = set(load_json("settings.json")["packages"])
+    # Entries are a source string or an object with a "source" key and resource filters.
+    packages = {
+        p if isinstance(p, str) else p["source"]
+        for p in load_json("settings.json")["packages"]
+    }
     docs = dict(profiles())
     docs["settings.json"] = load_json("settings.json")
     for name, doc in docs.items():
