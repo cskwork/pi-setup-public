@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.84.4",
+  "lastChangelogVersion": "1.1.0",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-sol",
-  "defaultThinkingLevel": "xhigh",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "high",
   "packages": [
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-simplify",
@@ -13,106 +13,125 @@
     "npm:pi-markdown-preview",
     "npm:pi-powerline-footer",
     "npm:pi-mcp-adapter",
-    "npm:pi-background-tasks",
+    {
+      "source": "npm:pi-background-tasks",
+      "extensions": [
+        "dist/extensions/background-tasks.js"
+      ]
+    },
     "npm:@gotgenes/pi-permission-system",
-    "npm:pi-ponytail",
+    {
+      "source": "npm:pi-ponytail",
+      "skills": [
+        "skills/*",
+        "!skills/ponytail/SKILL.md"
+      ]
+    },
     "npm:pi-agent-browser-native",
     "npm:@narumitw/pi-goal",
     "npm:@narumitw/pi-usage",
     "npm:pi-lens",
     "npm:pi-memory",
-    "npm:pi-oracle"
+    "npm:pi-oracle",
+    "git:github.com/cskwork/pi-jev-router",
+    "npm:billion-context-pi",
+    "npm:@duarteocarmo/pi-jumper",
+    {
+      "source": "git:github.com/cskwork/skills",
+      "skills": [
+        "skills/**",
+        "!skills/engineering/db-intelligence/SKILL.md",
+        "!skills/engineering/sdlc-kit/SKILL.md"
+      ]
+    },
+    "git:github.com/cskwork/pi-hindsight-memory"
   ],
   "enableInstallTelemetry": false,
   "theme": "dark/dark",
   "hideThinkingBlock": true,
   "collapseChangelog": true,
   "tuiMode": "fullscreen",
+  "powerline": {
+    "welcome": false
+  },
   "subagents": {
-    "defaultModel": "openai-codex/gpt-5.6-sol",
-    "defaultThinking": "medium",
+    "defaultModel": "openai-codex/gpt-6.1-sol",
+    "defaultThinking": "high",
     "agentOverrides": {
       "specifier": {
-        "model": "openai-codex/gpt-5.6-sol",
+        "model": "openai-codex/gpt-6.1-sol",
         "thinking": "high",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna"
-        ],
         "skills": [
           "db-intelligence"
-        ]
+        ],
+        "fast": true
       },
       "coder": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
         "skills": [
           "tdd",
           "ponytail"
-        ]
+        ],
+        "fast": true
       },
       "cleaner": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
         "skills": [
           "ponytail-review"
-        ]
+        ],
+        "fast": true
       },
       "sw-architect": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna"
-        ],
+        "model": "anthropic/claude-opus-5-5",
+        "thinking": "medium",
         "skills": [
           "api-and-interface-design"
         ],
-        "description": "OpenAI Sol/high design and post-implementation architecture review. Claude lane: architect. GLM lane: architect-glm."
+        "description": "sw-architect: Opus 5.5, medium reasoning.",
+        "fast": false
       },
       "hardender": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "high",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna"
-        ],
+        "model": "anthropic/claude-opus-5-5",
+        "thinking": "medium",
         "skills": [
           "diagnosing-bugs",
           "verification-before-completion",
           "db-intelligence"
-        ]
+        ],
+        "fast": false
       },
       "qa": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
         "skills": [
           "browser-qa",
           "verification-before-completion",
           "db-intelligence"
         ],
-        "description": "OpenAI Luna/xhigh fast verification and QA role. Claude lane: qa-tester or qa-auditor. GLM lane: tester-glm."
+        "description": "qa: GPT-6.1 Sol, high reasoning, Fast mode.",
+        "fast": true
       },
       "qa-tester": {
         "skills": [
           "browser-qa",
           "agent-browser"
         ],
-        "thinking": "medium",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "openai-codex/gpt-5.6-luna"
-        ],
-        "description": "Claude Sonnet/max black-box QA role. OpenAI lane: qa or verify. GLM lane: tester-glm."
+        "thinking": "high",
+        "description": "qa-tester: GPT-6.1 Sol, high reasoning, Fast mode.",
+        "model": "openai-codex/gpt-6.1-sol",
+        "fast": true
       },
       "qa-auditor": {
         "skills": [
           "browser-qa",
           "agent-browser"
         ],
-        "thinking": "medium",
-        "fallbackModels": [
-          "zai/glm-5.3-flash",
-          "openai-codex/gpt-5.6-luna"
-        ],
-        "description": "Claude Sonnet/max QA audit role. OpenAI lane: qa or verify. GLM lane: tester-glm."
+        "thinking": "high",
+        "description": "qa-auditor: GPT-6.1 Sol, high reasoning, Fast mode.",
+        "model": "openai-codex/gpt-6.1-sol",
+        "fast": true
       },
       "agent-browser": {
         "skills": [
@@ -120,24 +139,27 @@
           "agent-browser",
           "playwright-cli"
         ],
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "fast": true
       },
       "customer-agent": {
         "skills": [
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "fast": true
       },
       "persona-product-tester": {
         "skills": [
           "browser-qa",
           "agent-browser"
         ],
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "fast": true
       },
       "verify": {
         "skills": [
@@ -145,137 +167,265 @@
           "create-verification-skill",
           "verification-before-completion"
         ],
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "description": "OpenAI Luna/xhigh fast evidence-driven verification role. Claude lane: qa-tester. GLM lane: tester-glm."
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "description": "verify: GPT-6.1 Sol, high reasoning, Fast mode.",
+        "fast": true
       },
       "tester": {
         "skills": [
           "tdd",
           "playwright-cli"
         ],
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "fast": true
       },
       "debugger": {
         "skills": [
           "diagnosing-bugs"
         ],
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "anthropic/claude-opus-5-5",
+        "thinking": "medium",
+        "fast": false
       },
       "scout": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "write",
+          "contact_supervisor",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "fast": true
       },
       "researcher": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "tools": [
+          "read",
+          "write",
+          "web_search",
+          "fetch_content",
+          "get_search_content",
+          "source_check",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "fast": true
       },
       "reviewer": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "watchdog_diff",
+          "contact_supervisor",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "fast": true
       },
       "worker": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "edit",
+          "write",
+          "contact_supervisor",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "fast": true
       },
       "planner": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna"
-        ]
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "fast": true
       },
       "architect": {
-        "model": "anthropic/claude-opus-5",
-        "thinking": "high",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol",
-          "zai/glm-5.3-flash"
-        ],
-        "description": "Claude Opus/xhigh design architect. OpenAI lane: sw-architect. GLM lane: architect-glm."
+        "model": "anthropic/claude-opus-5-5",
+        "thinking": "medium",
+        "description": "architect: Opus 5.5, medium reasoning.",
+        "fast": false
       },
       "analyst": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna"
-        ],
-        "description": "OpenAI Sol/high pre-planning analyst with evidence-backed acceptance criteria."
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "description": "analyst: GPT-6.1 Sol, high reasoning, Fast mode.",
+        "fast": true
       },
       "security": {
-        "model": "openai-codex/gpt-5.6-sol",
+        "model": "anthropic/claude-opus-5-5",
         "thinking": "medium",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna"
-        ],
         "skills": [
           "verification-before-completion"
-        ]
+        ],
+        "fast": false
       },
       "refactorer": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
         "skills": [
           "ponytail-review"
-        ]
+        ],
+        "fast": true
       },
       "doc-writer": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "anthropic/claude-opus-5-5",
+        "thinking": "medium",
+        "fast": false
       },
       "git-ops": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "fast": true
       },
       "javascript-pro": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
         "skills": [
           "tdd"
-        ]
+        ],
+        "fast": true
       },
       "typescript-pro": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
         "skills": [
           "tdd"
-        ]
+        ],
+        "fast": true
       },
       "delegate": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "thinking": "medium"
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "edit",
+          "write",
+          "contact_supervisor",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "fast": true
       },
       "architect-glm": {
         "model": "zai/glm-5.3-flash",
-        "thinking": "max",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol",
-          "anthropic/claude-opus-5",
-          "anthropic/claude-opus-4-8"
-        ]
+        "thinking": "max"
       },
       "tester-glm": {
         "model": "zai/glm-5.3-flash",
-        "thinking": "max",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-luna",
-          "anthropic/claude-sonnet-5",
-          "anthropic/claude-haiku-4-5"
-        ]
+        "thinking": "max"
       },
       "oracle": {
-        "model": "anthropic/claude-opus-5",
+        "model": "anthropic/claude-opus-5-5",
+        "thinking": "medium",
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "fast": false
+      },
+      "evidence-auditor": {
+        "tools": [
+          "read",
+          "web_search",
+          "fetch_content",
+          "get_search_content",
+          "source_check",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "model": "openai-codex/gpt-6.1-sol",
         "thinking": "high",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol"
-        ]
+        "fast": true
       }
     }
   },
   "defaultProjectTrust": "always",
   "skills": [
     "!**/.agents/skills/**"
+  ],
+  "jevRouter": {
+    "classifier": "jev",
+    "options": {
+      "anthropic/claude-sonnet-5": {
+        "description": "Repository exploration, documentation, small fixes, and running established tests or browser QA scenarios with clear acceptance criteria.",
+        "thinking": "medium"
+      },
+      "anthropic/claude-fable-5-1": {
+        "description": "Web feature implementation, UI and API integration, regression tests, and multi-file changes with an agreed plan.",
+        "thinking": "medium"
+      },
+      "anthropic/claude-opus-5": {
+        "description": "Ambiguous requirements, architecture, difficult debugging, security-sensitive changes, adversarial review, and interpreting conflicting QA or verification evidence.",
+        "thinking": "high"
+      },
+      "zai/glm-5.3": {
+        "description": "General software development, documentation, and verification with clear requirements. Also available when Claude usage is exhausted.",
+        "thinking": "medium"
+      },
+      "openai-codex/gpt-5.6-sol": {
+        "description": "Multi-component implementation, cross-service debugging, code review, and QA or verification that connects evidence across UI, API, and tests. General-purpose OpenAI default.",
+        "thinking": "medium"
+      },
+      "openai-codex/gpt-6-astra": {
+        "description": "Architecture and planning: system design, implementation plans, ambiguous requirements, and difficult cross-service debugging on the OpenAI side. Counterpart to Claude Opus.",
+        "thinking": "high"
+      },
+      "openai-codex/gpt-5.6-terra": {
+        "description": "Routine web development: implement a clear plan using existing components and API patterns, fix localized bugs, and add focused regression coverage.",
+        "thinking": "medium"
+      },
+      "openai-codex/gpt-5.6-luna": {
+        "description": "Quick repository searches, focused exploration, mechanical edits, formatting, and small tests with an obvious expected result. Prefer for narrow tasks with little ambiguity.",
+        "thinking": "medium"
+      }
+    },
+    "fallback": "anthropic/claude-sonnet-5",
+    "rateLimitFallback": "openai-codex/gpt-5.6-sol",
+    "monitor": false,
+    "skills": false
+  },
+  "extensions": [
+    "~/pi-setup-public/extensions/sol-fast.ts"
   ]
 }

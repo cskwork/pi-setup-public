@@ -1,0 +1,29 @@
+name: selftest
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  # Git Bash otherwise copies on `ln -s`, and the symlink store checks would skip; ignored on macOS/Linux
+  MSYS: winsymlinks:nativestrict
+jobs:
+  selftest:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: git identity for the throwaway fixtures
+        run: |
+          git config --global user.email ci@sdlc-kit.invalid
+          git config --global user.name "sdlc-kit CI"
+          git config --global core.symlinks true
+          git config --global core.autocrlf false
+        shell: bash
+      - name: selftest
+        run: bash tests/selftest.sh
+        shell: bash

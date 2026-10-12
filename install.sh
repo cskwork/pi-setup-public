@@ -118,6 +118,46 @@ install_env_file() {
   fi
 }
 
+install_config_sync() {
+  "$REPO/scripts/sync-live-config.sh" --prefer-repo
+
+  if [ "$(uname -s)" != "Darwin" ]; then
+    echo "  INFO automatic repair requires launchd; canonical symlinks are still active"
+    return
+  fi
+
+  local label="com.cskwork.pi-config-sync"
+  local plist="$HOME/Library/LaunchAgents/$label.plist"
+  mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs"
+  "$PYTHON" - "$plist" "$REPO" "$HOME" <<'PY'
+import plistlib
+import sys
+from pathlib import Path
+
+plist, repo, home = map(Path, sys.argv[1:])
+payload = {
+    "Label": "com.cskwork.pi-config-sync",
+    "ProgramArguments": ["/bin/bash", str(repo / "scripts/sync-live-config.sh")],
+    "WatchPaths": [str(home / ".pi/agent/settings.json"), str(home / ".pi/acp.json")],
+    "StartInterval": 300,
+    "RunAtLoad": True,
+    "ThrottleInterval": 2,
+    "EnvironmentVariables": {
+        "HOME": str(home),
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    },
+    "StandardOutPath": str(home / "Library/Logs/pi-config-sync.out.log"),
+    "StandardErrorPath": str(home / "Library/Logs/pi-config-sync.err.log"),
+}
+with plist.open("wb") as handle:
+    plistlib.dump(payload, handle)
+PY
+
+  launchctl bootout "gui/$(id -u)" "$plist" >/dev/null 2>&1 || true
+  launchctl bootstrap "gui/$(id -u)" "$plist"
+  echo "  ✓ automatic Pi config sync enabled"
+}
+
 # Warn about providers settings.json routes to that have no credential here.
 # An unregistered provider makes every subagent launch print
 # "[pi-subagents] Skipping fallback model ... unavailable in this environment".
@@ -148,7 +188,7 @@ OAUTH_PROVIDERS = {"anthropic", "openai-codex", "amazon-bedrock"}
 settings = json.load(open(sys.argv[1], encoding="utf-8"))
 referenced = set()
 for override in settings.get("subagents", {}).get("agentOverrides", {}).values():
-    models = [override.get("model")] + list(override.get("fallbackModels", []))
+    models = [override.get("model")]
     for model in models:
         if isinstance(model, str) and "/" in model:
             referenced.add(model.split("/", 1)[0])
@@ -186,6 +226,9 @@ if not missing and not unknown:
 PY
 }
 
+echo "==> Checking settings for fields pi-subagents has removed"
+bash "$REPO/scripts/check-removed-fields.sh"
+
 echo "==> Linking pi setup into $PI_DIR"
 link AGENTS.md     AGENTS.md
 link settings.json settings.json
@@ -194,6 +237,10 @@ link extensions    extensions
 link agents        agents
 link skills        skills
 link profiles      profiles
+
+chmod +x "$REPO/scripts/sync-live-config.sh"
+echo "==> Enabling automatic config sync"
+install_config_sync
 
 # Deploy permission config into the runtime extension dir
 mkdir -p "$REPO/extensions/pi-permission-system"
@@ -218,12 +265,14 @@ echo "==> Checking provider credentials"
 check_provider_credentials
 
 echo "==> Installing pi packages (list comes from settings.json)"
-PACKAGES="$("$PYTHON" -c "import json,sys;print('\n'.join(json.load(sys.stdin)['packages']))" < "$REPO/settings.json")"
+# An entry is a source string or an object with "source" and resource filters;
+# pi install keeps an existing object entry's filters.
+PACKAGES="$("$PYTHON" -c "import json,sys;print('\n'.join(p if isinstance(p,str) else p['source'] for p in json.load(sys.stdin)['packages']))" < "$REPO/settings.json")"
 while IFS= read -r pkg; do
   [ -z "$pkg" ] && continue
   case "$pkg" in
-    npm:*) pi install "$pkg" >/dev/null 2>&1 && echo "  ✓ $pkg" || echo "  ⚠ failed: $pkg — run: pi install $pkg" ;;
-    *)     echo "  ⏭ skipped non-npm entry: $pkg" ;;
+    npm:*|git:*) pi install "$pkg" >/dev/null 2>&1 && echo "  ✓ $pkg" || echo "  ⚠ failed: $pkg — run: pi install $pkg" ;;
+    *)     echo "  ⏭ skipped unsupported entry: $pkg" ;;
   esac
 done <<< "$PACKAGES"
 

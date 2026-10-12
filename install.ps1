@@ -109,6 +109,13 @@ function Set-ManagedProfileBlock {
     Write-Host "  OK $ProfilePath (updated)"
 }
 
+Write-Host "==> Checking settings for fields pi-subagents has removed"
+$removedFieldFiles = @((Join-Path $Repo "settings.json")) + @(Get-ChildItem -LiteralPath (Join-Path $Repo "profiles\pi-subagents") -Filter *.json | ForEach-Object { $_.FullName })
+$removedFieldHits = $removedFieldFiles | Where-Object { Select-String -LiteralPath $_ -Pattern '"fallbackModels"' -Quiet }
+if ($removedFieldHits) {
+    foreach ($hit in $removedFieldHits) { Write-Host "  FAIL $hit uses removed field fallbackModels" }
+    throw "pi-subagents >= 0.70.1 refuses to load while fallbackModels is present. Remove it and configure one model per agent."
+}
 Write-Host "==> Linking Pi setup into $PiDir"
 Install-Link "AGENTS.md" "AGENTS.md"
 Install-Link "settings.json" "settings.json"
@@ -165,7 +172,7 @@ $oauthProviders = @("anthropic", "openai-codex", "amazon-bedrock")
 $settingsJson = Get-Content -LiteralPath (Join-Path $Repo "settings.json") -Raw | ConvertFrom-Json
 $referenced = New-Object System.Collections.Generic.HashSet[string]
 foreach ($override in $settingsJson.subagents.agentOverrides.PSObject.Properties.Value) {
-    $models = @($override.model) + @($override.fallbackModels)
+    $models = @($override.model)
     foreach ($model in $models) {
         if ($model -is [string] -and $model.Contains("/")) {
             [void]$referenced.Add($model.Split("/")[0])
@@ -199,9 +206,11 @@ if ($clean) {
 
 Write-Host "==> Installing Pi packages (list comes from settings.json)"
 $settings = Get-Content -LiteralPath (Join-Path $Repo "settings.json") -Raw | ConvertFrom-Json
-foreach ($package in $settings.packages) {
-    if (-not $package.StartsWith("npm:")) {
-        Write-Host "  SKIP non-npm entry: $package"
+foreach ($entry in $settings.packages) {
+    # An entry is a source string or an object with "source" and resource filters.
+    $package = if ($entry -is [string]) { $entry } else { $entry.source }
+    if (-not ($package.StartsWith("npm:") -or $package.StartsWith("git:"))) {
+        Write-Host "  SKIP unsupported entry: $package"
         continue
     }
 

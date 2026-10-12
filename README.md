@@ -30,7 +30,7 @@ notepad $HOME\.pi-setup.env  # API-key providers, e.g. ZAI_API_KEY=...
 # reopen PowerShell, then restart pi
 ```
 
-The installers link `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, install every package below, and deploy the default permission config. They back up existing files instead of overwriting them.
+The installers link `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}` into this repo, install every package below, and deploy the default permission config. They back up existing files instead of overwriting them. On macOS, `install.sh` also watches `settings.json` and `~/.pi/acp.json`: it copies valid live changes into this repo and restores the symlinks if Pi replaces them during an atomic write.
 
 They also add a managed shell-profile block that gives only Pi an 8 GiB V8 heap. Other Node processes keep their defaults, the block preserves any `NODE_OPTIONS` you already set, and it resolves the active NVM/npm Pi executable on every call. Re-run the installer after moving the checkout. Remove the block between the `pi-setup Pi-only Node heap` markers to uninstall it. If you use both Windows PowerShell 5.1 and PowerShell 7, run `install.ps1` once in each. Organization-enforced policies can still block PowerShell profiles; those require an administrator policy change.
 
@@ -45,17 +45,21 @@ So the installers create `~/.pi-setup.env` (mode `600`) from the tracked `.env.e
 
 The live secret file sits **outside** the repository, so it cannot be committed or reach the public mirror. Override its path with `PI_SETUP_ENV_FILE`.
 
-**A missing key is not an error.** pi-subagents warns once per launch for every model whose provider is not registered, and it has no setting to mute that. So for a provider routed in `settings.json` with no key, the loader exports an `unset-placeholder` value. That registers the provider and silences the warning; the credential is then wrong, but that path is already quiet. Pi tries the model, the call fails, and it moves to the next candidate in the fallback chain. A real key always overrides the placeholder, including when you re-source the profile in the same shell. Set `PI_SETUP_NO_PLACEHOLDER=1` to opt out and see the warnings.
+**A missing key is not an error.** pi-subagents warns once per launch for every model whose provider is not registered, and it has no setting to mute that. So for a provider routed in `settings.json` with no key, the loader exports an `unset-placeholder` value. That registers the provider and silences the warning; the credential is then wrong, but that path is already quiet. Pi tries the model and the call fails with a clear provider error; pi-subagents no longer switches models inside a launch. A real key always overrides the placeholder, including when you re-source the profile in the same shell. Set `PI_SETUP_NO_PLACEHOLDER=1` to opt out and see the warnings.
+
+**Project settings can break pi-subagents too.** A project-level `.pi/settings.json` with its own `agentOverrides` is read as well, and one `fallbackModels` entry there stops the extension from loading in that directory. Run `scripts/check-removed-fields.sh /path/to/project/.pi/settings.json` to check a project; the installer and CI check this repo's files automatically.
+
+**Anthropic requests must not hang.** The loader also defaults `PI_BG_FEATURES` to `process,delegate,fusion,attested`, leaving out pi-background-tasks' `attribution` feature. Version 2.6.2 of that package replaces Pi's Anthropic provider, and its message converter loops forever on the system messages Pi 0.86+ keeps in the transcript, so every Claude request sat at 100% CPU with no output. Pi's built-in provider handles subscription OAuth on its own. Export your own `PI_BG_FEATURES` to override, and add `attribution` back once the package is fixed.
 
 At the end of a run the installer lists every provider routed in `settings.json` that has no credential. That list is information, not a problem. Remove the block between the `pi-setup provider env` markers to uninstall the loader.
 
-The default model is `openai-codex/gpt-5.6-sol` at thinking `xhigh`. Subagents run `openai-codex/gpt-5.6-sol`: `high` thinking for the design roles (specifier, sw-architect, hardender, architect), `medium` everywhere else. Sol routes retain Anthropic and Z.ai fallbacks, and Z.ai lanes run at `max`. `models.json` keeps native text and image input available for GLM-5.3-Flash. The Z.ai routes use `ZAI_API_KEY` when it is set; without it those roles fall through to the Anthropic and OpenAI tiers silently.
+The default model is `openai-codex/gpt-6.1-sol` at thinking `high`, with Fast mode. Backend, simple work, browser automation, and QA use Sol high/Fast. UI, frontend, document writing, architecture, and difficult debugging use Opus 5.5 at medium reasoning. Model substitutions require owner approval. Explicit GLM roles remain available.
 
-Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
+The macOS watcher keeps Pi's mutable JSON config in the local checkout. Run `~/pi-setup-public/sync.sh` when you want to commit and push the checkout.
 
 ## What's inside
 
-### Skills (30)
+### Skills (23)
 
 | Skill | What it does | Source |
 |---|---|---|
@@ -64,7 +68,6 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `browser-qa` | Browser QA on anything: YAML DAG scenarios, engine choice (native `agent_browser` tool first), API evidence, `superqa` runtime; Playwright E2E patterns in `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | One DB skill, four engines: PostgreSQL, MySQL, SQLite, MongoDB. Credential-safe, read-first, schema-before-SQL; outputs a domain evidence artifact (entity graph + ubiquitous language + data shapes) | local |
 | `playwright-cli` | Drive a browser directly; inspect or author Playwright tests | local |
-| `call-agent` | Routes a task to the peer AI CLI that fits it; claude wrappers honor `CLAUDE_MODEL` | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5-gate verification; refuses "green build = verified" | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `create-verification-skill` | Generate a project-local skill that drives the real app and captures proof | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | Evidence before assertions. Never call unverified work done | [obra/superpowers](https://github.com/obra/superpowers) |
@@ -72,23 +75,20 @@ Keep drift in sync afterwards with `~/pi-setup-public/sync.sh`.
 | `sync-agent-prompt` | Sync the AGENTS.md operating contract and essential skills across pi-setup, pi-setup-public, and the promptbox onboarding prompt; compares per-file changes and preserves approved scope and private/public boundaries | local |
 | `diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions: reproduce → minimise → hypothesise → instrument → fix → regression-test | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | Test-driven development: red-green-refactor, integration tests, mocking patterns | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `unslop` | Remove AI writing patterns and restore a human voice | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop) |
+| `humanizer` | Default prose editor; preserve facts and remove AI writing patterns | [blader/humanizer](https://github.com/blader/humanizer) |
 | `code-review` | Review changes since a fixed point along Standards and Spec axes, in parallel sub-agents | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `implement` | Implement a piece of work based on a spec or tickets | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `research` | Investigate against high-trust primary sources, capture findings as Markdown | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `domain-modeling` | Build and sharpen a project's domain model in CONTEXT.md and ADRs | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `improve-codebase-architecture` | Scans for places worth deepening, writes an HTML report, then grills the one you pick | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `resolving-merge-conflicts` | Resolve an in-progress git merge/rebase conflict | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `grilling` | Stress-tests a plan or decision until it breaks or holds | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `wait-what` | Stop. That last message did not land, so re-pitch it | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `writing-for-agents` | Writing documents for agents: skills, AGENTS.md, CLAUDE.md | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `handoff` | Compact the conversation into a handoff doc for the next agent | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `teach` | Teach a skill or concept within the workspace | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `find-skills` | Discover and install new agent skills on demand | local |
-| `gpt-image-2` | Image generation via Codex CLI + ChatGPT plan | local |
-| `impeccable` | Frontend design review & polish | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | Agent-friendly browser sharing logged-in state | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `sdlc-kit` | Six-stage SDLC with human approvals on the record, fresh-context review, and bounded memory | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
+| `sdlc-kit` | Four-phase SDLC (intent → plan → build → evidence) with human gates, fresh-context review, and scored, routed proof | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
+
+
+**Plus [cskwork/skills](https://github.com/cskwork/skills) as a Pi package** (`git:github.com/cskwork/skills` in `settings.json`): call-agent, bughunt, quality-loop, verify-app, retro, prototype, improve-codebase-architecture, design skills (impeccable, diagram-design, gpt-image-2, image-first-ui, mobile-ui-ux, motion-graphics), simless, swiftui-pro, jk, sql-walkthrough, handoff, ponytail, wait-what, and writing-for-agents. `pi update` pulls the latest; `db-intelligence` and `sdlc-kit` load from `skills/` here instead.
 
 ### Extensions
 
@@ -100,6 +100,7 @@ Installed via `pi install` (see `settings.json`):
 | `npm:@narumitw/pi-goal` | Session goals, so pi keeps working to completion |
 | `npm:@narumitw/pi-usage` | Usage/cost tracking |
 | `npm:pi-subagents` | Subagent orchestration |
+| `npm:billion-context-pi` | Model-driven context compression; its delegate is disabled, while pi-subagents agents receive ACP tools |
 | `npm:pi-lens` | Code feedback while the agent edits: LSP, linters, formatters, type-checks |
 | `npm:pi-background-tasks` | Named background shell tasks |
 | `npm:context-mode` | Keep big tool outputs out of your context |
@@ -116,6 +117,8 @@ Installed via `pi install` (see `settings.json`):
 | `npm:pi-agent-browser-native` | agent-browser as a native `agent_browser` tool. First pick in browser-qa's engine cascade (requires the upstream `agent-browser` CLI on PATH) |
 
 Plus local extensions in `extensions/`: `dirty-repo-guard.ts` (uncommitted-change guard on session switch) and `herdr-agent-state.ts`. `@gotgenes/pi-permission-system` owns every Bash permission; nothing else writes them.
+
+**Hindsight memory.** `git:github.com/cskwork/pi-hindsight-memory` loads Hindsight's official Pi adapter when [hindsight-agent-setup](https://github.com/cskwork/hindsight-agent-setup) is installed: it recalls past decisions before each turn, saves the conversation after it, and adds the `hindsight_*` tools, sharing one memory with Claude Code and Codex. Without Hindsight it only shows a warning.
 
 ### Subagent model profiles (4)
 
@@ -181,14 +184,17 @@ Your live config is **yours**. It is gitignored here, and edits through pi's per
 ```
 AGENTS.md            operating instructions (symlinked to ~/.pi/agent)
 settings.json        provider + packages
+acp.json             billion-context-pi config
 configs/             permission default (public)
-skills/              30 agent skills
+skills/              23 agent skills
 agents/              subagent role prompts
 extensions/          local TS extensions
 scripts/             check-docs.py: CI guard for doc/config drift
                      pi-node-heap.sh/.ps1: Pi-only 8 GiB launchers
                      pi-env.sh/.ps1: provider credential loader + key aliasing
                      prune-sessions.sh: session transcript retention
+                     sync-live-config.sh: live JSON mirror + symlink repair
+                     sync-sdlc-kit-mirror.sh: push skills/sdlc-kit when the clone moves
 .env.example         template for ~/.pi-setup.env (the live secret file
                      lives outside this repo and is never committed)
 tests/               shell and PowerShell launcher regression checks

@@ -30,7 +30,7 @@ notepad $HOME\.pi-setup.env  # API 키 프로바이더, 예: ZAI_API_KEY=...
 # PowerShell을 다시 연 뒤 pi 재시작
 ```
 
-설치 스크립트는 `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`를 이 저장소로 심볼릭 링크하고, 아래 패키지를 전부 설치하고, 기본 권한 설정을 배치한다. 기존 파일은 덮어쓰지 않고 백업해 둔다.
+설치 스크립트는 `~/.pi/agent/{AGENTS.md, settings.json, extensions, agents, skills}`를 이 저장소로 심볼릭 링크하고, 아래 패키지를 전부 설치하고, 기본 권한 설정을 배치한다. 기존 파일은 덮어쓰지 않고 백업해 둔다. macOS에서는 `install.sh`가 `settings.json`과 `~/.pi/acp.json`도 감시한다. 유효한 실사용 설정을 이 저장소에 복사하고, Pi의 원자적 쓰기가 심볼릭 링크를 교체하면 링크를 복구한다.
 
 또한 셸 프로필에 관리 블록을 추가해 Pi에만 V8 힙 8 GiB를 준다. 다른 Node 프로세스는 기본값을 유지하고, 기존 `NODE_OPTIONS`도 보존하며, 호출할 때마다 현재 NVM/npm의 Pi 실행 파일을 찾는다. 저장소를 옮겼다면 설치 스크립트를 다시 실행한다. 제거하려면 `pi-setup Pi-only Node heap` 표식 사이의 블록을 지운다. Windows PowerShell 5.1과 PowerShell 7을 모두 사용하면 각 셸에서 `install.ps1`을 한 번씩 실행한다. 조직 정책이 PowerShell 프로필 실행을 강제로 막는 환경에서는 관리자 정책 변경이 필요하다.
 
@@ -45,17 +45,21 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 
 실제 비밀 파일은 저장소 **밖에** 있으므로 커밋되거나 공개 미러로 나갈 수 없다. 경로는 `PI_SETUP_ENV_FILE`로 바꿀 수 있다.
 
-**키가 없는 것은 오류가 아니다.** pi-subagents는 등록되지 않은 프로바이더의 모델마다 실행당 한 번씩 경고를 찍고, 이를 끄는 설정은 없다. 그래서 `settings.json`이 경로로 쓰지만 키가 없는 프로바이더에는 로더가 `unset-placeholder` 값을 넣는다. 그러면 프로바이더가 등록되어 경고가 사라진다. 자격증명은 틀리지만 그 경로는 이미 조용하다. Pi가 모델을 호출하고, 실패하면 폴백 체인의 다음 후보로 넘어간다. 진짜 키는 항상 placeholder를 이기며, 같은 셸에서 프로필을 다시 source 해도 마찬가지다. 경고를 보고 싶으면 `PI_SETUP_NO_PLACEHOLDER=1`로 끄면 된다.
+**키가 없는 것은 오류가 아니다.** pi-subagents는 등록되지 않은 프로바이더의 모델마다 실행당 한 번씩 경고를 찍고, 이를 끄는 설정은 없다. 그래서 `settings.json`이 경로로 쓰지만 키가 없는 프로바이더에는 로더가 `unset-placeholder` 값을 넣는다. 그러면 프로바이더가 등록되어 경고가 사라진다. 자격증명은 틀리지만 그 경로는 이미 조용하다. Pi가 모델을 호출하고, 실패하면 프로바이더 오류를 그대로 보여 준다. pi-subagents는 더 이상 실행 중에 모델을 바꾸지 않는다. 진짜 키는 항상 placeholder를 이기며, 같은 셸에서 프로필을 다시 source 해도 마찬가지다. 경고를 보고 싶으면 `PI_SETUP_NO_PLACEHOLDER=1`로 끄면 된다.
+
+**프로젝트 설정도 pi-subagents를 깨뜨릴 수 있다.** 프로젝트의 `.pi/settings.json`에 있는 `agentOverrides`도 함께 읽히므로, 거기에 `fallbackModels`가 하나라도 남아 있으면 그 디렉터리에서 확장이 로드되지 않는다. `scripts/check-removed-fields.sh /path/to/project/.pi/settings.json`으로 프로젝트 파일을 검사할 수 있고, 이 저장소의 파일은 설치 스크립트와 CI가 자동으로 검사한다.
+
+**Anthropic 요청이 멈추면 안 된다.** 로더는 `PI_BG_FEATURES`를 `process,delegate,fusion,attested`로 기본 설정해 pi-background-tasks의 `attribution` 기능을 뺀다. 이 패키지 2.6.2는 Pi의 Anthropic 프로바이더를 자기 것으로 바꾸는데, 그 메시지 변환기가 Pi 0.86+가 대화 기록에 두는 시스템 메시지에서 무한 루프에 빠져 모든 Claude 요청이 출력 없이 CPU만 쓰며 멈춘다. Pi 내장 프로바이더는 구독 OAuth를 스스로 처리한다. 직접 `PI_BG_FEATURES`를 내보내면 그 값이 우선하고, 패키지가 고쳐지면 `attribution`을 다시 넣으면 된다.
 
 설치 마지막에는 `settings.json`이 경로로 쓰지만 자격증명이 없는 프로바이더를 나열한다. 문제가 아니라 안내다. 로더를 제거하려면 `pi-setup provider env` 표식 사이의 블록을 지우면 된다.
 
-기본 모델은 사고 수준 `xhigh`의 `openai-codex/gpt-5.6-sol`이다. 서브에이전트는 `openai-codex/gpt-5.6-sol`을 쓴다. 설계 역할(specifier, sw-architect, hardender, architect)은 `high` 사고, 나머지는 `medium` 사고를 쓴다. Sol 경로는 Anthropic·Z.ai 폴백을 유지하고, Z.ai 경로는 `max` 사고로 돈다. `models.json`은 GLM-5.3-Flash의 텍스트·이미지 입력을 계속 선언한다. Z.ai 경로는 `ZAI_API_KEY`가 설정되어 있을 때 사용되고, 없으면 해당 역할은 조용히 Anthropic·OpenAI 단계로 내려간다.
+기본 모델은 사고 수준 `high`의 `openai-codex/gpt-6.1-sol`이다. Fast 모드를 사용한다. 백엔드, 간단한 작업, 브라우저 자동화와 QA는 Sol high/Fast를 쓰고, UI, 프런트엔드, 문서 작성, 아키텍처와 어려운 디버깅은 Opus 5.5 medium을 쓴다. 모델 대체에는 소유자 승인이 필요하다. 명시적인 GLM 역할은 유지한다.
 
-이후 로컬에서 바뀐 내용은 `~/pi-setup-public/sync.sh`로 저장소에 반영한다.
+macOS 감시 작업이 Pi의 JSON 설정을 로컬 체크아웃에 반영한다. 체크아웃을 커밋하고 푸시할 때는 `~/pi-setup-public/sync.sh`를 실행한다.
 
 ## 구성
 
-### 스킬 (30)
+### 스킬 (23)
 
 | 스킬 | 하는 일 | 출처 |
 |---|---|---|
@@ -64,7 +68,6 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `browser-qa` | 어떤 사이트든 브라우저 QA: YAML DAG 시나리오, 엔진 선택(네이티브 `agent_browser` 도구 우선), API 증적, `superqa` 런타임; Playwright E2E 패턴은 `reference/e2e-patterns.md` | [cskwork/browser-qa](https://github.com/cskwork/browser-qa) |
 | `db-intelligence` | DB 스킬 하나로 4개 엔진: PostgreSQL, MySQL, SQLite, MongoDB. 자격증명 안전 + 읽기 우선 + 스키마 선행; 도메인 증거 아티팩트(엔티티 그래프 + 보편 언어 + 데이터 형태) 생성 | local |
 | `playwright-cli` | 브라우저 직접 조작, Playwright 테스트 작성/디버깅 | local |
-| `call-agent` | 작업에 맞는 다른 AI CLI로 넘김; claude 래퍼는 `CLAUDE_MODEL`로 모델 교체 | [cskwork/call-agent](https://github.com/cskwork/call-agent) |
 | `verify` | 5단계 검증. "빌드 통과 = 검증됨"을 거부한다 | [cskwork/verify-skill](https://github.com/cskwork/verify-skill) |
 | `create-verification-skill` | 실제 앱을 구동해 증거를 남기는 프로젝트 전용 검증 스킬을 생성한다 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/create-verification-skill) |
 | `verification-before-completion` | 주장보다 증거 먼저. 검증 안 된 완료 선언 금지 | [obra/superpowers](https://github.com/obra/superpowers) |
@@ -72,23 +75,20 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `sync-agent-prompt` | pi-setup, pi-setup-public, promptbox 온보딩 프롬프트 세 곳의 AGENTS.md 운영 계약과 필수 스킬 동기화; 쓰기 전 as-is → to-be 비교 후 확인 | local |
 | `diagnosing-bugs` | 버그·성능 회귀 진단 루프: 재현 → 최소화 → 가설 → 계측 → 수정 → 회귀 테스트 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | 테스트 주도 개발: red-green-refactor, 통합 테스트, mocking 패턴 | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `unslop` | AI 문체 패턴을 걷어내고 사람다운 목소리로 다듬기 | [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop) |
+| `humanizer` | 기본 글쓰기 스킬. 사실을 유지하며 반복과 AI 문체를 줄임 | [blader/humanizer](https://github.com/blader/humanizer) |
 | `code-review` | 기준점 이후 변경을 Standards/Spec 두 축으로 병렬 서브에이전트 리뷰 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `implement` | 스펙·티켓 기반으로 작업 구현 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `research` | 신뢰 원천 조사 후 결과를 Markdown로 저장 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `domain-modeling` | CONTEXT.md와 ADR로 프로젝트 도메인 모델 구축 | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `improve-codebase-architecture` | 깊게 팔 만한 지점 스캔 → HTML 리포트 → 고른 항목 그릴링 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `resolving-merge-conflicts` | 진행 중인 git merge/rebase 충돌 해결 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `grilling` | 계획이나 결정이 깨지거나 버틸 때까지 압박 | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `wait-what` | 멈춤. 직전 메시지가 안 통했으면 다시 제안 | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `writing-for-agents` | 에이전트용 문서 작성: skills, AGENTS.md, CLAUDE.md | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `handoff` | 대화를 다음 에이전트용 인수인계 문서로 압축 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `teach` | 워크스페이스 내에서 기술·개념을 가르침 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `find-skills` | 새 에이전트 스킬 탐색/설치 | local |
-| `gpt-image-2` | Codex CLI + ChatGPT 요금제로 이미지 생성 | local |
-| `impeccable` | 프론트엔드 디자인 리뷰 및 다듬기 | [oddxinformatics/impeccable](https://github.com/oddxinformatics/impeccable) |
 | `ego-browser` | 로그인 상태를 공유하는 에이전트 친화 브라우저 | [citrolabs/ego-lite](https://github.com/citrolabs/ego-lite) |
-| `sdlc-kit` | 기록으로 남는 사람 승인, 새 컨텍스트 검토, 제한된 메모리를 갖춘 6단계 SDLC 루프 | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
+| `sdlc-kit` | 사람 승인 게이트, 새 컨텍스트 검토, 점수로 다음 단계를 정하는 증거를 갖춘 4단계 SDLC 루프(intent → plan → build → evidence) | [cskwork/sdlc-kit](https://github.com/cskwork/sdlc-kit) |
+
+
+**[cskwork/skills](https://github.com/cskwork/skills)도 Pi 패키지로 함께 불러옵니다** (`settings.json`의 `git:github.com/cskwork/skills`): call-agent, bughunt, quality-loop, verify-app, retro, prototype, improve-codebase-architecture, 디자인 스킬(impeccable, diagram-design, gpt-image-2, image-first-ui, mobile-ui-ux, motion-graphics), simless, swiftui-pro, jk, sql-walkthrough, handoff, ponytail, wait-what, writing-for-agents. `pi update`로 최신을 받으며, `db-intelligence`와 `sdlc-kit`은 이 저장소의 `skills/`에서 불러옵니다.
 
 ### 익스텐션
 
@@ -100,6 +100,7 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `npm:@narumitw/pi-goal` | 세션 목표를 주면 완료까지 계속 작업 |
 | `npm:@narumitw/pi-usage` | 사용량/비용 추적 |
 | `npm:pi-subagents` | 서브에이전트 오케스트레이션 |
+| `npm:billion-context-pi` | 모델 주도 컨텍스트 압축. 자체 delegate는 끄고 pi-subagents 에이전트에 ACP 도구를 제공 |
 | `npm:pi-lens` | 에이전트가 편집하는 동안 코드 피드백: LSP, 린터, 포매터, 타입 검사 |
 | `npm:pi-background-tasks` | 이름 붙인 백그라운드 셸 작업 |
 | `npm:context-mode` | 큰 도구 출력이 컨텍스트를 먹지 않게 함 |
@@ -116,6 +117,8 @@ Pi는 프로바이더별로 정해진 환경 변수가 설정되어 있을 때�
 | `npm:pi-agent-browser-native` | agent-browser를 네이티브 `agent_browser` 도구로 노출. browser-qa 엔진 캐스케이드 1순위 (업스트림 `agent-browser` CLI 필요, install.sh가 설치) |
 
 추가로 `extensions/`에 로컬 익스텐션이 있다: `dirty-repo-guard.ts`(세션 전환 시 미커밋 변경 가드), `herdr-agent-state.ts`. Bash 권한은 `@gotgenes/pi-permission-system`만 쓴다. 다른 곳에서는 건드리지 않는다.
+
+**Hindsight 기억.** [hindsight-agent-setup](https://github.com/cskwork/hindsight-agent-setup)이 설치돼 있으면 `git:github.com/cskwork/pi-hindsight-memory`가 Hindsight 공식 Pi 어댑터를 불러온다. 턴마다 관련 기억을 먼저 불러오고, 끝나면 대화를 저장하며, `hindsight_*` 도구를 더한다. Claude Code·Codex와 같은 기억을 쓴다. Hindsight가 없으면 경고만 띄운다.
 
 ### 서브에이전트 모델 프로필 (4)
 
@@ -178,14 +181,17 @@ frontmatter가 먼저 이기므로 settings override만으로는 이 핀을 고�
 ```
 AGENTS.md            운영 지침 (~/.pi/agent로 심볼릭 링크)
 settings.json        프로바이더 + 패키지
+acp.json             billion-context-pi 설정
 configs/             권한 기본값 (공개)
-skills/              에이전트 스킬 30개
+skills/              에이전트 스킬 23개
 agents/              서브에이전트 역할 프롬프트
 extensions/          로컬 TS 익스텐션
 scripts/             check-docs.py: 문서/설정 불일치 CI 가드
                      pi-node-heap.sh/.ps1: Pi 전용 8 GiB 런처
                      pi-env.sh/.ps1: 프로바이더 자격증명 로더 + 키 이름 미러링
                      prune-sessions.sh: 세션 기록 보존 기간 정리
+                     sync-live-config.sh: 실사용 JSON 동기화 + 링크 복구
+                     sync-sdlc-kit-mirror.sh: 클론이 바뀌면 skills/sdlc-kit 사본 push
 .env.example         ~/.pi-setup.env 템플릿 (실제 비밀 파일은 이 저장소
                      밖에 있고 절대 커밋되지 않는다)
 tests/               셸·PowerShell 런처 회귀 검사

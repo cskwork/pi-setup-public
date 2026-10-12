@@ -76,7 +76,7 @@ pi_setup_alias_env() {
 #
 # Any non-empty value registers the provider, which stops the warning. The
 # credential is then wrong, but that path is already silent: Pi tries the model,
-# the call fails, and it moves to the next candidate in the fallback chain.
+# the call fails with a clear provider error.
 # A real key later simply overrides the placeholder and gets used normally.
 #
 # Only providers actually routed in settings.json need this. Set
@@ -91,7 +91,24 @@ pi_setup_quiet_unused_providers() {
   done
 }
 
+# Keep pi-background-tasks from replacing Pi's Anthropic provider.
+#
+# pi-background-tasks 2.6.2 registers its own "anthropic" provider for Claude
+# Code OAuth attribution. Its message converter never advances past a
+# transcript message whose role is not user/assistant/toolResult, and Pi 0.86+
+# puts system messages in the transcript, so every Anthropic request spins at
+# 100% CPU with no output and no error. Leaving "attribution" out of
+# PI_BG_FEATURES keeps Pi's built-in Anthropic provider, which handles
+# subscription OAuth itself. An exported PI_BG_FEATURES always wins, so put
+# "attribution" back once the package is fixed.
+pi_setup_default_bg_features() {
+  if [ -z "${PI_BG_FEATURES-}" ]; then
+    export PI_BG_FEATURES="process,delegate,fusion,attested"
+  fi
+}
+
 pi_setup_clear_placeholders
 pi_setup_load_env_file
 pi_setup_alias_env
 pi_setup_quiet_unused_providers
+pi_setup_default_bg_features
