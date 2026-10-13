@@ -1,0 +1,39 @@
+# Keeps skills/sdlc-kit identical to cskwork/sdlc-kit main: every tracked file, verbatim, as the
+# private repo's scripts/sync-sdlc-kit-mirror.sh does, so a later sync-public.sh stages nothing for it.
+# Runs daily and on demand (Actions tab → Sync sdlc-kit → Run workflow).
+# The content is the public cskwork/sdlc-kit repository, so no private file can reach this repo here.
+name: Sync sdlc-kit
+
+on:
+  schedule:
+    - cron: '27 21 * * *' # 06:27 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: sync-sdlc-kit
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: cskwork/sdlc-kit
+          path: .upstream
+          persist-credentials: false
+      - name: Copy every tracked file
+        run: |
+          rsync -a --delete --exclude .git .upstream/ skills/sdlc-kit/
+          echo "VERSION=$(cat .upstream/VERSION)" >> "$GITHUB_ENV"
+          echo "SHA=$(git -C .upstream rev-parse --short HEAD)" >> "$GITHUB_ENV"
+          rm -rf .upstream
+      - name: Commit when changed
+        run: |
+          git add -A skills/sdlc-kit
+          if git diff --cached --quiet; then echo "No change"; exit 0; fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m "chore(sdlc-kit): cskwork/sdlc-kit v$VERSION 미러 ($SHA)"
+          git pull --rebase -q && git push
