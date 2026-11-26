@@ -47,7 +47,7 @@ function page(hash = '', options = {}) {
   const nodes = new Map(), requests = [], streams = [];
   const node = id => {
     if (!nodes.has(id)) nodes.set(id, {
-      dataset: {}, value: '', hidden: true, elements: [], children: [],
+      id, dataset: {}, value: '', hidden: true, elements: [], children: [],
       attributes: {}, listeners: {}, classList: { contains() { return false; }, toggle() {}, add() {}, remove() {} },
       addEventListener(type, fn) { this.listeners[type] = fn; },
       focus() { context.document.activeElement = this; },
@@ -83,12 +83,13 @@ function page(hash = '', options = {}) {
       createElementNS: () => node(`element-${++element}`), createTextNode: text => ({ textContent: text }) },
     sessionStorage: storage(), localStorage: storage(),
     history: { replaceState(_state, _title, url) { location.href = new URL(url, location).href; } },
-    location, URLSearchParams, setTimeout, clearTimeout, Node: class {}, scrollX: 0, scrollY: 0, scrollTo() {}, matchMedia: () => media,
+    location, URLSearchParams, setTimeout, clearTimeout, setInterval() {}, Node: class {}, scrollX: 0, scrollY: 0, scrollTo() {}, matchMedia: () => media,
     // The browser imports these modules; the VM runs app.js as a script with their exports as globals.
     ...i18n, ...status,
     EventSource: class {
-      constructor(url) { streams.push(url); }
-      addEventListener() {}
+      constructor(url) { streams.push(url); this.listeners = {}; context.lastStream = this; }
+      addEventListener(type, fn) { this.listeners[type] = fn; }
+      close() {}
     },
     fetch: async (url, options) => {
       requests.push({ url, options });
@@ -242,19 +243,75 @@ test('B4: a page without a token explains how to open it without making requests
   assert.equal(p.streams.length, 0);
 });
 
-test('B1: pending delete confirmation submits the shown version even if the row is replaced', async () => {
-  const p = page('#t=test-token');
+function deleting(title = 'Duplicate') {
+  const p = page('#t=test-token', { fetch: async url => url === '/api/items' ? new Promise(() => {}) : { ok: true, text: async () => '{}' } });
+  p.context.title = title;
   vm.runInContext(`
-    const shown = { id: 'abcdef', title: 'Duplicate', version: 'shown-A' };
-    const replacement = { id: 'abcdef', title: 'Duplicate', version: 'current-B' };
-    const li = { dataset: { id: shown.id }, _item: shown };
+    const shown = { id: 'abcdef', title, version: 'shown-A' };
+    const li = { dataset: { id: shown.id }, _item: shown, isConnected: true, focus() { document.activeElement = this; } };
+    const from = { isConnected: true, getClientRects() { return [{}]; } };
     items = [shown];
-    confirm = () => { items = [replacement]; li._item = replacement; return true; };
+    rows.set(shown.id, li);
   `, p.context);
-  await vm.runInContext('remove(li)', p.context);
-  const body = JSON.parse(p.requests.find(r => r.url === '/api/item').options.body);
-  assert.equal(body.id, 'abcdef');
-  assert.equal(body.version, 'shown-A', 'confirmation must keep the item shown before the dialog');
+  const dialog = p.nodes.get('delete-confirm');
+  const start = () => vm.runInContext('remove(li, from)', p.context);
+  return { p, dialog, start, sent: () => p.requests.filter(r => r.url === '/api/item').map(r => JSON.parse(r.options.body)) };
+}
+test('delete: Delete in the dialog deletes the version shown, even if the row is replaced meanwhile', async () => {
+  const { p, dialog, start, sent } = deleting('<b>Duplicate</b>');
+  const done = start();
+  assert.equal(dialog.modal, true);
+  assert.equal(p.nodes.get('delete-confirm-item').textContent, '<b>Duplicate</b>', 'the title is shown as text');
+  assert.equal(p.context.document.activeElement, p.nodes.get('delete-confirm-cancel'), 'focus starts on the safe choice');
+  assert.equal(sent().length, 0, 'nothing is sent before the answer');
+  vm.runInContext("const replacement = { ...shown, version: 'current-B' }; items = [replacement]; li._item = replacement;", p.context);
+  dialog.close('delete');
+  await done;
+  assert.deepEqual(sent(), [{ id: 'abcdef', version: 'shown-A', op: 'delete' }]);
+});
+test('delete: Cancel and Esc delete nothing; focus returns to the button, or to the row when that is gone', async () => {
+  for (const answer of ['cancel', undefined]) {
+    const { p, dialog, start, sent } = deleting();
+    let done = start();
+    dialog.close(answer);
+    await done;
+    assert.deepEqual(sent(), []);
+    assert.equal(vm.runInContext('document.activeElement === li', p.context), false, 'the dialog gave focus back by itself');
+    // An earlier "delete" answer never carries over to the next dialog.
+    dialog.returnValue = 'delete';
+    done = start();
+    vm.runInContext('from.isConnected = false', p.context);
+    dialog.close(answer);
+    await done;
+    assert.deepEqual(sent(), []);
+    assert.equal(vm.runInContext('document.activeElement === li', p.context), true);
+  }
+});
+test('delete: an Enter or Space held or pressed as the dialog opens answers nothing', async () => {
+  const { p, dialog, start } = deleting();
+  let now = 1000;
+  p.context.clock = () => now;
+  vm.runInContext('Date.now = () => clock()', p.context);
+  const done = start();
+  const press = (key, extra = {}) => { const event = { key, prevented: false, preventDefault() { this.prevented = true; }, ...extra }; dialog.listeners.keydown(event); return event.prevented; };
+  now = 1399;
+  assert.deepEqual([press('Enter'), press(' '), press('Escape'), press('Tab')], [true, true, false, false], 'Esc and Tab always work');
+  now = 1400;
+  assert.deepEqual([press('Enter'), press(' ')], [false, false]);
+  assert.deepEqual([press('Enter', { repeat: true }), press('Enter', { isComposing: true })], [true, true]);
+  dialog.close();
+  await done;
+});
+test('delete: no native confirm, alert or prompt is left; the dialog is named in both languages', () => {
+  for (const file of ['app.js', 'board.js', 'markdown.js']) {
+    const text = readFileSync(new URL(`../todo/page/${file}`, import.meta.url), 'utf8').replace(/^\s*\/\/.*$/gm, '');
+    assert.doesNotMatch(text, /(?<![\w.])(?:window\.|globalThis\.)?(?:confirm|alert|prompt)\(/, file);
+  }
+  const html = readFileSync(new URL('../todo/page/index.html', import.meta.url), 'utf8');
+  const dialog = html.match(/<dialog id="delete-confirm"[\s\S]*?<\/dialog>/)[0];
+  assert.match(dialog, /role="alertdialog" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-item delete-confirm-note"/);
+  assert.ok(dialog.indexOf('value="cancel"') < dialog.indexOf('value="delete"'), 'Cancel comes first');
+  for (const language of i18n.languages) for (const key of ['delete.title', 'delete.note', 'delete.confirm']) assert.ok(i18n.locales[language].messages[key], `${language} ${key}`);
 });
 test('B1: a changed-target response shows the server message and refreshes the snapshot', async () => {
   let loads = 0;
@@ -295,7 +352,7 @@ test('B1: a reply draft keeps the version it was written for when a duplicate re
 test('suggest: the reply field starts with the suggested answer; an edit stays, a new suggestion replaces an unedited one', async () => {
   const p = page('#t=test-token', { fetch: async url => url === '/api/items' ? new Promise(() => {}) : { ok: true, text: async () => '{}' } });
   vm.runInContext(`
-    items = [{ id: 'abcdef', title: 'A20-1438', version: 'shown-A', done: false, status: 'waiting', waiting: 'q', suggest: 'HLS는 뺀다', events: [], notes: [] }];
+    items = [{ id: 'abcdef', title: 'PROJ-1438', version: 'shown-A', done: false, status: 'waiting', waiting: 'q', suggest: 'HLS는 뺀다', events: [], notes: [] }];
     openDetail('abcdef');
   `, p.context);
   const field = p.nodes.get('reply-text');
@@ -315,7 +372,7 @@ test('suggest: the reply field starts with the suggested answer; an edit stays, 
 test('choices: an open item offers one button per label, the pick first; a click posts the label as a reply', async () => {
   const p = page('#t=test-token', { fetch: async url => url === '/api/items' ? new Promise(() => {}) : { ok: true, text: async () => '{}' } });
   vm.runInContext(`
-    items = [{ id: 'abcdef', title: '[결정 D35] A20-1462 · q', version: 'shown-A', done: false, status: 'waiting', waiting: '1) a · 2) b',
+    items = [{ id: 'abcdef', title: '[결정 D35] PROJ-1462 · q', version: 'shown-A', done: false, status: 'waiting', waiting: '1) a · 2) b',
       choices: ['원래 있던 실패로 보고 진행', '심사 시험부터 고친 뒤 진행', '보류'], pick: 2, events: [], notes: [] }];
     openDetail('abcdef');
   `, p.context);
@@ -334,12 +391,12 @@ test('choices: an open item offers one button per label, the pick first; a click
 test('choices: open items that need you and share a ticket link list together under its heading', () => {
   const p = page();
   const order = vm.runInContext(`
-    const link = { label: 'A20-1462', url: 'https://jira/browse/A20-1462' };
+    const link = { label: 'PROJ-1462', url: 'https://jira/browse/PROJ-1462' };
     const ask = (id, extra = {}) => ({ id, title: id, done: false, status: 'waiting', waiting: 'q', events: [], notes: [], ...extra });
     apply({ items: [ask('d35', { link }), ask('other'), ask('busy', { link, status: 'workable' }), ask('d36', { link })] });
     document.getElementById('open').children.map(li => li._head ? 'head:' + li._heading.textContent : li.dataset.id);
   `, p.context);
-  assert.deepEqual(order, ['head:A20-1462', 'd35', 'd36', 'other', 'busy']);
+  assert.deepEqual(order, ['head:PROJ-1462', 'd35', 'd36', 'other', 'busy']);
 });
 
 test('B1: approval sends the version of the item whose artifact was shown', async () => {
@@ -841,6 +898,262 @@ test('ticket: in the tray app\'s window the page asks the app (window.ipc) and o
   assert.equal(b.opened.length, 0, 'never window.open in the app');
 });
 
+test('ticket: the app\'s shell (todoApp) is asked before window.ipc, and opens no popup', () => {
+  const { b } = selectedBoard([linked('aaaaaa', { waiting: 'see https://tracker.invalid/browse/T-9, then pick' }), linked('bbbbbb')]);
+  const asks = [];
+  b.context.todoApp = { ticket: async (url, follow) => { asks.push([url.split('/').pop(), follow]); } };
+  b.context.ipc = { postMessage() { throw new Error('the shell\'s own channel is not for tickets'); } };
+  b.key('t');
+  b.nodes.get('panel-tickets').children[0].click();
+  b.key('j');
+  assert.deepEqual(asks, [['T-aaaaaa', false], ['T-9', false], ['T-bbbbbb', true]], 'the link, another ticket in the question, then the selection');
+  assert.equal(b.opened.length, 0);
+});
+
+test('fix: a request whose agent did not start shows one notice, on the board and in the list', async () => {
+  const blocked = askItem('aaaaaa', 'v1', '', { status: 'blocked', waiting: '', sdlc: { slug: 's', phase: 'build', state: 'BLOCKED', action: 'broken' } });
+  for (const [launch, toast, notice] of [['failed: no such command', '', 'no such command'], ['started', 'fix.started', ''], ['queued', 'fix.queued', '']]) {
+    const { p, b } = selectedBoard([blocked]);
+    const words = key => p.context.todoPage.t(key);
+    const errors = [], said = [];
+    p.context.todoPage.api = async () => ({ launch });
+    p.context.todoPage.showError = error => errors.push(error);
+    p.context.todoPage.announce = text => said.push(text);
+    const box = b.context.document.getElementById('toast');
+    await b.nodes.get('panel-fix').listeners.click();
+    assert.equal(box.textContent, toast && words(toast), `${launch}: the board's toast`);
+    assert.deepEqual(said, toast ? [words(toast)] : []);
+    assert.equal(errors.length, notice ? 1 : 0);
+    if (notice) assert.match(errors[0], /no such command/);
+
+    const l = page('#t=test-token', { fetch: async url => url === '/api/items' ? new Promise(() => {}) : { ok: true, text: async () => JSON.stringify({ launch }) } });
+    const told = [];
+    l.context.told = told;
+    vm.runInContext('announce = text => told.push(text)', l.context);
+    l.context.blocked = blocked;
+    await vm.runInContext('fixButton(blocked)', l.context).listeners.click();
+    assert.deepEqual(told, toast ? [words(toast)] : []);
+    assert.equal(l.context.document.getElementById('error').hidden, !notice, `${launch}: the list's notice`);
+  }
+});
+
+// A page in the app's window: todoApp answers, and the board's part is there (a stand-in carrier).
+async function appPage(list, { state = {}, calls = [], board = null } = {}) {
+  const own = { memos: {}, size: 100, sizes: [80, 160], font: '', fonts: [], terminal: true, follows: true, error: null, carried: null, view: null, ...state };
+  const p = page('#t=test-token', { source: source.replace('const shell = globalThis.todoApp;', 'const shell = globalThis.shellStub;')
+    .replace('let token = ', 'globalThis.shellStub = globalThis.process ? null : makeShell();\nlet token = ').replace('makeShell()', `({
+      state: async () => JSON.parse(${JSON.stringify(JSON.stringify(own))}),
+      saveMemo: async (id, text) => { sink.push(['memo', id, text]); }, saveView: (size, font) => viewAnswer(size, font),
+      openTerminal: async (id, command) => openAnswer(id, command), unsent: async now => { sink.push(['unsent', now]); }, quit: async () => { sink.push(['quit']); } })`)
+    .replace("const $ = id =>", "const sink = []; let viewAnswer = async (...a) => { sink.push(['view', ...a]); }, openAnswer = () => true; const CustomEvent = class { constructor(type, init) { this.type = type; this.detail = init.detail; } }; const dispatchEvent = event => sink.push([event.type, event.detail]);\nconst $ = id =>") });
+  Object.assign(p.context, { getComputedStyle: () => ({ fontFamily: 'system-ui' }) });
+  p.context.document.documentElement.style = {};
+  p.context.document.body = {};
+  p.context.list = list;
+  p.context.boardStub = board || { take: () => ({}), put() {} };
+  const json = code => JSON.parse(vm.runInContext(`JSON.stringify(${code})`, p.context));
+  const snapshot = () => vm.runInContext('apply({ items: list })', p.context);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  return { p, json, snapshot, run: code => vm.runInContext(code, p.context), calls: () => json('sink'),
+    board: () => vm.runInContext("todoPage.addCarrier('board', boardStub)", p.context), tick: () => new Promise(resolve => setTimeout(resolve, 0)) };
+}
+const plain = (id, extra = {}) => askItem(id, 'v1', '', extra);
+
+test('app: what was typed goes to the next page: replies, approval words, a new item, a memo not yet written', async () => {
+  const items = [plain('aaaaaa'), plain('bbbbbb')];
+  const first = await appPage(items);
+  first.board();
+  first.snapshot();
+  first.run("drafts.set('aaaaaa', { reply: '답 쓰는 중', words: '승인 말', seed: '', replyVersion: 'v1' }); drafts.set('bbbbbb', { reply: 'suggested', words: '', seed: 'suggested' }); addText.value = '새 일'; own.memos.bbbbbb = '내 메모'; memoSaving.add('bbbbbb');");
+  const held = first.json('todoPage.carry()');
+  assert.deepEqual(held.list.drafts.map(([id]) => id), ['aaaaaa'], 'an unedited suggestion is not the person\'s words');
+  assert.equal(held.idle, 1e9, 'nobody typed here');
+  const taken = [];
+  const next = await appPage(items, { state: { carried: { ...held, board: { view: 'list' } } }, board: { take: () => ({}), put: held => taken.push(held) } });
+  next.snapshot();
+  assert.equal(next.run("drafts.has('aaaaaa')"), false, 'waits for the board\'s part');
+  next.board();
+  await next.tick();
+  assert.deepEqual(next.json("drafts.get('aaaaaa')"), { reply: '답 쓰는 중', words: '승인 말', seed: '', replyVersion: 'v1' });
+  assert.equal(next.run('addText.value'), '새 일');
+  assert.deepEqual(next.calls().filter(call => call[0] === 'memo'), [['memo', 'bbbbbb', '내 메모']]);
+  assert.deepEqual(JSON.parse(JSON.stringify(taken)), [{ view: 'list' }]);
+  assert.equal(next.run('todoPage.busy()'), true);
+  next.run('todoPage.addCarrier(\'other\', boardStub)');
+  assert.equal(taken.length, 1, 'taken up once');
+});
+
+test('app: words for items that went away are all shown in one notice that stays and keeps the window', async () => {
+  const next = await appPage([plain('bbbbbb')], { state: { carried: { list: { drafts: [['aaaaaa', { reply: '첫 답', words: '', seed: '' }], ['cccccc', { reply: '둘째 답', words: '', seed: '' }]], edits: [{ id: 'dddddd', text: '새 이름' }, { id: 'eeeeee', text: '또 다른 이름' }] } } } });
+  next.board();
+  next.snapshot();
+  const text = () => next.p.nodes.get('error-text').textContent;
+  assert.match(text(), /첫 답 \/ 둘째 답 \/ 새 이름 \/ 또 다른 이름/);
+  next.run("source = null; connect()");
+  next.run('for (const [type, fn] of Object.entries(lastStream.listeners)) if (type === "open") fn()');
+  assert.equal(next.p.nodes.get('error').hidden, false, 'the stream opening keeps the notice');
+  next.run("showError('later failure')");
+  assert.match(text(), /첫 답/, 'a later notice does not cover them');
+  assert.equal(next.run('todoPage.busy()'), true, 'quitting or closing asks first');
+  assert.deepEqual(next.json('todoPage.carry().list.lost'), ['첫 답', '둘째 답', '새 이름', '또 다른 이름'], 'and another replacement takes them along');
+  next.p.nodes.get('error-dismiss').listeners.click();
+  assert.equal(next.run('lost.length'), 0);
+  assert.equal(next.run('todoPage.busy()'), false);
+});
+
+test('app: every rename being typed goes along', async () => {
+  const first = await appPage([plain('aaaaaa'), plain('bbbbbb')]);
+  first.board();
+  first.snapshot();
+  const editing = id => ({ dataset: { id }, querySelector: () => ({ value: `name of ${id}` }) });
+  first.p.context.document.querySelectorAll = selector => selector === 'li.row.editing' ? [editing('aaaaaa'), editing('bbbbbb')] : [];
+  assert.deepEqual(first.json('todoPage.carry().list.edits'), [{ id: 'aaaaaa', text: 'name of aaaaaa' }, { id: 'bbbbbb', text: 'name of bbbbbb' }]);
+});
+
+test('board: no key acts behind a dialog, the quit and delete questions included', () => {
+  const { b, sent } = selectedBoard([askItem('aaaaaa', 'v1', '', { choices: ['yes', 'no'] })]);
+  for (const id of ['delete-confirm', 'keys-help', 'view-settings', 'run-confirm']) {
+    b.context.document.getElementById(id).open = true;
+    assert.equal(b.key('1').prevented, false, id);
+    b.context.document.getElementById(id).open = false;
+  }
+  assert.equal(sent().length, 0);
+  b.key('1');
+  assert.deepEqual(sent().map(body => body.text), ['yes'], 'and acts once none is open');
+});
+
+test('app: words handed over and not yet taken up count as unsent and go on unchanged', async () => {
+  const held = { list: { add: '새 일', drafts: [] }, board: { view: 'board' } };
+  const next = await appPage([plain('aaaaaa')], { state: { carried: held } });
+  assert.equal(next.run('todoPage.busy()'), true, 'before the first list');
+  assert.deepEqual(next.json('todoPage.carry()'), { ...held, idle: 1e9 });
+});
+
+test('app: the board takes its replies, note, selection and view along', () => {
+  const list = [askItem('aaaaaa', 'v1', ''), askItem('bbbbbb', 'v1', '')];
+  const p2 = page('#t=test-token');
+  boardItems(p2, list);
+  let mine;
+  p2.context.todoPage.addCarrier = (name, value) => { mine = value; };
+  const b2 = boardPage(p2);
+  const held = { drafts: [['aaaaaa', { reply: '보드 답', seed: '' }], ['gone00', { reply: '사라진 답', seed: '' }]], note: { id: 'aaaaaa', text: '승인 메모' }, selected: vm.runInContext("cards = boardCards(page.items, page.feed, Date.now()); cards.find(card => card.target.id === 'aaaaaa').key", b2.context), view: 'board' };
+  const shown = [];
+  p2.context.todoPage.lostWords = text => shown.push(text);
+  mine.put(held);
+  assert.equal(b2.nodes.get('panel-reply-text').value, '보드 답');
+  assert.equal(b2.nodes.get('panel-note').value, '승인 메모');
+  assert.deepEqual(shown, ['사라진 답']);
+  const again = JSON.parse(JSON.stringify(mine.take()));
+  assert.deepEqual([again.drafts.map(([id]) => id), again.note, again.view], [['aaaaaa'], { id: 'aaaaaa', text: '승인 메모' }, 'board']);
+});
+
+test('app: the shell is told when something is unsent; Quit then asks, and only Quit anyway quits', async () => {
+  const a = await appPage([plain('aaaaaa')]);
+  a.board();
+  a.snapshot();
+  a.run("drafts.set('aaaaaa', { reply: 'x', words: '', seed: '' }); tellUnsent(); tellUnsent(); drafts.clear(); tellUnsent();");
+  assert.deepEqual(a.calls().filter(call => call[0] === 'unsent'), [['unsent', false], ['unsent', true], ['unsent', false]], 'once per change');
+  const dialog = a.p.nodes.get('delete-confirm');
+  assert.equal(a.run('todoPage.askQuit()'), true);
+  await a.tick();
+  assert.equal(dialog.open, true);
+  assert.equal(a.run('todoPage.askQuit()'), true, 'asking twice shows one question');
+  dialog.close('');
+  await a.tick();
+  assert.equal(a.calls().some(call => call[0] === 'quit'), false);
+  a.run('todoPage.askQuit()');
+  await a.tick();
+  dialog.close('delete');
+  await a.tick();
+  assert.equal(a.calls().filter(call => call[0] === 'quit').length, 1);
+});
+
+test('app: quick size changes are saved one after another, the last one last', async () => {
+  const a = await appPage([]);
+  a.run("globalThis.waiting = []; viewAnswer = (size, font) => { sink.push(['view', size]); return new Promise(done => waiting.push(done)); }; sizeText(10); sizeText(10); sizeText(10);");
+  assert.deepEqual(a.calls().filter(call => call[0] === 'view'), [['view', 110]], 'the next waits');
+  a.run('waiting[0]()');
+  await a.tick();
+  assert.deepEqual(a.calls().filter(call => call[0] === 'view'), [['view', 110], ['view', 130]]);
+  a.run('waiting[1]()');
+  await a.tick();
+  assert.equal(a.calls().filter(call => call[0] === 'view').length, 2);
+});
+
+test('app: a terminal opens with the command on screen; a changed one is refused with a notice', async () => {
+  const a = await appPage([plain('aaaaaa', { run: 'vpn login' })]);
+  a.run("openAnswer = (id, command) => { sink.push(['open', id, command]); throw 'changed'; };");
+  const box = a.run("runCommandControl({ id: 'aaaaaa', run: 'vpn login' })");
+  await box.children.find(child => child.listeners?.click).listeners.click();
+  assert.deepEqual(a.calls().filter(call => call[0] === 'open'), [['open', 'aaaaaa', 'vpn login']]);
+  assert.equal(a.p.nodes.get('error-text').textContent, a.p.context.todoPage.t('run.changed'));
+});
+
+test('app: a view picked on the tray while the page loaded is taken up', async () => {
+  const a = await appPage([], { state: { view: 'list' } });
+  assert.deepEqual(a.calls().filter(call => call[0] === 'todo-view'), [['todo-view', 'list']]);
+  assert.match(boardSource, /globalThis\.todoApp\?\.view\?\.\(\)/, 'and one that came before the board could listen');
+  assert.match(boardSource, /if \(!globalThis\.todoApp\?\.view\?\.\(\) && \[/, 'and the old page\'s view does not undo it');
+});
+
+test('choices: what each does comes from the document\'s numbered Options list, matched by label', () => {
+  const { b } = selectedBoard([askItem('aaaaaa', 'v1', '')]);
+  const options = (markdown, choices) => [...vm.runInContext('optionsOf', b.context)(markdown, choices)];
+  const brief = '# D\n\n## At a glance\n- **Your call:** go?\n\n## 선택지 (번호로 답)\n1. **승인** (AI 권장) — 계획대로 `build`.\n2. **보류** — 진행하지 않고 대기.\n\n## Next\n1. unrelated — no\n';
+  assert.deepEqual(options(brief, ['승인', '보류']), ['계획대로 build.', '진행하지 않고 대기.']);
+  assert.deepEqual(options('## Options\n1. **a** - first\n2. **b**\n', ['a', 'b']), ['first', '']);
+  // A list in another order: labels match after trimming, collapsing spaces and ignoring case.
+  const swapped = '## Options\n1. **Hold  it** — wait for QA.\n2. **Ship** (AI pick) — merge now.\n';
+  assert.deepEqual(options(swapped, ['ship', ' Hold it ']), ['merge now.', 'wait for QA.']);
+  // A list that does not match the choices one to one says nothing rather than mislabel them.
+  assert.deepEqual(options(brief, ['승인', '보류', '취소']), []);
+  assert.deepEqual(options(swapped, ['Ship', 'Cancel']), []);
+  assert.deepEqual(options('## Summary\n1. a — b\n', ['a']), []);
+});
+
+test('app: memos, text size and font live in the shell; a memo not yet written keeps the window', async () => {
+  const calls = [];
+  const own = { memos: { aaaaaa: 'ask QA' }, size: 100, sizes: [80, 160], font: '', fonts: [{ name: 'NanumGothic', file: '/f/N.ttf' }], terminal: true, follows: true, error: null };
+  assert.equal(vm.runInContext('own', page('#t=test-token').context), null, 'a browser has none');
+  const inShell = page('#t=test-token', { source: source
+    .replace('const shell = globalThis.todoApp;', `const shell = { state: async () => (${JSON.stringify(own)}), saveMemo: async (id, text) => { calls.push(['memo', id, text]); }, saveView: async (size, font) => { calls.push(['view', size, font]); } };`) });
+  Object.assign(inShell.context, { calls, getComputedStyle: () => ({ fontFamily: 'system-ui' }) });
+  const root = inShell.context.document.documentElement;
+  root.style = {};
+  inShell.context.document.body = {};
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(inShell.nodes.get('view-open').hidden, false);
+  inShell.nodes.get('view-larger').listeners.click();
+  inShell.nodes.get('view-font').value = '/f/N.ttf';
+  inShell.nodes.get('view-font').listeners.change();
+  assert.equal(root.style.fontSize, '110%');
+  assert.equal(root.style.fontFamily, '"NanumGothic", system-ui');
+  const box = inShell.nodes.get('panel-memo'), field = inShell.nodes.get('panel-memo-text');
+  const item = { id: 'aaaaaa', done: false };
+  inShell.context.todoPage.renderMemo(box, item);
+  assert.deepEqual([box.hidden, box.open, field.value], [false, true, 'ask QA']);
+  field.value = 'ask QA first';
+  field.listeners.input();
+  assert.equal(inShell.context.todoPage.busy(), true);
+  assert.equal(vm.runInContext('memoSaving.size', inShell.context), 1);
+  field.value = 'ask QA first, then ship';
+  field.listeners.input();
+  field.value = 'ask QA first, then ship it';
+  field.listeners.input();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(vm.runInContext('memoSaving.size', inShell.context), 0);
+  const kept = JSON.parse(JSON.stringify(calls)), of = kind => kept.filter(call => call[0] === kind);
+  assert.deepEqual([...of('view'), ...of('memo')], [['view', 110, ''], ['view', 110, '/f/N.ttf'], ['memo', 'aaaaaa', 'ask QA first'], ['memo', 'aaaaaa', 'ask QA first, then ship it']],
+    'one save at a time; the newest words are written last');
+  inShell.context.document.querySelector = selector => selector === 'li.row.editing' ? {} : null;
+  assert.equal(vm.runInContext('inFlight = 0; todoPage.busy()', inShell.context), true, 'a rename being typed keeps the window');
+  inShell.context.document.querySelector = () => null;
+  assert.equal(vm.runInContext('todoPage.busy()', inShell.context), false);
+  inShell.context.todoPage.renderMemo(box, { id: 'bbbbbb', done: true });
+  assert.equal(box.hidden, true, 'a done item has none');
+  assert.equal(inShell.requests.filter(r => /memo|ask QA/.test(JSON.stringify(r))).length, 0, 'the server never sees a memo');
+});
+
 test('ticket: in the app a link to this machine is refused with a message, not sent to the app', () => {
   const local = (id, url) => askItem(id, 'v1', '', { link: { label: id, url } });
   const { p, b } = selectedBoard([local('aaaaaa', 'http://127.0.0.1:5173/x'), local('bbbbbb', 'http://LOCALHOST./y'),
@@ -1232,4 +1545,122 @@ test('copy buttons: without the async clipboard the selection copy runs; when bo
   assert.match(said[0], /^Couldn't copy/);
   t.mock.timers.tick(4000);
   assert.equal(button.textContent, 'Copy');
+});
+
+// B-32: a card that is your turn because an agent asked shows that one ask; the kit's own instructions wait closed.
+const kitAction = 'ship to stg, then sdlc.sh ship chat-fix stg <sha> [repo]';
+const projLink = { label: 'PROJ-7', url: 'https://example.atlassian.net/browse/PROJ-7' };
+function askBoard(list, feed) {
+  // Requests never answer: the work document stays loading, so More renders no markdown.
+  const p = page('#t=test-token', { fetch: () => new Promise(() => {}) });
+  boardItems(p, list);
+  if (feed) { p.context.boardFeed = feed; vm.runInContext('feed = boardFeed', p.context); }
+  const b = boardPage(p);
+  const key = vm.runInContext(`render(); cards.find(card => card.target.id === '${list[0].id}').key`, b.context);
+  vm.runInContext(`select('${key}', false)`, b.context);
+  const more = () => { b.nodes.get('panel-more').click(); return b.nodes.get('panel-fields').children.map(n => n.textContent); };
+  return { question: b.nodes.get('panel-question').textContent, next: b.nodes.get('panel-agent-next'),
+    lines: b.nodes.get('panel-agent-next-list').children.map(li => li.textContent), more };
+}
+
+test('B-32 board: an agent\'s waiting is the one ask; the kit action and feed next step sit in a closed disclosure', () => {
+  const view = askBoard([askItem('aaaaaa', 'v1', '', { waiting: 'stg 배포를 지금 진행해도 될까요?', link: projLink,
+    sdlc: { slug: 'chat-fix', phase: 'deliver', state: 'NEEDS-HUMAN', action: kitAction } })],
+  { items: { 'PROJ-7': { nextStep: 'then close the ticket' } } });
+  assert.equal(view.question, 'stg 배포를 지금 진행해도 될까요?');
+  assert.doesNotMatch(view.question, /sdlc\.sh/);
+  assert.equal(view.next.hidden, false);
+  assert.notEqual(view.next.open, true, 'closed by default');
+  assert.deepEqual(view.lines, [kitAction, 'then close the ticket']);
+  assert.ok(!view.more().includes('Next step'), 'the next step is not repeated under More');
+});
+
+test('B-32 board: a pure sdlc NEEDS-HUMAN card is unchanged: the action is the ask, no disclosure, next step under More', () => {
+  const view = askBoard([askItem('bbbbbb', 'v1', '', { waiting: '', link: projLink,
+    sdlc: { slug: 'pure', phase: 'evidence', state: 'NEEDS-HUMAN', action: 'run QA on S1, fill evidence.md, sdlc.sh score' } })],
+  { items: { 'PROJ-7': { nextStep: 'run QA on S1' } } });
+  assert.equal(view.question, 'run QA on S1, fill evidence.md, sdlc.sh score');
+  assert.equal(view.next.hidden, true);
+  assert.deepEqual(view.lines, []);
+  assert.ok(view.more().includes('Next step'));
+});
+
+// The list's waiting rows as plain data: main text, folded text (null when the disclosure is hidden), open state.
+function listRows(items) {
+  const p = page();
+  p.context.listItems = items;
+  return JSON.parse(vm.runInContext(`
+    apply({ items: listItems });
+    JSON.stringify(Object.fromEntries(listItems.map(({ id }) => { const r = rows.get(id)._refs;
+      return [id, { what: r.waitWhat.textContent, whatHidden: r.waitWhat.hidden, next: r.waitNext.hidden ? null : r.waitNextText.textContent, open: !!r.waitNext.open }]; })));
+  `, p.context));
+}
+const listLink = { label: 'PROJ-8', url: 'https://example.atlassian.net/browse/PROJ-8' };
+const listItem = (id, extra) => ({ id, title: id, done: false, status: 'waiting', waiting: '', events: [], notes: [], ...extra });
+const qaCheck = 'How sure we are table missing in intent.md: run QA on S1 S2 S3, fill evidence.md, sdlc.sh score';
+
+test('B-32 list: beside an agent\'s question about the same work, a kit-only row folds its instruction; elsewhere rows are unchanged', () => {
+  const rows = listRows([
+    listItem('ask001', { link: listLink, waiting: 'QA 계정 비밀번호를 알려 주세요', sdlc: { slug: 'qa-run', phase: 'evidence', state: '', action: '' } }),
+    listItem('kit001', { link: listLink, sdlc: { slug: 'qa-run', phase: 'evidence', state: 'NEEDS-HUMAN', action: qaCheck } }),
+    listItem('pure01', { sdlc: { slug: 'pure', phase: 'evidence', state: 'NEEDS-HUMAN', action: 'run QA on S1' } })]);
+  assert.deepEqual(rows.ask001, { what: 'QA 계정 비밀번호를 알려 주세요', whatHidden: false, next: null, open: false });
+  assert.deepEqual(rows.kit001, { what: '', whatHidden: true, next: qaCheck, open: false }, 'folded, closed by default');
+  assert.deepEqual(rows.pure01, { what: 'run QA on S1', whatHidden: false, next: null, open: false }, 'no agent question: unchanged');
+});
+
+test('B-32 list: a sibling for other work keeps its own NEEDS-HUMAN step as a task of the person\'s', () => {
+  const rows = listRows([
+    listItem('ask002', { link: listLink, waiting: 'QA 계정 비밀번호를 알려 주세요' }),
+    listItem('own002', { link: listLink, sdlc: { slug: 'deploy-auth', phase: 'deliver', state: 'NEEDS-HUMAN', action: 'authorize the deploy' } })]);
+  assert.deepEqual(rows.own002, { what: 'authorize the deploy', whatHidden: false, next: null, open: false });
+});
+
+test('B-32 list: an item asking only with a command shows the run ask; its kit action folds', () => {
+  const rows = listRows([listItem('exec01', { exec: { argv: ['make', 'deploy'], cwd: '/tmp', why: 'deploy' },
+    sdlc: { slug: 'ship', phase: 'deliver', state: 'NEEDS-HUMAN', action: 'ship to stg, then sdlc.sh ship ship stg <sha>' } })]);
+  const runAsk = vm.runInContext(`t('run.ask')`, page().context);
+  assert.deepEqual(rows.exec01, { what: runAsk, whatHidden: false, next: 'ship to stg, then sdlc.sh ship ship stg <sha>', open: false });
+});
+
+// A board whose work document request answers with the given markdown.
+async function documentBoard(item, markdown) {
+  const p = page('#t=test-token', { fetch: async url => url.startsWith('/api/artifact') ?
+    { ok: true, text: async () => JSON.stringify({ markdown, gate: '', sha: 'x' }) } : new Promise(() => {}) });
+  boardItems(p, [item]);
+  const b = boardPage(p);
+  const key = vm.runInContext(`render(); cards.find(card => card.target.id === '${item.id}').key`, b.context);
+  vm.runInContext(`select('${key}', false)`, b.context);
+  for (let i = 0; i < 5; i++) await new Promise(resolve => setImmediate(resolve));
+  assert.ok(p.requests.some(r => r.url.startsWith('/api/artifact')), 'the document was fetched');
+  return b.nodes.get('panel-question').textContent;
+}
+const glanceDoc = '# Intent\n## At a glance\n- **Your call:** approve the old scope?\n';
+
+test('B-32 board: a work document\'s Your call does not replace an agent\'s waiting', async () => {
+  const question = await documentBoard(askItem('dddddd', 'v1', '', { waiting: 'stg 배포를 지금 진행해도 될까요?', project: '/tmp/p',
+    sdlc: { slug: 'chat-fix', phase: 'deliver', state: 'NEEDS-HUMAN', action: kitAction } }), glanceDoc);
+  assert.equal(question, 'stg 배포를 지금 진행해도 될까요?');
+});
+
+test('B-32 board: a brief\'s Your call is the agent\'s own words and still leads', async () => {
+  const question = await documentBoard(askItem('eeeeee', 'v1', '', { waiting: 'see the brief', brief: '/tmp/brief.md' }), glanceDoc);
+  assert.equal(question, 'approve the old scope?');
+});
+
+test('B-32 detail: your next step is the agent\'s question; the item\'s kit action sits closed below it', () => {
+  const p = page();
+  vm.runInContext(`
+    items = [{ id: 'abcdef', title: 'PROJ-7 deploy', done: false, status: 'waiting', waiting: 'stg 배포를 지금 진행해도 될까요?',
+      sdlc: { slug: 'chat-fix', phase: 'deliver', state: 'NEEDS-HUMAN', action: '${kitAction}' }, events: [], notes: [] }];
+    openDetail('abcdef');
+  `, p.context);
+  const fields = p.nodes.get('detail-fields').children.map(n => n.textContent);
+  assert.equal(fields[fields.indexOf('Your next step') + 1], 'stg 배포를 지금 진행해도 될까요?');
+  assert.ok(!fields.some(text => /sdlc\.sh/.test(text)), 'the kit action is not a field');
+  assert.equal(p.nodes.get('detail-agent-next').hidden, false);
+  assert.notEqual(p.nodes.get('detail-agent-next').open, true);
+  assert.deepEqual(p.nodes.get('detail-agent-next-list').children.map(li => li.textContent), [kitAction]);
+  vm.runInContext(`items = [{ ...items[0], id: 'abcdef', waiting: '', version: 'v2' }]; renderDetail();`, p.context);
+  assert.equal(p.nodes.get('detail-agent-next').hidden, true, 'a pure sdlc ask shows no disclosure');
 });
